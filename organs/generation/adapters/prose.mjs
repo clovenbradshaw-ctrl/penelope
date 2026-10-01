@@ -23,7 +23,8 @@ import { createRequire } from "node:module";
 import { draw, SEARCH_URL } from "../engine.mjs";
 
 const require = createRequire(import.meta.url);
-const ER7 = "/Users/mlacy/Documents/3.0/eoreader7";
+// ER7_HOME points at the eoreader7 checkout (the default is the original author's machine).
+const ER7 = process.env.ER7_HOME ?? "/Users/mlacy/Documents/3.0/eoreader7";
 let organs = null;
 try {
   const ledger = await import(`${ER7}/native/the-fold/document-ledger.js`);

@@ -390,6 +390,13 @@ Example request:
 
 The stable response schema is `Weaving@1`. Unknown artifact kinds are named gaps rather than silently guessed.
 
+### The no-model diagnostic
+
+`weave({ ..., noModel: true })` runs the lifecycle with the mouth walled off: field and hunt run as usual,
+and any unit that reaches the mouth stage is recorded `model-required` and left unresolved — nothing is
+drawn, nothing is substituted. `node gym/weave-nomodel.mjs` drives it per target size, audits the provenance
+and prints where the first limit appears; the Borodino record is `ladder/NOMODEL-BOUNDARY.md`.
+
 ## Layout
 
 ```

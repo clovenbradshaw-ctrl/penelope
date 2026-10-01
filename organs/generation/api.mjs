@@ -7,6 +7,9 @@
 //
 // The result separates artifact, materialization, verification, evidence, and
 // repair. Adding a medium means registering an adapter, not another engine.
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { arrange } from "./engine.mjs";
 
 const adapters = new Map();
@@ -57,6 +60,7 @@ export async function weave({
   context = {},
   verification = {},
   model = null,
+  noModel = false,
   output = null,
 } = {}) {
   const task = String(intent ?? "").trim();
@@ -77,7 +81,10 @@ export async function weave({
     };
   }
 
-  const ctx = { ...context, constraints, verification, model, artifact: kind ?? adapter.kind };
+  // noModel:true is the explicit model-free mode: field and hunt run as usual,
+  // and any unit that reaches the mouth stage is recorded as model-required and
+  // left unresolved. No draw is ever made, and no substitute model is used.
+  const ctx = { ...context, constraints, verification, model: noModel ? null : model, noModel: noModel === true, artifact: kind ?? adapter.kind };
   const args = { out: output ?? undefined };
   if (context?.example !== undefined) args.example = JSON.stringify(context.example);
 
@@ -125,12 +132,16 @@ export async function weave({
         addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" },
       },
       eot: result.eot ?? null,
+      // Flat per-unit disposition: field | hunt | mouth | model-required | unsatisfied.
+      outcomes: result.outcomes ?? [],
+      units: (result.units ?? []).map((u) => ({ name: u.name, spec: u.spec })),
     },
     repair: {
       scars: result.scars ?? [],
       converged: (result.scars ?? []).length === 0 && verified,
     },
-    model: model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b",
+    model: noModel ? null : (model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b"),
+    noModel: noModel === true,
   };
 }
 
@@ -146,9 +157,31 @@ export async function selftest() {
   adapters.delete("selftest");
   const empty = await weave({ intent: "   ", artifact: "code" });
   const textReady = generationAdapter("text") === generationAdapter("prose");
-  const ok = registered && textReady && empty.ok === false && empty.status === "gap" && generationKinds().join("|") === before.join("|");
-  if (!ok) throw new Error("unified generation API selftest failed");
-  return { ok: true, checks: 4 };
+  // noModel: a unit field and hunt cannot satisfy stops at the mouth stage as
+  // `model-required`; the mouth (and so any model door) is never reached.
+  const mouth = { calls: 0 };
+  const noModelAdapter = {
+    kind: "selftest-nomodel",
+    readUnits: () => [{ name: "a", spec: "field-held" }, { name: "b", spec: "hunt-held" }, { name: "c", spec: "nobody-holds" }],
+    autofill: (u) => (u.name === "a" ? { code: "alpha from the field", address: "field:a" } : null),
+    hunt: async (u) => (u.name === "b" ? { code: "beta from the hunt", url: "hunt:b" } : null),
+    mouthFragment: () => { mouth.calls += 1; return "never asked"; },
+    snip: (v) => v,
+    probeUnit: () => ({ ok: true, detail: "" }),
+    testUnits: () => ({ ok: true, reason: "ok" }),
+    toDocument: () => "<html></html>",
+  };
+  const quiet = console.log;
+  console.log = () => {};
+  let nm;
+  try {
+    nm = await weave({ intent: "no-model selftest", artifact: noModelAdapter, noModel: true, output: fs.mkdtempSync(path.join(os.tmpdir(), "weave-nomodel-")) });
+  } finally { console.log = quiet; }
+  const stages = (nm.evidence?.outcomes ?? []).map((o) => o.stage).join(",");
+  const noModelOk = mouth.calls === 0 && nm.noModel === true && nm.model === null && stages === "field,hunt,model-required" && (nm.repair?.scars ?? []).some((x) => x.stage === "mouth");
+  const ok = registered && textReady && empty.ok === false && empty.status === "gap" && generationKinds().join("|") === before.join("|") && noModelOk;
+  if (!ok) throw new Error("unified generation API selftest failed" + (noModelOk ? "" : " (noModel: mouth calls=" + mouth.calls + ", stages=" + stages + ")"));
+  return { ok: true, checks: 5 };
 }
 
 export default { weave, generate, registerGenerationAdapter, generationAdapter, generationKinds };

@@ -58,7 +58,11 @@ export function parseArgs(argv) {
 
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
-export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch" } = {}) {
+export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch", noModel = false } = {}) {
+  // NO-MODEL TRIPWIRE: a weave run with noModel:true must never reach the door.
+  // fillUnits stops a unit at the mouth stage before calling here; this throw
+  // is the second wall, so no future caller can draw by accident.
+  if (noModel) throw new Error("draw() called with noModel:true — the mouth stage must stop a unit as model-required, never draw");
   // Every model draw enters Penelope's draw door. The engine remains the
   // orchestrator; admission/routing belongs to the door, not this engine.
   const { runDrawDoor } = await import("../generation-door.mjs");
@@ -85,14 +89,18 @@ export function writeTmp(code) {
 async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
+  // Per-unit disposition: where each unit was satisfied (field | hunt | mouth)
+  // or why it was not (model-required | unsatisfied). The provenance events
+  // carry the same fact; this is the flat, countable form of it.
+  const outcomes = [];
   const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind });
   const addSource = (spec) => ledger.source(spec);
   const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
     const text = String(code ?? "");
-    const offset = drawn.length ? Buffer.byteLength(drawn.join("
-
-") + "
-") : 0;
+    // The folded artifact is drawn.join("\n\n") + "\n": the next contribution starts
+    // AFTER the two-byte separator. (This was +1, which put every anchor after the
+    // first one byte early — measured by gym/weave-nomodel.mjs's byte-range audit.)
+    const offset = drawn.length ? Buffer.byteLength(drawn.join("\n\n")) + 2 : 0;
     if (text) drawn.push(text);
     const end = offset + Buffer.byteLength(text);
     ledger.event({ stage, source_id, unit: unit.name, parent, range: byteRange(offset, end), detail, transform });
@@ -106,6 +114,7 @@ async function fillUnits(units, adapter, ctx = {}) {
     if (fill) {
       const source = addSource({ kind: "corpus", locator: fill.address ?? "corpus:unknown", anchor: fill.address ?? null });
       addContribution({ unit: u, stage: "ground", code: fill.code, source_id: source, parent: unitSource, transform: "autofill-frame" });
+      outcomes.push({ unit: u.name, stage: "field", source_id: source, bytes: Buffer.byteLength(String(fill.code ?? "")), text: String(fill.code ?? "") });
       continue;
     }
 
@@ -114,9 +123,21 @@ async function fillUnits(units, adapter, ctx = {}) {
       if (res) {
         const source = addSource({ kind: "hunt", locator: res.url ?? "hunt:unknown", anchor: res.url ?? null });
         addContribution({ unit: u, stage: "ground", code: res.code, source_id: source, parent: unitSource, transform: "hunt-snip" });
+        outcomes.push({ unit: u.name, stage: "hunt", source_id: source, bytes: Buffer.byteLength(String(res.code ?? "")), text: String(res.code ?? "") });
         continue;
       }
       if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
+    }
+
+    // THE MOUTH STAGE. With noModel the unit stops HERE: field and hunt both
+    // had their chance, neither satisfied it, and the next stage is a model.
+    // That is recorded as a typed, countable fact (event + scar + outcome) —
+    // never a draw, never a fallback, never a silent skip.
+    if (ctx.noModel) {
+      ledger.event({ stage: "model-required", source_id: unitSource, parent: unitSource, unit: u.name, transform: "field+hunt-unsatisfied→mouth-stage", detail: { reason: "noModel:true — the unit reached the mouth stage and was left unresolved" } });
+      scars.push({ unit: u.name, attempt: 0, why: "model-required (noModel:true)", atom: u.spec, stage: "mouth" });
+      outcomes.push({ unit: u.name, stage: "model-required", source_id: unitSource, bytes: 0 });
+      continue;
     }
 
     let attempt = 0;
@@ -128,6 +149,7 @@ async function fillUnits(units, adapter, ctx = {}) {
       const out = await draw(fragment, {
         maxTokens: adapter.mouthTokens ?? 240,
         model: ctx.model ?? null,
+        noModel: ctx.noModel === true,
         kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document", "text"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other",
         priority: "batch",
       });
@@ -135,6 +157,7 @@ async function fillUnits(units, adapter, ctx = {}) {
       const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
         addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1 }, transform: "draw→snip" });
+        outcomes.push({ unit: u.name, stage: "mouth", source_id: source, bytes: Buffer.byteLength(String(fn)), text: String(fn) });
         break;
       }
       const why = alone.detail;
@@ -144,16 +167,11 @@ async function fillUnits(units, adapter, ctx = {}) {
       atom = nextAtom;
       attempt += 1;
     }
+    if (!outcomes.some((o) => o.unit === u.name)) outcomes.push({ unit: u.name, stage: "unsatisfied", source_id: unitSource, bytes: 0 });
   }
 
-  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("
-
-") + "
-"), units: units.length } });
-  return { code: drawn.join("
-
-") + "
-", scars, provenance: ledger.eot() };
+  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("\n\n") + "\n"), units: units.length } });
+  return { code: drawn.join("\n\n") + "\n", scars, outcomes, provenance: ledger.eot() };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
@@ -182,16 +200,20 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
 
   console.log(`
 === THE SPIRAL — field first, hunt second, mouth last ===`);
-  const { code, scars, provenance } = await fillUnits(units, adapter, context);
+  const { code, scars, outcomes, provenance } = await fillUnits(units, adapter, context);
   const verdict = adapter.testUnits(code, units, context);
   const verifySource = ledger.source({ kind: "verification", locator: { adapter: adapter.kind, verdict: verdict.reason } });
   ledger.event({ stage: "verify", source_id: verifySource, transform: "artifact→verification", detail: verdict });
   console.log(`  folded: ${code.length} bytes, ${units.length} units`);
-  const refs = provenance?.refs ?? [];
-  const snipped = refs.filter((p) => p.stage === "corpus");
-  const drawn = refs.filter((p) => p.stage === "mouth");
-  const hunted = refs.filter((p) => p.stage === "hunt");
-  if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${p.address?.split("/").pop()}`).join(", ")}`);
+  // Provenance@2 has events, not refs: derive the per-stage summaries from the
+  // transformation events (stage:ground + transform names which door filled it).
+  const evs = provenance?.events ?? [];
+  const srcOf = new Map((provenance?.sources ?? []).map((x) => [x.source_id, x]));
+  const row = (e) => ({ unit: e.unit, address: srcOf.get(e.source_id)?.anchor ?? null, source_id: e.source_id });
+  const snipped = evs.filter((e) => e.stage === "ground" && e.transform === "autofill-frame").map(row);
+  const drawn = evs.filter((e) => e.stage === "draw").map(row);
+  const hunted = evs.filter((e) => e.stage === "ground" && e.transform === "hunt-snip").map(row);
+  if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${String(p.address ?? "").split("/").pop()}`).join(", ")}`);
   if (hunted.length) console.log(`  hunted: ${hunted.map((p) => p.unit).join(", ")}`);
   if (drawn.length) console.log(`  drawn by the mouth: ${drawn.map((p) => p.unit).join(", ")}`);
   console.log(`  test:   ${verdict.reason}${verdict.ok ? "" : " — " + verdict.detail}`);
@@ -204,18 +226,21 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
   fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
+  // The snapshot returned by fillUnits predates the verification source; re-take it
+  // now so every source an event names is in the table (no dangling verify.source_id).
+  const finalProvenance = ledger.eot();
   const eot = {
     schema: "ArrangementEOT@2", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
-    prompt: task, model: MODEL,
+    prompt: task, model: context.noModel ? null : MODEL, noModel: context.noModel === true,
     law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
-    provenance,
+    provenance: finalProvenance,
     corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
       snipped,
       hunted,
       drawn,
-      sourceTable: provenance?.sources ?? [],
+      sourceTable: finalProvenance.sources ?? [],
     },
     swarm: { verdict, scars },
     product: { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}` },
@@ -226,7 +251,7 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
   if (scars.length) { console.log(`
   scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
-  return { slug, html, code, eot, verdict, scars, provenance };
+  return { slug, html, code, eot, verdict, scars, outcomes, units, provenance: finalProvenance };
 }
 
 export { execSync };
