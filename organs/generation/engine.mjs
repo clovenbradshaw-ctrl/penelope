@@ -216,7 +216,7 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
   const eot = {
     schema: "ArrangementEOT@2", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
-    prompt: task, model: MODEL,
+    prompt: task, model: context.noModel === true ? null : MODEL,
     law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
     provenance,
@@ -230,13 +230,15 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
     swarm: { verdict, scars },
     product: { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}` },
   };
+  // Finalize provenance before persisting the EOT so verification and materialization
+  // remain part of the same Provenance@2 artifact returned to callers.
+  eot.provenance = ledger.eot();
   fs.writeFileSync(path.join(outDir, `${slug}.eot.json`), JSON.stringify(eot, null, 2));
   console.log(`  widget: ${path.join(outDir, `${slug}.html`)}`);
   console.log(`  eot:    ${path.join(outDir, `${slug}.eot.json`)}`);
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
   if (scars.length) { console.log(`
   scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
-  eot.provenance = ledger.eot();
   return { slug, html, code, eot, verdict, scars, provenance: eot.provenance };
 }
 
