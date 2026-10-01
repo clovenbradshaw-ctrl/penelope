@@ -25,7 +25,7 @@ The current public HTTP contract is `POST /api/generation`:
 }
 ```
 
-The response is `GenerationResult@1`: artifact bytes, materialization,
+The response is `Weaving@1`: artifact bytes, materialization,
 verification verdict, provenance/EOT evidence, and repair scars. The built-in
 adapters currently include `code` and `prose`. Registering a new adapter adds
 a medium without creating a second orchestration engine. Unsupported media are
@@ -388,7 +388,7 @@ Example request:
 
 `{"intent":"Explain how a closure captures variables","artifact":"text"}`
 
-The stable response schema is `GenerationResult@1`. Unknown artifact kinds are named gaps rather than silently guessed.
+The stable response schema is `Weaving@1`. Unknown artifact kinds are named gaps rather than silently guessed.
 
 ## Layout
 
