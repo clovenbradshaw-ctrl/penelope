@@ -112,7 +112,7 @@ async function fillUnits(units, adapter, ctx = {}) {
     let atom = u.spec;
     while (attempt < 4) {
       const fragment = adapter.mouthFragment(u, atom, ctx);
-      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240, model: ctx.model ?? null, kind: ctx.artifact ?? adapter.kind ?? "other", priority: "batch" });
+      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240, model: ctx.model ?? null, kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other", priority: "batch" });
       const fn = adapter.snip(out, u.name);
       const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
