@@ -73,6 +73,18 @@ export class ProvenanceLedger {
   }
 }
 
+export function foldProvenance(parent, { transform = "re-admit", detail = null } = {}) {
+  const ledger = new ProvenanceLedger({ artifact: parent.artifact, encoding: parent.addressSpace?.encoding ?? "utf8" });
+  for (const source of parent.sources ?? []) ledger.sources.set(source.source_id, source);
+  for (const event of parent.events ?? []) {
+    ledger.events.push({ ...event });
+    ledger.byKey.set(JSON.stringify({ stage: event.stage, source_id: event.source_id, parent: event.parent, unit: event.unit, range: event.range, transform: event.transform, ibid: event.ibid }), event.event_id);
+  }
+  const parentRoot = parent.root ?? (parent.events?.length ? parent.events[parent.events.length - 1].event_id : null);
+  if (parentRoot) ledger.ibid(parentRoot, { transform, ...(detail ? { detail } : {}) });
+  return ledger;
+}
+
 export function byteRange(start, end) {
   return { unit: "byte", start, end };
 }
