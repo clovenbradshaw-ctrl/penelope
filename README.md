@@ -104,9 +104,9 @@ append-only, always revisable).
 #    a sentence is LINKED to one source sentence or it is UNGROUNDED         #
 #                           |                                                #
 # =[ THE DOORS ]  routed by measured evidence, disclosed =================== #
-#  chat --> Heimdall admission (shared mouth, x-er7-session penelope-gym,    #
-#           batch priority; 429/503 + Retry-After -> bounded backoff ->      #
-#           a typed refusal; never a hang, never silence)                    #
+#  chat --> Heimdall admission, non-stream /api/chat (shared mouth,          #
+#           x-er7-session penelope-gym, batch; 429/503 + Retry-After ->      #
+#           bounded backoff -> a typed refusal; never a hang)                #
 #  stream --> ollama DIRECT (both proxy streaming doors hang — measured      #
 #           2026-10-01: /v1/chat/completions and /api/chat, code 000, 90s,   #
 #           zero bytes; the SSE route is the chat loom's live face)          #
