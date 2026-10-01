@@ -912,7 +912,7 @@
    "typing": "‡",
    "refs": [
     "o/html-snip.mjs",
-    "GL-WV-13",
+    "GL-RS-01",
     "GL-EN-09"
    ]
   },
@@ -926,8 +926,36 @@
    "typing": "‡",
    "refs": [
     "o/resolver.mjs",
-    "GL-WV-13",
+    "GL-RS-01",
     "GL-OG-08"
+   ]
+  },
+  {
+   "id": "STR",
+   "name": "steersman",
+   "st": "■",
+   "lvl": 2,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "§",
+   "refs": [
+    "o/steersman.mjs",
+    "o/steersman.test.mjs",
+    "GL-WV-13"
+   ]
+  },
+  {
+   "id": "VOC",
+   "name": "voice",
+   "st": "■",
+   "lvl": 2,
+   "op": "INS",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "o/voice.mjs",
+    "o/voice.e2e.mjs",
+    "GL-WV-13"
    ]
   }
  ]

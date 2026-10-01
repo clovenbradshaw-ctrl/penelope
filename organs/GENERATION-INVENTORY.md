@@ -17,8 +17,8 @@ copied — copying them would fork their kernel dependencies and rot.
 | `freshness.mjs` | born here (R12) | penelope founding | no imports |
 | `window.mjs` | born here (council weave) | penelope 2026-10-01 | no imports — next-N dated records + countdown, any dated feed |
 | `agenda-shape.mjs` | born here (council weave) | penelope 2026-10-01 | no imports — ordered action lists, own sequence, declared actions |
-| `html-snip.mjs` | born here (GL-WV-13) | penelope 2026-10-01 | no imports — tag-aware, byte-addressed HTML fragment snip (GL-EN-09 for markup) |
-| `resolver.mjs` | born here (GL-WV-13) | penelope 2026-10-01 | no imports — the closed 27-cell taxonomy: every task routed or a named void |
+| `html-snip.mjs` | born here (GL-RS-01) | penelope 2026-10-01 | no imports — tag-aware, byte-addressed HTML fragment snip (GL-EN-09 for markup) |
+| `resolver.mjs` | born here (GL-RS-01) | penelope 2026-10-01 | no imports — the closed 27-cell taxonomy: every task routed or a named void |
 | `cube.mjs` | copy of `eoreader7/native/kernel/cube.js` + THE-27-CELLS.md | cube.js 6a11c1d (2026-09-17) | no imports; the coordinate system the tapestry is woven on (selftest 15 checks) |
 
 ## Referenced (coupled — read at source, do not copy)

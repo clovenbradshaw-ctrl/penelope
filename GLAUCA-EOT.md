@@ -1250,18 +1250,18 @@ so the next weave starts from what this one learned.
 
 ## organs — the closed resolver
 
-### GL-WV-13 — The taxonomy is complete by closure; every task lands in one cell, routed or a named void
+### GL-RS-01 — The taxonomy is complete by closure; every task lands in one cell, routed or a named void
 - pipeline: organs
 - status: standing
-- supersedes: —
+- supersedes: — (renumbered from GL-WV-13 2026-10-01 to clear the homonym with the steersman's entry — id corrected in place, disclosed)
 - evidence: organs/resolver.mjs (Resolver@1, selftest 34/34 — all 27 cells enumerated and routed or void, exactly one declared void DEF·Ground; routes: image→measure (look.js, no model), html→box:html:snip, data feed→box:feed (window+agenda), code→engine (/v1/ask→/v1/code), prose INS→engine, unroutable→mouth, DEF·Ground→void loudly); organs/html-snip.mjs (HtmlSnip@1, selftest 7/7 — the tag-aware, byte-addressed HTML snipper, GL-EN-09's analogue for markup); gym/weave-build.mjs (runWeave routes through classify(); every run sealed by seal() into apps/weaves/<slug>-facing.html)
 - falsifying control: a task that lands in no cell, a second cell double-routed, a void cell that is not named, or a run sealed without a holograph (no SOURCES/NOTES), contradicts this; the resolver's word-boundary scorer must not misfire a modality (the "json"⊂"js" collision was caught and fixed with \b-boundaries).
 
 ## engine — the holograph of the run
 
-### GL-WV-14 — Every run is a holograph: SOURCES addressed, RESPONSE tagged, NOTES disclosed
+### GL-RS-02 — Every run is a holograph: SOURCES addressed, RESPONSE tagged, NOTES disclosed
 - pipeline: engine
 - status: standing
-- supersedes: —
+- supersedes: — (renumbered from GL-WV-14 2026-10-01, id corrected in place, disclosed)
 - evidence: gym/weave-build.mjs seal() (writes apps/weaves/<slug>-facing.html: [S#] SOURCES @ permanent address · bytes, RESPONSE = the artifact/fragment/code, NOTES = route·cell·mouthCalls·verdict·standing·falsifier); the council/feed run's SOURCES = the legistar feed via the gym door; the snip run's SOURCES = the html byte span; the image run's SOURCES = the image + OCR standing (GL-IM-01)
 - falsifying control: a run whose facing page hides the mouthCalls, or whose RESPONSE carries a claim with no SOURCES entry, contradicts this — the holograph is the ledger of its own making (GL-00, GL-BD-04).
