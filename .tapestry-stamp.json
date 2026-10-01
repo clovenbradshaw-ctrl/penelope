@@ -10,7 +10,7 @@
     "gym/server.mjs": "3d893a5d206d882273d1a4e884a00e86865d4d535c649c3094613c6cb9718b63",
     "gym/to-notebook.mjs": "2a1acaf5b37ac008b86ed2c174bd1ccf79372a8f6c569acb87941721f6165380",
     "gym/unweave.mjs": "9300d36afb80556c1a1c7dc20bd58171488705c8cef1adc82c343753a7569b9f",
-    "gym/weave-build.mjs": "c779a5467bec75ef98ee98367170611926fca24e21b3e06e9c5efcc5fc2f76f5",
+    "gym/weave-build.mjs": "761691d28666e79c769845bfa41058792e7227ca7df1e003442bfd164a82a130",
     "gym/weave.mjs": "bf7ba6cf4e69e8b13acd945d7f5232cf828650dc2b1da980a67f022db23158b6",
     "ladder/mouth-last.json": "c1fdaca0553d75ee70d7ca52021e2aff67419b9b5995e355c60a4fb381f029cf",
     "ladder/nomouth-rows.txt": "4d0270b912a9730bfd4c3e54fca56976235950293295191e07f3c46a4741255d",

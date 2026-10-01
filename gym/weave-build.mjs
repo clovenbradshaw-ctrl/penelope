@@ -101,7 +101,11 @@ export async function engineRun({ ask, testCommand, out, model }) {
   const withOutArg = (cmd) => {
     let s = String(cmd ?? "").trim();
     if (!s || !absOut) return s;
-    const m = /^(node|nodejs)\s+(\S+)/i.exec(s);
+    // any declared interpreter — node, python3, ... the script resolves against
+    // the ROOT (buildCodeTask runs from the PROXY's cwd, the remedy from its
+    // own workspace; neither sees a penelope-root-relative script), and the
+    // module path rides last (GL-BD-11, generalized across medium).
+    const m = /^(node|nodejs|python3|python)\s+(\S+)/i.exec(s);
     if (m && !m[2].startsWith("/")) s = `${m[1]} ${JSON.stringify(path.resolve(ROOT, m[2]))}${s.slice(m[0].length)}`;
     if (s.includes(absOut)) return s;
     return `${s} ${JSON.stringify(absOut)}`;

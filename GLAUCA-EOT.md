@@ -1392,7 +1392,11 @@ so the next weave starts from what this one learned.
   "gate: no module path" without it); measured 2026-10-01: a testCommand of
   "node apps/weaves/clamp-gate.mjs" exits 1 with "no module path" — the gate's
   cases never ran, verified stayed false. Closed: the loom composes the
-  absolute module path into the testCommand when it is absent (JSON-quoted).
+  absolute module path into the testCommand when it is absent (JSON-quoted),
+  for ANY declared interpreter — node/python3 alike (2026-10-01: the python
+  build's gate "python3 apps/weaves/case-py-gate.py" ran without the module
+  path until the composition covered python3; box-computed python passed the
+  gate 9/9 once the module was named).
 - falsifying control: a bare testCommand that still runs the gate's own cases,
   or a gate failure reported as a code failure when the gate never ran,
   contradicts this.
@@ -1464,22 +1468,33 @@ so the next weave starts from what this one learned.
 - status: standing
 - supersedes: —
 - evidence: eoreader7/native/organs/mechanical-units.js (the closed a priori
-  registry — every category computes a deterministic body, selftest 15/15:
-  clamp, lerp, toCamelCase/toSnakeCase/toKebabCase/toTitleCase, slugify,
-  countWords, capitalize, pluralize, formatBytes, padStart/padEnd, fmtDuration;
-  an unowned name is null, never a guess — the residue is OPEN by
-  construction); eoreader7/native/organs/code-build.js buildCodeTask
-  (per-unit routing: a category computes — provenance source "box", 0 draws —
-  else the mouth draws with the fenced JS anchor, provenance "mouth"; the
-  assembled file carries provenance, boxUnits, boxBytes, mouthBytes, and
-  `draws` is the mouth count only); measured 2026-10-01: the
-  toCamelCase/toSnakeCase weave drew from the mouth and failed 4/10 golden
-  pairs — "convincingly wrong" logic, the dialectical illusion; after the fix
-  the same weave computed both units in the box — draws 0, mouthCalls 0,
-  tokens 0, boxBytes 512, verified true, gate 10/10 (swatch row
+  registry — MEDIUM-AWARE: the logic is language-neutral, the syntax is the
+  medium; every category carries a js and a python body, the name normalizes
+  across medium (to_camel_case ≡ toCamelCase), a category with no body for the
+  ask's language routes to the mouth — the residue is OPEN by construction;
+  selftest 15/15 incl. real python3 golden pins: clamp, lerp,
+  toCamelCase/toSnakeCase/toKebabCase/toTitleCase, slugify, countWords,
+  capitalize, pluralize, formatBytes, padStart/padEnd, fmtDuration); eoreader7/
+  native/organs/code-build.js buildCodeTask (per-unit routing: a category
+  computes — provenance source "box", 0 draws — else the mouth draws with the
+  language-aware fenced anchor (```python/def vs ```javascript/function) and the
+  language-aware extractor (def + indentation-block walk for python, function +
+  brace walk for js); the assembled file carries provenance, boxUnits,
+  boxBytes, mouthBytes, and `draws` is the mouth count only); measured
+  2026-10-01: the toCamelCase/toSnakeCase weave drew from the mouth and failed
+  4/10 golden pairs — "convincingly wrong" logic, the dialectical illusion;
+  after the fix the same weave computed both units in the box — draws 0,
+  mouthCalls 0, tokens 0, boxBytes 512, verified true, gate 10/10 (swatch row
   2026-10-01T22:36:41). The residue stays open: isPalindrome (unowned) drew
   from the mouth — draws 1, mouthCalls 1, mouthBytes 262, verified true, gate
-  5/5 (swatch row 2026-10-01T22:38).
+  5/5 (swatch row 2026-10-01T22:38). A DIFFERENT MEDIUM (python, 2026-10-01):
+  the to_camel_case/to_snake_case python build computed both units in the box
+  (boxBytes 457, mouthBytes 0, provenance lang "python"), gate 9/9 verified —
+  the a priori crossed the medium; the pre-fix JS-tether (registry/anchor/
+  extractor) had returned "no units drawn". The prose/matter domain drew an
+  EMPTY composition at the same hour (box saturated after a session of builds)
+  — the mouth's matter was starved, not exercised.
 - falsifying control: a unit whose name the registry owns drawn from the mouth
-  (provenance source "mouth" for a category shape), or a box-computed unit
-  whose body fails its own golden cases, contradicts this.
+  (provenance source "mouth" for a category shape), a box-computed unit whose
+  body fails its own golden cases, or a category that the medium leaks (a
+  python ask routed through the js anchor/extractor) contradicts this.
