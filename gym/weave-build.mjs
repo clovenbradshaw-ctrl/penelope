@@ -88,24 +88,50 @@ async function pacedPost(url, body, { timeoutMs = 900000, maxDefer = 6 } = {}) {
 }
 
 export async function engineRun({ ask, testCommand, out, model }) {
-  const build = await (await pacedPost(`${PROXY}/v1/ask`, { task: ask, testCommand: testCommand ?? null, out: out ?? null, model: model ?? "gemma2:2b" })).json();
+  // The seam is an address (GL-BD-10): a relative --out is resolved by the
+  // PROXY's own cwd, never Penelope's. Resolve here, against the ROOT, so the
+  // write lands where the loom can seal it and the remedy's workspace exists.
+  const absOut = out ? path.resolve(ROOT, out) : null;
+  // The gate's argv is part of the testCommand (GL-BD-11): buildCodeTask runs
+  // execSync(testCommand) with NO argv, and the house gates read the module at
+  // process.argv[2]. Compose the absolute module path in when it is absent, and
+  // resolve a relative `node <script>` against the ROOT — buildCodeTask runs
+  // from the PROXY's cwd and the remedy from its own workspace, neither of
+  // which can see a penelope-root-relative script.
+  const withOutArg = (cmd) => {
+    let s = String(cmd ?? "").trim();
+    if (!s || !absOut) return s;
+    const m = /^(node|nodejs)\s+(\S+)/i.exec(s);
+    if (m && !m[2].startsWith("/")) s = `${m[1]} ${JSON.stringify(path.resolve(ROOT, m[2]))}${s.slice(m[0].length)}`;
+    if (s.includes(absOut)) return s;
+    return `${s} ${JSON.stringify(absOut)}`;
+  };
+  const gate = withOutArg(testCommand);
+  // The build mouth is MEASURED, never assumed (GL-BD-09): with the fenced JS
+  // completion anchor, gemma2:2b holds JS on the resident box (3/3 probed);
+  // qwen2.5-coder:1.5b answered the same anchor with prose-Python every time.
+  // The operator may still name a model; the standing default is the mouth
+  // that held the anchor.
+  const buildModel = model ?? "gemma2:2b";
+  const build = await (await pacedPost(`${PROXY}/v1/ask`, { task: ask, testCommand: gate || null, out: absOut, model: buildModel })).json();
   let j = build;
   if (build.kind !== "mechanical-code-build") {
-    swatch({ weave: "engine:" + String(ask).slice(0, 40), class: "new (engine-held)", engine: "eoreader7 /v1/ask (turned, not built)", mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.error ? "refused" : "turn", evidence: "GL-WV-07/08" });
+    swatch({ weave: "engine:" + String(ask).slice(0, 40), class: "new (engine-held)", engine: "eoreader7 /v1/ask (build refused)", mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.error ? "refused (named gap)" : "turn", evidence: "GL-WV-07/08, GL-BD-09" });
     return { ok: false, error: build.error ?? `the door answered a turn, not a build (kind ${build.kind ?? "?"}) — ${String(build.answer ?? "").slice(0, 200)}` };
   }
+  const mouthCalls = build.draws ?? 0;
   // Thea's remedy: a gate that fails is handed to the bounded loop, not re-run.
-  if (build.verified !== true && out && testCommand) {
+  if (build.verified !== true && absOut && gate) {
     const remedy = await (await pacedPost(`${PROXY}/v1/code`, {
       task: `${ask}. The gate failed: ${String(build.verifyError ?? "").slice(0, 400)}. Make the testCommand pass.`,
-      workspace: path.dirname(out), testCommand, model: model ?? "gemma2:2b", maxRounds: 3,
+      workspace: path.dirname(absOut), testCommand: gate, model: model ?? "gemma2:2b", maxRounds: 3,
     })).json();
-    const finalCode = fs.existsSync(out) ? fs.readFileSync(out, "utf8") : (remedy.code ?? build.code ?? "");
-    swatch({ weave: "engine:" + (build.units ?? []).join("+") + "+remedy", class: "new (engine-held)", engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", mouthCalls: (build.draws ?? 0) + (remedy.draws ?? 0), mouthBytes: finalCode.length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: remedy.done ? "pass (remedy loop)" : String(remedy.error ?? "budget spent"), evidence: "GL-WV-07/10/12" });
-    return { ok: !!remedy.done, engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", units: build.units ?? [], draws: (build.draws ?? 0) + (remedy.draws ?? 0), verified: !!remedy.done, remedy: remedy.done ? "loop converged" : String(remedy.error ?? remedy.status ?? "budget spent"), out, code: finalCode, disclosure: build.disclosure ?? null };
+    const finalCode = fs.existsSync(absOut) ? fs.readFileSync(absOut, "utf8") : (remedy.code ?? build.code ?? "");
+    swatch({ weave: "engine:" + (build.units ?? []).join("+") + "+remedy", class: "new (engine-held)", engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", mouthCalls: mouthCalls + (remedy.draws ?? 0), mouthBytes: finalCode.length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: remedy.done ? "pass (remedy loop)" : String(remedy.error ?? "budget spent"), evidence: "GL-WV-07/10/12" });
+    return { ok: !!remedy.done, engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", units: build.units ?? [], draws: (build.draws ?? 0) + (remedy.draws ?? 0), mouthCalls, verified: !!remedy.done, remedy: remedy.done ? "loop converged" : String(remedy.error ?? remedy.status ?? "budget spent"), out: absOut, code: finalCode, disclosure: build.disclosure ?? null };
   }
-  swatch({ weave: "engine:" + (build.units ?? []).join("+"), class: "new (engine-held)", engine: "eoreader7 /v1/ask → buildCodeTask", mouthCalls: build.draws ?? 0, mouthBytes: String(build.code ?? "").length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.verified === true ? "pass (testCommand)" : String(build.verified ?? "unverified"), evidence: "GL-WV-07/08/09" });
-  return { ok: build.verified === true, engine: "eoreader7 /v1/ask → buildCodeTask", units: build.units ?? [], draws: build.draws ?? 0, tokens: build.tokens ?? 0, verified: build.verified ?? null, verifyError: build.verifyError ?? null, out: build.out ?? null, code: build.code ?? null, disclosure: build.disclosure ?? null };
+  swatch({ weave: "engine:" + (build.units ?? []).join("+"), class: "new (engine-held)", engine: "eoreader7 /v1/ask → buildCodeTask", mouthCalls, mouthBytes: String(build.code ?? "").length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.verified === true ? "pass (testCommand)" : String(build.verified ?? "unverified"), evidence: "GL-WV-07/08/09" });
+  return { ok: build.verified === true, engine: "eoreader7 /v1/ask → buildCodeTask", units: build.units ?? [], draws: build.draws ?? 0, mouthCalls, tokens: build.tokens ?? 0, verified: build.verified ?? null, verifyError: build.verifyError ?? null, out: absOut, code: build.code ?? null, disclosure: build.disclosure ?? null };
 }
 
 export async function runWeave({ ask, testCommand, out, banked, model, html, sel, image, attachment }) {
@@ -140,7 +166,7 @@ export function seal(result) {
     : String(result.error ?? result.gap ?? "failed");
   const notes = [
     `route: ${result.route ?? result.class ?? "?"} · executor: ${result.executor ?? "box/engine"} · cell: ${result.cell ? JSON.stringify(result.cell) : "?"}`,
-    `mouthCalls: ${result.mouthCalls ?? 0} · verdict: ${result.verified ?? (result.ok ? "pass" : "fail")}`,
+    `mouthCalls: ${result.mouthCalls ?? result.draws ?? 0} · verdict: ${result.verified ?? (result.ok ? "pass" : "fail")}`,
     result.standing ? `standing: ${result.standing}` : null,
     `falsifier: the swatch must equal this run's EOT provenance (mouth bytes vs measured/box bytes), never asserted`,
   ].filter(Boolean);

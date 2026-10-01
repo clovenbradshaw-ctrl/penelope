@@ -93,8 +93,12 @@
    "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
+    "o/mouth.mjs",
+    "mouth/server.mjs",
     "GL-EN-05",
-    "GL-LD-05"
+    "GL-LD-05",
+    "GL-RR-04",
+    "GL-RR-05"
    ]
   },
   {
@@ -177,7 +181,8 @@
     "a/launch-facing.html",
     "a/record.json",
     "GL-BD-01",
-    "GL-BD-04"
+    "GL-BD-04",
+    "GL-RS-03"
    ]
   },
   {
@@ -339,7 +344,11 @@
     "g/weave-build.mjs",
     "/api/weave",
     "GL-WV-07",
-    "GL-WV-12"
+    "GL-WV-12",
+    "GL-BD-09",
+    "GL-BD-10",
+    "GL-BD-11",
+    "GL-RS-03"
    ]
   },
   {
@@ -408,7 +417,8 @@
     "ER7/heimdall.mjs",
     "organs/generation-door.mjs",
     "GL-CH-03",
-    "GL-RT-03"
+    "GL-RT-03",
+    "GL-RR-05"
    ]
   },
   {
@@ -797,9 +807,11 @@
    "grain": "Figure",
    "typing": "‡",
    "refs": [
-    "o/generation/engine.mjs"
+    "o/generation/engine.mjs",
+    "GL-RS-03",
+    "GL-WV-05"
    ],
-   "ctl": "∑swatch ≠ ∑{≡ ↻ ●}"
+   "ctl": "∑swatch ≠ ∑{≡ ↻ ●} ∨ notes mouthCalls ≠ ∑swatch"
   },
   {
    "id": "KIN",

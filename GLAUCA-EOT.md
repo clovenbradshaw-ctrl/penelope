@@ -1302,3 +1302,145 @@ so the next weave starts from what this one learned.
 - supersedes: —
 - evidence: eoreader7/heimdall.mjs (laneCmp sorts lane → kind pressure → last-served; noteKindServed at both serve sites; kindTurnMs per-kind EWMA feeds queueOf's ETA; pickHost's SPREAD: hosts whose wait exceeds the best by ≤ the cheapest MEASURED loadMs rotate least-picked-first — the 2026-09-21 lesson, a naive round robin pays a cold load and discards every prefix cache; reason "spread_within_load_cost"); eoreader7/native/kernel/online-mouths.js pick() (rotate across MEASURED providers within one EWMA smoothing step of the best latency — measured-equal windows are shared, never burned one at a time; unmeasured providers are never rotated as equal); tests 9/9 queue, 4/4 spread, 7/7 online
 - falsifying control: a host rotated to when its wait exceeds the best by more than the cheapest measured load, a provider rotated to that is clearly slower than the best by more than the smoothing step, or a queue that serves a served-more kind ahead of a served-less one — any of these breaks this.
+
+# Addendum G — the mouth is Penelope's (2026-10-01)
+
+// The operator's direction: "penelope sit on top of eoreader7 and the mouth
+// is with her." The generation door (Addendum F) already carried every
+// eoreader7 draw through Penelope; this addendum gives her the mouth — her
+// own admission and kind→wire routing — and makes her the first door a draw
+// enters. The bridge (Heimdall's channel, the AntiStrauss gate, the host
+// picker, the upstream lanes) still executes; it is never forked.
+
+## organs + door + engine — the mouth
+
+### GL-RR-04 — The mouth is Penelope's: a draw enters her admission and kind→wire routing first; the bridge (Heimdall's channel) executes, never forked
+- pipeline: organs + door + engine
+- status: standing
+- supersedes: —
+- evidence: penelope organs/mouth.mjs (Mouth@1, 14 selftests: admit — the ration 40 draws/15 min per identity, typed 429/503 + Retry-After, hop≥1 honors the doorway's admission; route/modelForWire — kind→wire /api/chat | /api/generate | /api/embed, plain model on every wire, a carried er7: prefix stripped); penelope mouth/server.mjs (POST /v1/draw, POST /v1/mouth/admit, and the wire routes /api/generate /api/chat /api/embed /v1/chat/completions that are DROP-IN for the channel — a caller changes only its base URL; identity/kind/hop headers ride through; every draw on the ration log). eoreader7 native/kernel/mouth.js (MOUTH_URL/MOUTH_IDENTITY — the ONE address, same discipline model-server.js holds for the daemon). Rerouted onto the mouth, verified live 2026-10-01: gym/server.mjs drawChat/draw/chat-stream (mouth /v1/draw, stream piped); organs/generation-door.mjs runDrawDoor (mouth /api/generate — the door the proxy's streamOllamaChat calls by default, GENERATION_DOOR); code-build.js (mouth /api/generate), look.js (mouth /api/chat), corpus-resonance.js + prior-query.js (mouth /api/embed); eoreader7 native tests 29/29 (corpus-resonance, prior-resonance, look) through the mouth; live draws: chat→"mouth", code→"shuttle", generation-door→"doorstop", NDJSON streamed, embeddings→full vectors. Coordinated restart 2026-10-01 (mouth → gym → proxy): proxy /v1/ask → "voyage" through the doorway → generation door → mouth → bridge (4 s), channel draw restored 200, eoreader7 native tests 29/29 through the mouth. The proxy's in-process draws already route through Penelope via the generation door (GL-RR-02); a redundant mouth-admit choke point was added to streamOllamaChat and REVERTED — it tripled the hops and killed the door-unreachable fall-through; the generation door is the seam.
+- falsifying control: a SERVED engine draw — an organ, a the-fold surface, a proxy doorway, the penelope gym or generation door — that reaches ollama, the daemon, or the channel without first passing the mouth (a file addressing 11434/11435/ER7_OLLAMA_URL for a draw in the production path, or a draw that bypasses the generation door) breaks this. Eval harnesses (native/eval/*, build-battery, connector-witness.test.mjs) address the channel directly as BATCH tools — a named, separate migration (eval draws, never served draws), not part of this rule's scope. The one disclosed exception, standing: when PENELOPE HERSELF is unreachable (the generation door down, draw_door_unreachable noted), streamOllamaChat falls through to the direct host path so the box stays alive — a named finding, never a silent bypass (GL-RR-02). A mouth that refuses (up but 429/503) is a typed throw, never a fall-through.
+
+# Addendum H — the seams of the build run, closed (2026-10-01)
+
+// A live build chase falsified five seams of the generation process. Each is
+// filed with its evidence and its falsifying control; where the run tripped an
+// entry's falsifier, that entry is superseded by pointer, never rewritten. The
+// fixes are pipeline, never output: the mouth-routing, the address resolution,
+// the gate's argv, the seal's count, and the door's refusal shape.
+
+## build — the cloth
+
+### GL-BD-09 — A build-shaped ask is a typed refusal or a build, never a silent turn
+- pipeline: build
+- status: standing
+- supersedes: GL-WV-07, in part — its evidence claimed "the proxy's own build
+  detection routes a discrete multi-unit task to buildCodeTask"; the live run
+  falsified it. The rule GL-WV-07 protects — the loom feeds through the real
+  /v1/ask doorway, never the bare organ door — stands.
+- evidence: eoreader7/proxy.mjs (the LIVE /v1/ask branch, lines 1211-1227:
+  detectBuildTask matched, buildCodeTask returned !ok, and the ask fell through
+  to the normal chat turn; now a 400 kind "mechanical-code-build-refused"). The
+  screenshot-pipeline twin (eoreader7-screenshot-pipeline/proxy.mjs) got the
+  same fix. eoreader7/native/organs/code-build.js detectBuildTask + planUnits
+  (detect said YES — write+module+functions+commas — but the build could not
+  run, and the turn answered); measured 2026-10-01: gym/swatch.jsonl row 65
+  ("engine:write a module with two functions: clamp", engine "eoreader7 /v1/ask
+  (turned, not built)", verdict "turn") — the door answered a chat draw (Python
+  prose), not a build; the planUnits gap ("two functions clamp and lerp",
+  and-separated, parsed ZERO units); and the DRAW gap: both resident mouths
+  answered the bare "function clamp(" anchor with prose-Python ("Certainly!
+  Below is a Python module..."), while the fenced anchor "\`\`\`javascript\n
+  function clamp(" held gemma2:2b in JS 3/3 probed and qwen2.5-coder:1.5b
+  drifted every time. All three closed: planUnits parses and-separated names
+  gated by a plural unit-noun + a stop-word set; detectBuildTask's listed
+  clause requires a NAMED list (a paper about "the functions of memory" no
+  longer opens the build door); the draw anchor is the fenced JS head the
+  small mouth completes; and a matched build that cannot run is a typed
+  refusal, never prose.
+- falsifying control: a module-shaped ask reaching the chat turn instead of a
+  build or a typed refusal, a prose ask that opens the build door and is
+  refused with a build gap, or a JS-fenced build draw that the resident mouth
+  still answers in prose-Python (the anchor losing), contradicts this.
+
+### GL-BD-10 — The seam is an address: a relative --out is resolved by the proxy's cwd, never Penelope's
+- pipeline: build
+- status: standing
+- supersedes: —
+- evidence: gym/weave-build.mjs engineRun (out passed verbatim to /v1/ask; the
+  remedy's workspace was path.dirname(out) — a relative out stayed relative;
+  now resolved against the ROOT to an absolute path before the post);
+  eoreader7/native/organs/code-build.js buildCodeTask (the LIVE build engine —
+  target = out, resolved against the PROXY's own cwd, which is eoreader7/, not
+  Penelope; a relative out misses and verified stays false, the gate never
+  runs); measured 2026-10-01:
+  gym/swatch.jsonl row 70 ("engine:clamp+lerp+remedy", verdict "workspace must
+  be an existing directory" — Thea's /v1/code refused), rows 4-8
+  ("engine:parseDate+fmtDuration", verdict "false" ×5 — verified:false, the
+  gate never ran).
+- falsifying control: a loom that resolves --out to an absolute path whose
+  build still writes nowhere and verifies false, or a failure attributed to the
+  draw when the write missed and the gate never ran, contradicts this.
+
+### GL-BD-11 — The gate's argv is part of the testCommand; a bare testCommand dies at "no module path"
+- pipeline: build
+- status: standing
+- supersedes: —
+- evidence: eoreader7/native/organs/code-build.js
+  buildCodeTask (execSync(testCommand) with NO argv — a black box);
+  apps/weaves/clamp-gate.mjs (the gate reads process.argv[2] and exits 1
+  "gate: no module path" without it); measured 2026-10-01: a testCommand of
+  "node apps/weaves/clamp-gate.mjs" exits 1 with "no module path" — the gate's
+  cases never ran, verified stayed false. Closed: the loom composes the
+  absolute module path into the testCommand when it is absent (JSON-quoted).
+- falsifying control: a bare testCommand that still runs the gate's own cases,
+  or a gate failure reported as a code failure when the gate never ran,
+  contradicts this.
+
+## engine — the holograph of the run
+
+### GL-RS-03 — The holograph's mouthCalls is the run's own count; ?? 0 is a false claim, not a number
+- pipeline: engine
+- status: standing
+- supersedes: GL-RS-02, in part — its falsifier ("a run whose facing page hides
+  the mouthCalls") fired: seal defaulted a field the run never returned to 0.
+  The holograph rule (every run carries SOURCES / RESPONSE / NOTES with the
+  real count) stands. Supersedes GL-WV-05, in part — its falsifier ("a draw
+  recorded in one and not the other") fired on the same run; the swatch-sum
+  rule stands.
+- evidence: gym/weave-build.mjs engineRun (returns draws, no mouthCalls) and
+  seal() (wrote `mouthCalls: result.mouthCalls ?? 0`; now `?? result.draws ??
+  0`); measured 2026-10-01: gym/swatch.jsonl ("engine:clamp+lerp", mouthCalls
+  2) against apps/weaves/weave-1790891844076-facing.html ("· mouthCalls: 0 ·
+  verdict: false") — the swatch and the holograph disagreed on the same run;
+  GL-WV-05's falsifier and the SWT thread's ctl (∑swatch ≠ ∑{≡ ↻ ●}) both fired.
+- falsifying control: a holograph whose NOTES mouthCalls disagrees with the
+  swatch row for the same run, or a seal that writes 0 where the run returned
+  no count instead of naming the gap, contradicts this.
+
+## organs + door + engine — the mouth
+
+### GL-RR-05 — Every served build draw enters the mouth: the engine's draw() and the live code-build are her clients, never freelancers
+- pipeline: organs + door + engine
+- status: standing
+- supersedes: GL-RR-04, in part — its falsifier ("a SERVED engine draw … that
+  reaches ollama … without first passing the mouth breaks this") fired on two
+  served paths. The mouth's law (organs/mouth.mjs:1-17: the draw itself is the
+  BRIDGE, always, never a second ollama call) stands.
+- evidence: organs/generation/engine.mjs draw() (posted ${OLLAMA}/api/generate —
+  the direct host path — with no admit, no kind→wire routing, no identity;
+  now env-gated: PENELOPE_MOUTH_URL set → the draw enters her /api/generate
+  wire with the penelope identity + x-er7-kind, and a 429 defers on the
+  retry-after; unset → the ai-code-harness twin stays byte-compatible);
+  eoreader7-screenshot-pipeline/native/organs/code-build.js draw() (posted
+  straight to ${ER7_OLLAMA_URL}/api/generate with no identity and no kind —
+  now routes the mouth at 127.0.0.1:11439 with the build identity + a bounded
+  429 defer). The live door's engine, eoreader7/native/organs/code-build.js,
+  already routed via kernel/mouth.js (MOUTH_URL 11439, MOUTH_IDENTITY +
+  x-er7-kind) — the law held there. Measured 2026-10-01: the engine's fillUnits
+  draws and the screenshot copy's build draws reached the daemon while the
+  mouth's ration log never saw them.
+- falsifying control: a served engine or build draw that reaches the
+  daemon/channel while the mouth's ration log shows no admit for it, or a fix
+  that forks the bridge instead of routing the draw through the mouth's wire,
+  contradicts this.

@@ -165,7 +165,8 @@ append-only, always revisable).
 ║■HNT 1 ●◦ § hunt                                                            ║
 ║     @ o/generation/engine.mjs GL-EN-04                                     ║
 ║■MTH 0 ●• § mouth                                                           ║
-║     @ o/generation/engine.mjs GL-EN-05 GL-LD-05                            ║
+║     @ o/generation/engine.mjs o/mouth.mjs mouth/server.mjs GL-EN-05        ║
+║     @ GL-LD-05 GL-RR-04 GL-RR-05                                           ║
 ║■SNP 1 |• § snip                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-09 GL-RT-02                     ║
 ║■PRB 1 ±• § probe                                                           ║
@@ -177,7 +178,7 @@ append-only, always revisable).
 ║■TST 2 ±• § test                                                            ║
 ║     @ o/generation/engine.mjs GL-BD-01 GL-CD-06                            ║
 ║■SEL 2 ◊Ω ‡ seal                                                            ║
-║     @ a/launch-facing.html a/record.json GL-BD-01 GL-BD-04                 ║
+║     @ a/launch-facing.html a/record.json GL-BD-01 GL-BD-04 GL-RS-03        ║
 ║■EOT 2 ◊• § record                                                          ║
 ║     @ o/generation/engine.mjs GL-00 GL-BD-07                               ║
 ║■CGT 2 ±Ω ‡ gate                                                            ║
@@ -200,6 +201,7 @@ append-only, always revisable).
 ║     @ g/server.mjs g/chat.html GL-CH-01 GL-CH-02                           ║
 ║■BLD 3 ◊Ω ‡ build                                                           ║
 ║     @ LOOMS.md GL-BD-03 g/weave-build.mjs /api/weave GL-WV-07 GL-WV-12     ║
+║     @ GL-BD-09 GL-BD-10 GL-BD-11 GL-RS-03                                  ║
 ║■NBK 3 ±Ω ‡ book                                                            ║
 ║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
 ║■DOR 3 |◦ ‡ door                                                            ║
@@ -210,7 +212,7 @@ append-only, always revisable).
 ║     @ g/server.mjs g/asks.jsonl g/chat.html GL-BD-08                       ║
 ║■ADM 3 →◦ ‡ admit                                                           ║
 ║     @ g/server.mjs ER7/heimdall.mjs organs/generation-door.mjs GL-CH-03    ║
-║     @ GL-RT-03                                                             ║
+║     @ GL-RT-03 GL-RR-05                                                    ║
 ║■ADC 1 ●Ω ‡ code                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
 ║■ADP 1 ●Ω ‡ prose                                                           ║
@@ -288,8 +290,8 @@ append-only, always revisable).
 ║     @ SP/organs/visual-pathos.js                                           ║
 ║     ¬measured Λ verdict ∂†                                                 ║
 ║·SWT 2 ◊• ‡ swatch                                                          ║
-║     @ o/generation/engine.mjs                                              ║
-║     ∑swatch ≠ ∑{∏ Γ ●} ∂†                                                  ║
+║     @ o/generation/engine.mjs GL-RS-03 GL-WV-05                            ║
+║     ∑swatch ≠ ∑{∏ Γ ●} √ notes mouthCalls ≠ ∑swatch ∂†                     ║
 ║·KIN 1 ○Ω ‡ kind                                                            ║
 ║     @ E7/kernel/kind-induction.js                                          ║
 ║     induced ¬beat null ∂†                                                  ║
@@ -336,7 +338,12 @@ append-only, always revisable).
 
 ```
 organs/    the reusable machinery (pure, self-tested, schema-tagged):
-             consensus-gate, detail-fetch, behavior-check, freshness
+             consensus-gate, detail-fetch, behavior-check, freshness,
+             mouth (the decision layer every draw enters: admission,
+             kind→wire routing, priority)
+mouth/     the mouth as a server (Mouth@1, PENELOPE_MOUTH_PORT 11439):
+             /v1/draw, /v1/mouth/admit, the bridge wires — admits, then
+             directs the bridge (Heimdall's channel) to execute
 ladder/    competency rungs + records (r1-r8 baseline, r9-r13 teeth,
              mouth-last standing order)
 apps/      built artifacts (R13 launch app, facing page, controls)
@@ -360,12 +367,14 @@ Correspondences, each with its seam:
 | Odysseus (eoreader7) | Penelope (this repo) | the seam |
 |---|---|---|
 | the voyage (runProxyTurn out the doors) | the loom (gate → library → assembly) | the ledger: his scars are her weft |
-| metis, cunning with words (the mouth) | the cards (pattern computed once, covering infinite cases) | mouth-last: he throws the shuttle, she holds the cards |
+| the bridge (the channel, the gate, the host picker, the lanes — he draws what she directs) | the mouth (organs/mouth.mjs + mouth/server.mjs: her admission, her kind→wire routing, her priority) | mouth-last: she decides, he executes — the machinery is never forked |
 | the suitors' contest (many claimants) | the gate (many comps, one mode survives the null) | frequency + growth decide, never loudness |
 | the bow (only the true king strings it) | the testCommand (only the true build passes) | verification stringed by no other hand |
 | nostos, the return to Ithaca | the seal (artifact + facing page) | home is the fold that holds |
 
-What Penelope never does: voyage. What Odysseus never does: weave.
+What Penelope never does: voyage. What Odysseus never does: weave. The
+mouth is HERS (2026-10-01): a draw enters her mouth first, and she directs
+the bridge to execute — no model call in the engine draws past her.
 Material crosses between them only as addressed record — feed bytes,
 comp evidence, scars, verdicts — never as assertion.
 

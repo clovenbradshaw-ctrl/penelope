@@ -151,7 +151,8 @@
 ║■HNT 1 ●◦ § hunt                                                            ║
 ║     @ o/generation/engine.mjs GL-EN-04                                     ║
 ║■MTH 0 ●• § mouth                                                           ║
-║     @ o/generation/engine.mjs GL-EN-05 GL-LD-05                            ║
+║     @ o/generation/engine.mjs o/mouth.mjs mouth/server.mjs GL-EN-05        ║
+║     @ GL-LD-05 GL-RR-04 GL-RR-05                                           ║
 ║■SNP 1 |• § snip                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-09 GL-RT-02                     ║
 ║■PRB 1 ±• § probe                                                           ║
@@ -163,7 +164,7 @@
 ║■TST 2 ±• § test                                                            ║
 ║     @ o/generation/engine.mjs GL-BD-01 GL-CD-06                            ║
 ║■SEL 2 ◊Ω ‡ seal                                                            ║
-║     @ a/launch-facing.html a/record.json GL-BD-01 GL-BD-04                 ║
+║     @ a/launch-facing.html a/record.json GL-BD-01 GL-BD-04 GL-RS-03        ║
 ║■EOT 2 ◊• § record                                                          ║
 ║     @ o/generation/engine.mjs GL-00 GL-BD-07                               ║
 ║■CGT 2 ±Ω ‡ gate                                                            ║
@@ -186,6 +187,7 @@
 ║     @ g/server.mjs g/chat.html GL-CH-01 GL-CH-02                           ║
 ║■BLD 3 ◊Ω ‡ build                                                           ║
 ║     @ LOOMS.md GL-BD-03 g/weave-build.mjs /api/weave GL-WV-07 GL-WV-12     ║
+║     @ GL-BD-09 GL-BD-10 GL-BD-11 GL-RS-03                                  ║
 ║■NBK 3 ±Ω ‡ book                                                            ║
 ║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
 ║■DOR 3 |◦ ‡ door                                                            ║
@@ -196,7 +198,7 @@
 ║     @ g/server.mjs g/asks.jsonl g/chat.html GL-BD-08                       ║
 ║■ADM 3 →◦ ‡ admit                                                           ║
 ║     @ g/server.mjs ER7/heimdall.mjs organs/generation-door.mjs GL-CH-03    ║
-║     @ GL-RT-03                                                             ║
+║     @ GL-RT-03 GL-RR-05                                                    ║
 ║■ADC 1 ●Ω ‡ code                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
 ║■ADP 1 ●Ω ‡ prose                                                           ║
@@ -274,8 +276,8 @@
 ║     @ SP/organs/visual-pathos.js                                           ║
 ║     ¬measured Λ verdict ∂†                                                 ║
 ║·SWT 2 ◊• ‡ swatch                                                          ║
-║     @ o/generation/engine.mjs                                              ║
-║     ∑swatch ≠ ∑{∏ Γ ●} ∂†                                                  ║
+║     @ o/generation/engine.mjs GL-RS-03 GL-WV-05                            ║
+║     ∑swatch ≠ ∑{∏ Γ ●} √ notes mouthCalls ≠ ∑swatch ∂†                     ║
 ║·KIN 1 ○Ω ‡ kind                                                            ║
 ║     @ E7/kernel/kind-induction.js                                          ║
 ║     induced ¬beat null ∂†                                                  ║

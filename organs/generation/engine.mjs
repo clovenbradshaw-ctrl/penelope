@@ -43,6 +43,13 @@ export const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const OLLAMA = process.env.ER7_OLLAMA_URL ?? "http://localhost:11434";
 export const MODEL = process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b";
 export const SEARCH_URL = process.env.ER7_SEARCH_URL ?? "http://localhost:8812/api/web/search";
+// The mouth is the only draw entry (GL-RR-04/05): when PENELOPE_MOUTH_URL is
+// set, a draw enters her admission and kind→wire routing first — identity and
+// kind ride, a 429 defers on the retry-after — and she directs the bridge.
+// Unset, this file stays the domain-shared ai-code-harness engine it is (the
+// twin byte-identical twin in ai-code-harness/pipeline/engine.mjs).
+const MOUTH_URL = String(process.env.PENELOPE_MOUTH_URL ?? "").replace(/\/+$/, "");
+const MOUTH_IDENTITY = MOUTH_URL ? { "x-er7-user": "penelope", "x-er7-caller": "penelope-engine", "x-er7-kind": "code", "x-er7-priority": "batch" } : null;
 
 export function parseArgs(argv) {
   const out = { _: [] };
@@ -57,13 +64,18 @@ export function parseArgs(argv) {
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
 export async function draw(prompt, { maxTokens = 240, retries = 4, model = null } = {}) {
+  const url = MOUTH_URL ? `${MOUTH_URL}/api/generate` : `${OLLAMA}/api/generate`;
+  const headers = MOUTH_URL ? { "content-type": "application/json", ...MOUTH_IDENTITY } : { "content-type": "application/json" };
+  const body = JSON.stringify({ model: model ?? MODEL, prompt, stream: false, options: { num_predict: maxTokens, temperature: 0 } });
   for (let a = 0; a < retries; a += 1) {
     try {
-      const r = await fetch(`${OLLAMA}/api/generate`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ model: model ?? MODEL, prompt, stream: false, options: { num_predict: maxTokens, temperature: 0 } }),
-        signal: AbortSignal.timeout(120000),
-      });
+      const r = await fetch(url, { method: "POST", headers, body, signal: AbortSignal.timeout(120000) });
+      if (r.status === 429 && MOUTH_URL) {
+        // the mouth refused the ration — defer on the retry-after, never spin
+        const wait = Math.min(60000, (Number(r.headers.get("retry-after")) || 5) * 1000);
+        await new Promise((res) => setTimeout(res, wait));
+        continue;
+      }
       const j = await r.json();
       return j.response ?? "";
     } catch (e) {
