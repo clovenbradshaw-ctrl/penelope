@@ -23,6 +23,7 @@ ladder R1–R13, apps in `apps/`.)
 
 In: cells (rung, prompt, prior attempt). Out: re-runnable record —
 every cell replays to its verdict, history appends, nothing overwrites.
-The ladder as an interactive surface: re-run R4 any day and watch the
-mouth fail the same way, on the record. (Named gap today: specified,
-unbuilt. Holodeck's editable re-run cells are the closest kin.)
+The ladder as a Jupyter notebook: markdown cells carry specs and
+model-drawn history (recorded, never replayed), code cells re-run the
+organ selftests with outputs stored. (Live: `penelope-notebook.ipynb`
+via `gym/to-notebook.mjs`, 4/4 organ cells green.)
