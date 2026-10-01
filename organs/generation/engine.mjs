@@ -37,6 +37,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 export const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -80,44 +81,74 @@ export function writeTmp(code) {
 // ── THE SPIRAL — draw → probe → sharpen the atom → re-draw. The dissent
 // (every defection) is disclosed on the EOT. The FILL ORDER is the law:
 // field (autofill) → hunt → mouth. The mouth is never the first resort. ──
+function stableId(value, prefix = "src") {
+  return `${prefix}_${createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 20)}`;
+}
+function sourceRecord({ kind, locator, anchor = null, meta = null }) {
+  const source_id = stableId({ kind, locator }, "src");
+  return { source_id, kind, locator, ...(anchor ? { anchor } : {}), ...(meta ? { meta } : {}) };
+}
+function byteRange(start, end) { return { unit: "byte", start, end }; }
+function provenanceRef({ source_id, unit, stage, range = null, parent = null, detail = null }) {
+  return { source_id, unit, stage, ...(range ? { range } : {}), ...(parent ? { parent } : {}), ...(detail ? { detail } : {}) };
+}
+
+// The source table stores each stable identity once. Refs are compact foreign
+// keys plus byte anchors into the folded artifact; reconciliation can enrich
+// or merge sources later without rewriting the artifact's provenance.
 async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
-  const provenance = [];
+  const refs = [];
+  const sources = new Map();
+  const addSource = (spec) => {
+    const row = sourceRecord(spec);
+    sources.set(row.source_id, row);
+    return row.source_id;
+  };
+  const addContribution = ({ unit, stage, code, source, parent = null, detail = null }) => {
+    const text = String(code ?? "");
+    const offset = drawn.length ? Buffer.byteLength(drawn.join("\n\n") + "\n") : 0;
+    if (text) drawn.push(text);
+    const end = offset + Buffer.byteLength(text);
+    refs.push(provenanceRef({ source_id: source, unit: unit.name, stage, range: byteRange(offset, end), parent, detail }));
+  };
+
   for (const u of units) {
-    // 1. THE FIELD (autofill): the corpus already holds the framed unit —
-    //    snipped from its bytes with an address. Match BY FRAME, never name.
+    const unitSource = addSource({ kind: "unit", locator: { artifact: ctx.artifact ?? adapter.kind, name: u.name, spec: u.spec } });
     const fill = adapter.autofill ? adapter.autofill(u, ctx) : null;
     if (fill) {
-      drawn.push(fill.code);
-      provenance.push({ unit: u.name, source: "corpus", address: fill.address, bytes: fill.code.length });
+      const source = addSource({ kind: "corpus", locator: fill.address ?? "corpus:unknown", anchor: fill.address ?? null });
+      addContribution({ unit: u, stage: "corpus", code: fill.code, source, parent: unitSource });
       continue;
     }
-    // 2. THE HUNT: the field lacks the framed unit — go get it. The mouth is
-    //    not the first resort for structured material.
     let hunted = false;
     if (adapter.hunt) {
       const res = await adapter.hunt(u, ctx);
       if (res) {
-        drawn.push(res.code);
-        provenance.push({ unit: u.name, source: "hunt", url: res.url, bytes: res.code.length });
+        const source = addSource({ kind: "hunt", locator: res.url ?? "hunt:unknown", anchor: res.url ?? null });
+        addContribution({ unit: u, stage: "hunt", code: res.code, source, parent: unitSource });
         hunted = true;
       } else if (res === null && adapter.huntScar) {
         scars.push({ unit: u.name, why: adapter.huntScar(u) });
       }
     }
     if (hunted) continue;
-    // 3. THE MOUTH draws only the irreducible residue.
     let attempt = 0;
     let atom = u.spec;
     while (attempt < 4) {
       const fragment = adapter.mouthFragment(u, atom, ctx);
-      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240, model: ctx.model ?? null, kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other", priority: "batch" });
+      const source = addSource({ kind: "draw", locator: { adapter: adapter.kind, unit: u.name, attempt: attempt + 1, prompt: fragment } });
+      const out = await draw(fragment, {
+        maxTokens: adapter.mouthTokens ?? 240,
+        model: ctx.model ?? null,
+        kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document", "text"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other",
+        priority: "batch",
+      });
       const fn = adapter.snip(out, u.name);
       const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
-        drawn.push(fn);
-        provenance.push({ unit: u.name, source: "mouth" });
+        addContribution({ unit: u, stage: "mouth", code: fn, source, parent: unitSource, detail: { attempt: attempt + 1 } });
         break;
       }
       const why = alone.detail;
@@ -126,7 +157,7 @@ async function fillUnits(units, adapter, ctx = {}) {
       attempt += 1;
     }
   }
-  return { code: drawn.join("\n\n") + "\n", scars, provenance };
+  return { code: drawn.join("\n\n") + "\n", scars, provenance: { schema: "Provenance@1", sources: [...sources.values()], refs, addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" } } };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
@@ -148,9 +179,10 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   const { code, scars, provenance } = await fillUnits(units, adapter, context);
   const verdict = adapter.testUnits(code, units, context);
   console.log(`  folded: ${code.length} bytes, ${units.length} units`);
-  const snipped = (provenance ?? []).filter((p) => p.source === "corpus");
-  const drawn = (provenance ?? []).filter((p) => p.source === "mouth");
-  const hunted = (provenance ?? []).filter((p) => p.source === "hunt");
+  const refs = provenance?.refs ?? [];
+  const snipped = refs.filter((p) => p.stage === "corpus");
+  const drawn = refs.filter((p) => p.stage === "mouth");
+  const hunted = refs.filter((p) => p.stage === "hunt");
   if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${p.address?.split("/").pop()}`).join(", ")}`);
   if (hunted.length) console.log(`  hunted: ${hunted.map((p) => p.unit).join(", ")}`);
   if (drawn.length) console.log(`  drawn by the mouth: ${drawn.map((p) => p.unit).join(", ")}`);
@@ -169,9 +201,10 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
     corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
-      snipped: (provenance ?? []).filter((p) => p.source === "corpus"),
-      hunted: (provenance ?? []).filter((p) => p.source === "hunt"),
-      drawn: (provenance ?? []).filter((p) => p.source === "mouth"),
+      snipped,
+      hunted,
+      drawn,
+      sourceTable: provenance?.sources ?? [],
     },
     swarm: { verdict, scars },
     product: { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}` },
