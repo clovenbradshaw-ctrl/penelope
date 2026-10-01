@@ -126,11 +126,13 @@ const snipJs = (t) => {
   if (!spans.length) return src.trim();
   // cut from first function head to the last closing brace on its own line
   const start = spans[0].index;
-  const end = src.lastIndexOf("\n}");
+  const end = src.lastIndexOf("
+}");
   return (end > start ? src.slice(start, end + 3) : src.slice(start)).trim();
 };
 function loadJs(src, names) {
-  const f = new Function(`${src}\nreturn { ${names.join(", ")} };`);
+  const f = new Function(`${src}
+return { ${names.join(", ")} };`);
   return f();
 }
 // probes (mirror the organs; box-side, no model)
@@ -178,14 +180,17 @@ const PROBES = {
 // on the record.
 const ASK = path.join(HERE, "asks.jsonl");
 const pendingAsks = () => {
-  try { return fs.readFileSync(ASK, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)).filter((a) => !a.answer); }
+  try { return fs.readFileSync(ASK, "utf8").split("
+").filter(Boolean).map((l) => JSON.parse(l)).filter((a) => !a.answer); }
   catch { return []; }
 };
-function logAsk(row) { fs.appendFileSync(ASK, JSON.stringify(row) + "\n"); }
+function logAsk(row) { fs.appendFileSync(ASK, JSON.stringify(row) + "
+"); }
 
 function score() {
   let rows = [];
-  try { rows = fs.readFileSync(LOG, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)); } catch {}
+  try { rows = fs.readFileSync(LOG, "utf8").split("
+").filter(Boolean).map((l) => JSON.parse(l)); } catch {}
   const by = {};
   for (const r of rows) {
     if (r.kind !== "rung" || !r.task) continue;
@@ -260,7 +265,8 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(r));
       return;
     }
-    // Specialized weave routing is handled inside the canonical /api/weave door above.\n    // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
+    // Specialized weave routing is handled inside the canonical /api/weave door above.
+    // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
     // 2026-10-01), so a browser cannot fetch it cross-origin — the loom fetches
     // at home and the browser reads the hunt through the door. Bounded retry on
     // 429, then the typed status — never a silent stop (GL-RT-03).
@@ -298,13 +304,17 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ id }));
         return;
       }
-      const rows = (() => { try { return fs.readFileSync(ASK, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)); } catch { return []; } })();
+      const rows = (() => { try { return fs.readFileSync(ASK, "utf8").split("
+").filter(Boolean).map((l) => JSON.parse(l)); } catch { return []; } })();
       const i = rows.findIndex((r) => r.id === j.id);
       if (i < 0) { res.writeHead(404); res.end("no such ask"); return; }
       rows[i].answer = String(j.answer ?? "");
       rows[i].answeredAt = Date.now();
-      fs.writeFileSync(ASK, rows.map((r) => JSON.stringify(r)).join("\n") + "\n");
-      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "answer", id: j.id, answer: String(j.answer ?? "").slice(0, 300) }) + "\n");
+      fs.writeFileSync(ASK, rows.map((r) => JSON.stringify(r)).join("
+") + "
+");
+      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "answer", id: j.id, answer: String(j.answer ?? "").slice(0, 300) }) + "
+");
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify({ ok: true }));
       return;
@@ -318,7 +328,9 @@ const server = http.createServer(async (req, res) => {
       for await (const c of req) body += c;
       const { prompt, model } = JSON.parse(body || "{}");
       res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache", connection: "keep-alive" });
-      const flush = (o) => res.write(`data: ${JSON.stringify(o)}\n\n`);
+      const flush = (o) => res.write(`data: ${JSON.stringify(o)}
+
+`);
       let full = "";
       try {
         const r = await fetch(`${CHANNEL}/api/generate`, {
@@ -336,7 +348,8 @@ const server = http.createServer(async (req, res) => {
           if (done) break;
           buf += dec.decode(value, { stream: true });
           let nl;
-          while ((nl = buf.indexOf("\n")) >= 0) {
+          while ((nl = buf.indexOf("
+")) >= 0) {
             const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
             if (!line.trim()) continue;
             let j;
@@ -349,7 +362,8 @@ const server = http.createServer(async (req, res) => {
       } catch (e) {
         flush({ err: String(e.message ?? e).slice(0, 200) });
       }
-      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", stream: true, model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200), text: full.slice(0, 400) }) + "\n");
+      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", stream: true, model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200), text: full.slice(0, 400) }) + "
+");
       res.end();
       return;
     }
@@ -359,7 +373,8 @@ const server = http.createServer(async (req, res) => {
       const { prompt, task, model } = JSON.parse(body || "{}");
       if (u.pathname === "/api/chat") {
         const text = await drawChat(String(prompt ?? ""), { interactive: pageOrigin(req.headers.origin) });
-        fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200) }) + "\n");
+        fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200) }) + "
+");
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ text }));
         return;
@@ -377,7 +392,8 @@ const server = http.createServer(async (req, res) => {
       }
       const pass = results.length > 0 && results.every((r) => r.ok);
       const row = { t: Date.now(), kind: "rung", task, model: model ?? P.model, pass, winner: pass ? "mouth" : "box", results, draw: raw.slice(0, 600) };
-      fs.appendFileSync(LOG, JSON.stringify(row) + "\n");
+      fs.appendFileSync(LOG, JSON.stringify(row) + "
+");
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify({ ...row, score: score() }));
       return;
