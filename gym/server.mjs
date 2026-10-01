@@ -26,9 +26,19 @@ const LOG = path.join(HERE, "ladder-live.jsonl");
 // never a silent stop, never a wedge.
 const er7model = (m) => (String(m).startsWith("er7:") ? m : `er7:${m}`);
 
-async function draw(model, prompt, num_predict = 260) {
+// Two routes, by evidence (2026-10-01):
+// - chat goes through Heimdall admission (shared mouth er7:gemma2:2b).
+// - code draws go DIRECT to ollama. Measured reason: the chat doors'
+//   hard-meaning auto-route swallows code prompts whole and returns a
+//   swarm verdict instead of a draw ("Hard meaning (truncated_end)…",
+//   logged). This matches house precedent (code-build.js and the
+//   arrangement engine both draw direct). Consolidation falsified for
+//   code draws — disclosed, not hidden.
+const OLLAMA = "http://localhost:11434";
+
+async function drawChat(prompt) {
   const body = JSON.stringify({
-    model: er7model(model), stream: false, max_tokens: num_predict, temperature: 0,
+    model: "er7:gemma2:2b", stream: false, temperature: 0,
     messages: [{ role: "user", content: prompt }],
   });
   let last = null;
@@ -50,13 +60,33 @@ async function draw(model, prompt, num_predict = 260) {
       continue;
     }
     const j = await r.json();
-    const text = j.choices?.[0]?.message?.content ?? j.answer ?? "";
+    const text = j.choices?.[0]?.message?.content ?? "";
     if (text) return text;
     throw new Error(`heimdall-ok-but-empty (status ${r.status})`);
   }
   throw new Error(`heimdall-refused (${last}) after bounded backoff — named gap, retry later`);
 }
-const snipJs = (t) => String(t ?? "").replace(/```[a-z]*/gi, "").trim();
+
+async function draw(model, prompt, num_predict = 260) {
+  const r = await fetch(`${OLLAMA}/api/generate`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ model, prompt, stream: false, options: { num_predict, temperature: 0 } }),
+    signal: AbortSignal.timeout(150000),
+  });
+  const j = await r.json();
+  return j.response ?? "";
+}
+// The chat door talks (prose around code); raw generate didn't. So the
+// snip extracts function-shaped spans instead of loading whole text.
+const snipJs = (t) => {
+  const src = String(t ?? "").replace(/```[a-z]*/gi, "");
+  const spans = [...src.matchAll(/function\s+[A-Za-z_$][\w$]*\s*\([^)]*\)\s*\{/g)];
+  if (!spans.length) return src.trim();
+  // cut from first function head to the last closing brace on its own line
+  const start = spans[0].index;
+  const end = src.lastIndexOf("\n}");
+  return (end > start ? src.slice(start, end + 3) : src.slice(start)).trim();
+};
 function loadJs(src, names) {
   const f = new Function(`${src}\nreturn { ${names.join(", ")} };`);
   return f();
@@ -104,6 +134,7 @@ function score() {
   try { rows = fs.readFileSync(LOG, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)); } catch {}
   const by = {};
   for (const r of rows) {
+    if (r.kind !== "rung" || !r.task) continue;
     by[r.task] ??= { task: r.task, attempts: 0, passes: 0, mouth: 0, box: 0 };
     by[r.task].attempts += 1;
     if (r.pass) by[r.task].passes += 1;
@@ -131,7 +162,7 @@ const server = http.createServer(async (req, res) => {
       for await (const c of req) body += c;
       const { prompt, task, model } = JSON.parse(body || "{}");
       if (u.pathname === "/api/chat") {
-        const text = await draw(model ?? "gemma2:2b", String(prompt ?? ""), 400);
+        const text = await drawChat(String(prompt ?? ""));
         fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200) }) + "\n");
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ text }));
