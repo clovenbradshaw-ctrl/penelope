@@ -152,7 +152,7 @@
 ║     @ o/generation/engine.mjs GL-EN-04                                     ║
 ║■MTH 0 ●• § mouth                                                           ║
 ║     @ o/generation/engine.mjs o/mouth.mjs mouth/server.mjs GL-EN-05        ║
-║     @ GL-LD-05 GL-RR-04 GL-RR-05                                           ║
+║     @ GL-LD-05 GL-RR-04 GL-RR-05 GL-BD-12                                  ║
 ║■SNP 1 |• § snip                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-09 GL-RT-02                     ║
 ║■PRB 1 ±• § probe                                                           ║
@@ -187,7 +187,7 @@
 ║     @ g/server.mjs g/chat.html GL-CH-01 GL-CH-02                           ║
 ║■BLD 3 ◊Ω ‡ build                                                           ║
 ║     @ LOOMS.md GL-BD-03 g/weave-build.mjs /api/weave GL-WV-07 GL-WV-12     ║
-║     @ GL-BD-09 GL-BD-10 GL-BD-11 GL-RS-03                                  ║
+║     @ GL-BD-09 GL-BD-10 GL-BD-11 GL-RS-03 GL-BD-12                         ║
 ║■NBK 3 ±Ω ‡ book                                                            ║
 ║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
 ║■DOR 3 |◦ ‡ door                                                            ║

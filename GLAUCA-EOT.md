@@ -1444,3 +1444,42 @@ so the next weave starts from what this one learned.
   daemon/channel while the mouth's ration log shows no admit for it, or a fix
   that forks the bridge instead of routing the draw through the mouth's wire,
   contradicts this.
+
+# Addendum I — the mouth never draws logic (2026-10-01)
+
+// The operator's direction: "why is the model doing any logic? remember our
+// Kant." The answer is that the build engine asked an empirical faculty to
+// legislate: logic is a priori — the understanding's own contribution — and an
+// LLM can only imitate the shape of legislation, which is dialectical illusion
+// by construction (the toCamelCase/toSnakeCase draw produced necessarily-
+// looking logic that failed 4/10). The fix is architectural: a unit whose name
+// legislates an a priori category is COMPUTED by the box, 0 draws; the mouth
+// draws only the irreducible residue. Structure AND logic are the
+// understanding's; only matter is the mouth's.
+
+## build — the cloth
+
+### GL-BD-12 — The mouth never draws logic: an a priori unit is a category, computed by the box; the residue draws
+- pipeline: build
+- status: standing
+- supersedes: —
+- evidence: eoreader7/native/organs/mechanical-units.js (the closed a priori
+  registry — every category computes a deterministic body, selftest 15/15:
+  clamp, lerp, toCamelCase/toSnakeCase/toKebabCase/toTitleCase, slugify,
+  countWords, capitalize, pluralize, formatBytes, padStart/padEnd, fmtDuration;
+  an unowned name is null, never a guess — the residue is OPEN by
+  construction); eoreader7/native/organs/code-build.js buildCodeTask
+  (per-unit routing: a category computes — provenance source "box", 0 draws —
+  else the mouth draws with the fenced JS anchor, provenance "mouth"; the
+  assembled file carries provenance, boxUnits, boxBytes, mouthBytes, and
+  `draws` is the mouth count only); measured 2026-10-01: the
+  toCamelCase/toSnakeCase weave drew from the mouth and failed 4/10 golden
+  pairs — "convincingly wrong" logic, the dialectical illusion; after the fix
+  the same weave computed both units in the box — draws 0, mouthCalls 0,
+  tokens 0, boxBytes 512, verified true, gate 10/10 (swatch row
+  2026-10-01T22:36:41). The residue stays open: isPalindrome (unowned) drew
+  from the mouth — draws 1, mouthCalls 1, mouthBytes 262, verified true, gate
+  5/5 (swatch row 2026-10-01T22:38).
+- falsifying control: a unit whose name the registry owns drawn from the mouth
+  (provenance source "mouth" for a category shape), or a box-computed unit
+  whose body fails its own golden cases, contradicts this.
