@@ -127,4 +127,18 @@ export async function generate({
   };
 }
 
+export function selftest() {
+  const before = generationKinds();
+  const invalid = { kind: "selftest", readUnits() { return []; }, testUnits() { return { ok: true }; } };
+  registerGenerationAdapter("selftest", invalid);
+  const registered = generationAdapter("selftest") === invalid && generationKinds().includes("selftest");
+  adapters.delete("selftest");
+  const empty = generate({ intent: "   ", artifact: "code" });
+  return Promise.resolve(empty).then((r) => {
+    const ok = registered && r.ok === false && r.status === "gap" && generationKinds().join("|") === before.join("|");
+    if (!ok) throw new Error("unified generation API selftest failed");
+    return { ok: true, checks: 3 };
+  });
+}
+
 export default { generate, registerGenerationAdapter, generationAdapter, generationKinds };
