@@ -127,18 +127,18 @@ export async function weave({
   };
 }
 
-// Compatibility for internal callers during the migration. The public operation is weave().\nexport const generate = weave;\n\nexport function selftest() {
+// Compatibility for internal callers during the migration. The public operation is weave().\nexport const generate = weave;\n\nexport async function selftest() {
+  await loadBuiltins();
   const before = generationKinds();
   const invalid = { kind: "selftest", readUnits() { return []; }, testUnits() { return { ok: true }; } };
   registerGenerationAdapter("selftest", invalid);
   const registered = generationAdapter("selftest") === invalid && generationKinds().includes("selftest");
   adapters.delete("selftest");
-  const empty = weave({ intent: "   ", artifact: "code" });
-  return Promise.resolve(empty).then((r) => {
-    const ok = registered && r.ok === false && r.status === "gap" && generationKinds().join("|") === before.join("|");
-    if (!ok) throw new Error("unified generation API selftest failed");
-    return { ok: true, checks: 3 };
-  });
+  const empty = await weave({ intent: "   ", artifact: "code" });
+  const textReady = generationAdapter("text") === generationAdapter("prose");
+  const ok = registered && textReady && empty.ok === false && empty.status === "gap" && generationKinds().join("|") === before.join("|");
+  if (!ok) throw new Error("unified generation API selftest failed");
+  return { ok: true, checks: 4 };
 }
 
 export default { weave, generate, registerGenerationAdapter, generationAdapter, generationKinds };
