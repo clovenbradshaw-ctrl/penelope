@@ -27,11 +27,11 @@ const FRAME_KEYS = {
 
 // ── THE READING: one small ask, JSON out (kleenUp's law — the decoder parses
 // a structure, never a format-guessing regex) ──
-export async function readUnits(task) {
+export async function readUnits(task, ctx = {}) {
   const { draw } = await import("../engine.mjs");
   const raw = await draw(
     `Return a JSON array of objects, each {name, spec} for one function this task asks to write. Only JSON. Task: ${task}`,
-    { maxTokens: 500 },
+    { maxTokens: 500, model: ctx.model ?? null, kind: "build", priority: "batch" },
   );
   const units = [];
   const arrStart = raw.indexOf("[");

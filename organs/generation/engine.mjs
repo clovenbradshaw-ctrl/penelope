@@ -37,7 +37,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { ProvenanceLedger, byteRange } from "./provenance.mjs";
 
 export const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const OLLAMA = process.env.ER7_OLLAMA_URL ?? "http://localhost:11434";
@@ -56,21 +58,18 @@ export function parseArgs(argv) {
 
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
-export async function draw(prompt, { maxTokens = 240, retries = 4, model = null } = {}) {
+export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch" } = {}) {
+  // Every model draw enters Penelope's draw door. The engine remains the
+  // orchestrator; admission/routing belongs to the door, not this engine.
+  const { runDrawDoor } = await import("../generation-door.mjs");
+  let last = "";
   for (let a = 0; a < retries; a += 1) {
-    try {
-      const r = await fetch(`${OLLAMA}/api/generate`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ model: model ?? MODEL, prompt, stream: false, options: { num_predict: maxTokens, temperature: 0 } }),
-        signal: AbortSignal.timeout(120000),
-      });
-      const j = await r.json();
-      return j.response ?? "";
-    } catch (e) {
-      await new Promise((r) => setTimeout(r, 3000 * (a + 1)));
-    }
+    const r = await runDrawDoor({ prompt, model: model ?? MODEL, kind, priority, maxTokens });
+    if (r.ok) return r.text;
+    last = r.error ?? "draw failed";
+    await new Promise((res) => setTimeout(res, 3000 * (a + 1)));
   }
-  return "";
+  return last ? "" : "";
 }
 
 let tmpCounter = 0;
@@ -83,98 +82,140 @@ export function writeTmp(code) {
 // ── THE SPIRAL — draw → probe → sharpen the atom → re-draw. The dissent
 // (every defection) is disclosed on the EOT. The FILL ORDER is the law:
 // field (autofill) → hunt → mouth. The mouth is never the first resort. ──
-async function fillUnits(units, adapter) {
+async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
-  const provenance = [];
+  const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind });
+  const addSource = (spec) => ledger.source(spec);
+  const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
+    const text = String(code ?? "");
+    const offset = drawn.length ? Buffer.byteLength(drawn.join("
+
+") + "
+") : 0;
+    if (text) drawn.push(text);
+    const end = offset + Buffer.byteLength(text);
+    ledger.event({ stage, source_id, unit: unit.name, parent, range: byteRange(offset, end), detail, transform });
+  };
+
   for (const u of units) {
-    // 1. THE FIELD (autofill): the corpus already holds the framed unit —
-    //    snipped from its bytes with an address. Match BY FRAME, never name.
-    const fill = adapter.autofill ? adapter.autofill(u) : null;
+    const unitSource = addSource({ kind: "unit", locator: { artifact: ctx.artifact ?? adapter.kind, name: u.name, spec: u.spec } });
+    ledger.event({ stage: "arrange", source_id: unitSource, unit: u.name, transform: "unit-spec" });
+
+    const fill = adapter.autofill ? adapter.autofill(u, ctx) : null;
     if (fill) {
-      drawn.push(fill.code);
-      provenance.push({ unit: u.name, source: "corpus", address: fill.address, bytes: fill.code.length });
+      const source = addSource({ kind: "corpus", locator: fill.address ?? "corpus:unknown", anchor: fill.address ?? null });
+      addContribution({ unit: u, stage: "ground", code: fill.code, source_id: source, parent: unitSource, transform: "autofill-frame" });
       continue;
     }
-    // 2. THE HUNT: the field lacks the framed unit — go get it. The mouth is
-    //    not the first resort for structured material.
-    let hunted = false;
+
     if (adapter.hunt) {
-      const res = await adapter.hunt(u);
+      const res = await adapter.hunt(u, ctx);
       if (res) {
-        drawn.push(res.code);
-        provenance.push({ unit: u.name, source: "hunt", url: res.url, bytes: res.code.length });
-        hunted = true;
-      } else if (res === null && adapter.huntScar) {
-        scars.push({ unit: u.name, why: adapter.huntScar(u) });
+        const source = addSource({ kind: "hunt", locator: res.url ?? "hunt:unknown", anchor: res.url ?? null });
+        addContribution({ unit: u, stage: "ground", code: res.code, source_id: source, parent: unitSource, transform: "hunt-snip" });
+        continue;
       }
+      if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
     }
-    if (hunted) continue;
-    // 3. THE MOUTH draws only the irreducible residue.
+
     let attempt = 0;
     let atom = u.spec;
     while (attempt < 4) {
-      const fragment = adapter.mouthFragment(u, atom);
-      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240 });
+      const fragment = adapter.mouthFragment(u, atom, ctx);
+      const source = addSource({ kind: "draw", locator: { adapter: adapter.kind, unit: u.name, attempt: attempt + 1, prompt: fragment } });
+      ledger.event({ stage: "draw-request", source_id: source, parent: unitSource, unit: u.name, transform: "prompt-from-spec", detail: { attempt: attempt + 1 } });
+      const out = await draw(fragment, {
+        maxTokens: adapter.mouthTokens ?? 240,
+        model: ctx.model ?? null,
+        kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document", "text"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other",
+        priority: "batch",
+      });
       const fn = adapter.snip(out, u.name);
-      const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
+      const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
-        drawn.push(fn);
-        provenance.push({ unit: u.name, source: "mouth" });
+        addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1 }, transform: "draw→snip" });
         break;
       }
       const why = alone.detail;
-      atom = adapter.sharpen ? adapter.sharpen(u, atom, why) : atom;
-      scars.push({ unit: u.name, attempt: attempt + 1, why, atom });
+      const nextAtom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
+      ledger.event({ stage: "repair", source_id: source, parent: unitSource, unit: u.name, transform: "failed-draw→sharpened-prior", detail: { attempt: attempt + 1, why, from: atom, to: nextAtom } });
+      scars.push({ unit: u.name, attempt: attempt + 1, why, atom: nextAtom });
+      atom = nextAtom;
       attempt += 1;
     }
   }
-  return { code: drawn.join("\n\n") + "\n", scars, provenance };
+
+  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("
+
+") + "
+"), units: units.length } });
+  return { code: drawn.join("
+
+") + "
+", scars, provenance: ledger.eot() };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
-export async function arrange({ task, args = {}, adapter }) {
+export async function arrange({ task, args = {}, adapter, context = {} }) {
   const outDir = path.resolve(args.out || path.join(HERE, "..", "arrangement-out"));
   fs.mkdirSync(outDir, { recursive: true });
 
-  console.log(`\n=== THE FIELD READS THE PROMPT ===`);
-  console.log(`  "${task}"\n`);
-  let units = await adapter.readUnits(task);
+  console.log(`
+=== THE FIELD READS THE PROMPT ===`);
+  console.log(`  "${task}"
+`);
+  const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind });
+  const taskSource = ledger.source({ kind: "intent", locator: { task, artifact: context.artifact ?? adapter.kind } });
+  ledger.event({ stage: "intent", source_id: taskSource, transform: "request→task" });
+  const priorSource = ledger.source({ kind: "prior", locator: { adapter: adapter.kind, constraints: context.constraints ?? {}, verification: context.verification ?? {} } });
+  ledger.event({ stage: "prior", source_id: priorSource, parent: taskSource, transform: "constraints+verification→generation-prior" });
+  context.provenanceLedger = ledger;
+  let units = await adapter.readUnits(task, context);
+  ledger.event({ stage: "read", source_id: taskSource, parent: priorSource, transform: "task→units", detail: { units: (units ?? []).map((u) => ({ name: u.name, spec: u.spec })) } });
   units = units ?? [];
   let example = null;
   if (args.example) { try { example = JSON.parse(args.example); } catch { example = null; } }
-  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example);
+  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example, context);
   console.log(`  units + per-unit specs (from the reading, not a dictionary):`);
   for (const u of units) console.log(`    ${u.name}: ${u.spec}${u.settle ? `  [settle: ${u.settle}]` : ""}`);
 
-  console.log(`\n=== THE SPIRAL — field first, hunt second, mouth last ===`);
-  const { code, scars, provenance } = await fillUnits(units, adapter);
-  const verdict = adapter.testUnits(code, units);
+  console.log(`
+=== THE SPIRAL — field first, hunt second, mouth last ===`);
+  const { code, scars, provenance } = await fillUnits(units, adapter, context);
+  const verdict = adapter.testUnits(code, units, context);
+  const verifySource = ledger.source({ kind: "verification", locator: { adapter: adapter.kind, verdict: verdict.reason } });
+  ledger.event({ stage: "verify", source_id: verifySource, transform: "artifact→verification", detail: verdict });
   console.log(`  folded: ${code.length} bytes, ${units.length} units`);
-  const snipped = (provenance ?? []).filter((p) => p.source === "corpus");
-  const drawn = (provenance ?? []).filter((p) => p.source === "mouth");
-  const hunted = (provenance ?? []).filter((p) => p.source === "hunt");
+  const refs = provenance?.refs ?? [];
+  const snipped = refs.filter((p) => p.stage === "corpus");
+  const drawn = refs.filter((p) => p.stage === "mouth");
+  const hunted = refs.filter((p) => p.stage === "hunt");
   if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${p.address?.split("/").pop()}`).join(", ")}`);
   if (hunted.length) console.log(`  hunted: ${hunted.map((p) => p.unit).join(", ")}`);
   if (drawn.length) console.log(`  drawn by the mouth: ${drawn.map((p) => p.unit).join(", ")}`);
   console.log(`  test:   ${verdict.reason}${verdict.ok ? "" : " — " + verdict.detail}`);
 
-  console.log(`\n=== THE PRODUCT ===`);
+  console.log(`
+=== THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
-  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title });
+  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
+  ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(code) } });
   const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
   fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
   const eot = {
-    schema: "ArrangementEOT@1", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
+    schema: "ArrangementEOT@2", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
     prompt: task, model: MODEL,
     law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
+    provenance,
     corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
-      snipped: (provenance ?? []).filter((p) => p.source === "corpus"),
-      hunted: (provenance ?? []).filter((p) => p.source === "hunt"),
-      drawn: (provenance ?? []).filter((p) => p.source === "mouth"),
+      snipped,
+      hunted,
+      drawn,
+      sourceTable: provenance?.sources ?? [],
     },
     swarm: { verdict, scars },
     product: { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}` },
@@ -183,7 +224,8 @@ export async function arrange({ task, args = {}, adapter }) {
   console.log(`  widget: ${path.join(outDir, `${slug}.html`)}`);
   console.log(`  eot:    ${path.join(outDir, `${slug}.eot.json`)}`);
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
-  if (scars.length) { console.log(`\n  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
+  if (scars.length) { console.log(`
+  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
   return { slug, html, code, eot, verdict, scars, provenance };
 }
 

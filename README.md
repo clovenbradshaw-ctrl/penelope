@@ -8,6 +8,33 @@ The autonomous app pipeline: a user describes an app in plain words, and
 the system remembers (library), derives (box), gets (hunt), and asks the
 local mouth only for what none of those can say — usually nothing.
 
+## Public generation API
+
+All artifact generation should enter through Penelope's artifact-neutral API.
+The current public HTTP contract is `POST /api/generation`:
+
+```json
+{
+  "intent": "Describe the thing to produce",
+  "artifact": "code",
+  "constraints": {},
+  "context": {},
+  "verification": {},
+  "model": "gemma2:2b",
+  "output": null
+}
+```
+
+The response is `GenerationResult@1`: artifact bytes, materialization,
+verification verdict, provenance/EOT evidence, and repair scars. The built-in
+adapters currently include `code` and `prose`. Registering a new adapter adds
+a medium without creating a second orchestration engine. Unsupported media are
+returned as explicit gaps; Penelope does not guess an adapter.
+
+The lower-level `POST /api/generate` remains the raw draw door. It is not the
+artifact-generation API. Existing `POST /api/weave` remains the specialized
+build/classification workflow while its migration is staged.
+
 ## The tapestry — how generation works now
 
 Kept true by `node gym/check-tapestry.mjs` (source: [TAPESTRY.md](TAPESTRY.md);
@@ -331,6 +358,37 @@ append-only, always revisable).
 
 </details>
 <!-- tapestry:end -->
+
+## Weave — the single generation operation
+## Provenance is foldable EOT
+
+Weave provenance is itself an artifact that can travel through the pipeline as EOT. It is not a repeated citation blob.
+
+- `Provenance@2` has a deduplicated source table plus compact transformation events.
+- Events carry stable foreign keys, optional byte anchors, parent lineage, and a transformation label.
+- An `ibid` event points to an existing provenance event instead of copying its source/material payload. This is the provenance equivalent of IBID.
+- Re-admitting provenance can therefore fold the lineage forward: the new artifact records **what happened to prior material**, not the same source over and over.
+- Priors are explicit provenance stages, including constraints, verification requirements, adapter/domain priors, and other grounded assumptions supplied to the weave.
+- Grounding distinguishes corpus/autofill and hunt material from model-drawn material.
+- Draws, sharpened retries, folds, verification, repair, and materialization are separate transformation stages.
+- Stable foreign keys and byte addresses are the preferred compact anchors. Reconciliation can later resolve or merge identities without rewriting every downstream event.
+
+The invariant is: **anything that materially influences the artifact must have a traceable lineage, while repeated identity/payload is represented by reference rather than duplication.**
+
+
+Penelope has one public artifact-generation operation: **Weave**.
+
+`POST /api/weave` is the canonical door. It accepts an intent plus an explicit artifact kind and runs the shared lifecycle: reading → field/hunt → mouth → arrangement → verification → materialization → disclosed evidence/repair. Text is not a separate API: it is a first-class `text` artifact backed by the prose adapter. Code and future media use the same contract with medium-specific adapters.
+
+`/api/generate` remains only the lower-level model-draw door used by the arrangement engine. It is not a competing artifact-generation API. The adapter boundary is where genuinely medium-specific behavior belongs; the orchestration boundary does not split by text/code/application.
+
+Example request:
+
+`POST /api/weave`
+
+`{"intent":"Explain how a closure captures variables","artifact":"text"}`
+
+The stable response schema is `GenerationResult@1`. Unknown artifact kinds are named gaps rather than silently guessed.
 
 ## Layout
 
