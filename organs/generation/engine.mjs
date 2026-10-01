@@ -39,6 +39,7 @@ import path from "node:path";
 import { execSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { ProvenanceLedger, byteRange } from "./provenance.mjs";
 
 export const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const OLLAMA = process.env.ER7_OLLAMA_URL ?? "http://localhost:11434";
@@ -81,64 +82,46 @@ export function writeTmp(code) {
 // ── THE SPIRAL — draw → probe → sharpen the atom → re-draw. The dissent
 // (every defection) is disclosed on the EOT. The FILL ORDER is the law:
 // field (autofill) → hunt → mouth. The mouth is never the first resort. ──
-function stableId(value, prefix = "src") {
-  return `${prefix}_${createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 20)}`;
-}
-function sourceRecord({ kind, locator, anchor = null, meta = null }) {
-  const source_id = stableId({ kind, locator }, "src");
-  return { source_id, kind, locator, ...(anchor ? { anchor } : {}), ...(meta ? { meta } : {}) };
-}
-function byteRange(start, end) { return { unit: "byte", start, end }; }
-function provenanceRef({ source_id, unit, stage, range = null, parent = null, detail = null }) {
-  return { source_id, unit, stage, ...(range ? { range } : {}), ...(parent ? { parent } : {}), ...(detail ? { detail } : {}) };
-}
-
-// The source table stores each stable identity once. Refs are compact foreign
-// keys plus byte anchors into the folded artifact; reconciliation can enrich
-// or merge sources later without rewriting the artifact's provenance.
 async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
-  const refs = [];
-  const sources = new Map();
-  const addSource = (spec) => {
-    const row = sourceRecord(spec);
-    sources.set(row.source_id, row);
-    return row.source_id;
-  };
-  const addContribution = ({ unit, stage, code, source, parent = null, detail = null }) => {
+  const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind });
+  const addSource = (spec) => ledger.source(spec);
+  const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
     const text = String(code ?? "");
     const offset = drawn.length ? Buffer.byteLength(drawn.join("\n\n") + "\n") : 0;
     if (text) drawn.push(text);
     const end = offset + Buffer.byteLength(text);
-    refs.push(provenanceRef({ source_id: source, unit: unit.name, stage, range: byteRange(offset, end), parent, detail }));
+    ledger.event({ stage, source_id, unit: unit.name, parent, range: byteRange(offset, end), detail, transform });
   };
 
   for (const u of units) {
     const unitSource = addSource({ kind: "unit", locator: { artifact: ctx.artifact ?? adapter.kind, name: u.name, spec: u.spec } });
+    ledger.event({ stage: "arrange", source_id: unitSource, unit: u.name, transform: "unit-spec" });
+
     const fill = adapter.autofill ? adapter.autofill(u, ctx) : null;
     if (fill) {
       const source = addSource({ kind: "corpus", locator: fill.address ?? "corpus:unknown", anchor: fill.address ?? null });
-      addContribution({ unit: u, stage: "corpus", code: fill.code, source, parent: unitSource });
+      addContribution({ unit: u, stage: "ground", code: fill.code, source_id: source, parent: unitSource, transform: "autofill-frame" });
       continue;
     }
-    let hunted = false;
+
     if (adapter.hunt) {
       const res = await adapter.hunt(u, ctx);
       if (res) {
         const source = addSource({ kind: "hunt", locator: res.url ?? "hunt:unknown", anchor: res.url ?? null });
-        addContribution({ unit: u, stage: "hunt", code: res.code, source, parent: unitSource });
-        hunted = true;
-      } else if (res === null && adapter.huntScar) {
-        scars.push({ unit: u.name, why: adapter.huntScar(u) });
+        addContribution({ unit: u, stage: "ground", code: res.code, source_id: source, parent: unitSource, transform: "hunt-snip" });
+        continue;
       }
+      if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
     }
-    if (hunted) continue;
+
     let attempt = 0;
     let atom = u.spec;
     while (attempt < 4) {
       const fragment = adapter.mouthFragment(u, atom, ctx);
       const source = addSource({ kind: "draw", locator: { adapter: adapter.kind, unit: u.name, attempt: attempt + 1, prompt: fragment } });
+      ledger.event({ stage: "draw-request", source_id: source, parent: unitSource, unit: u.name, transform: "prompt-from-spec", detail: { attempt: attempt + 1 } });
       const out = await draw(fragment, {
         maxTokens: adapter.mouthTokens ?? 240,
         model: ctx.model ?? null,
@@ -148,16 +131,20 @@ async function fillUnits(units, adapter, ctx = {}) {
       const fn = adapter.snip(out, u.name);
       const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
-        addContribution({ unit: u, stage: "mouth", code: fn, source, parent: unitSource, detail: { attempt: attempt + 1 } });
+        addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1 }, transform: "draw→snip" });
         break;
       }
       const why = alone.detail;
-      atom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
-      scars.push({ unit: u.name, attempt: attempt + 1, why, atom });
+      const nextAtom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
+      ledger.event({ stage: "repair", source_id: source, parent: unitSource, unit: u.name, transform: "failed-draw→sharpened-prior", detail: { attempt: attempt + 1, why, from: atom, to: nextAtom } });
+      scars.push({ unit: u.name, attempt: attempt + 1, why, atom: nextAtom });
+      atom = nextAtom;
       attempt += 1;
     }
   }
-  return { code: drawn.join("\n\n") + "\n", scars, provenance: { schema: "Provenance@1", sources: [...sources.values()], refs, addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" } } };
+
+  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("\n\n") + "\n"), units: units.length } });
+  return { code: drawn.join("\n\n") + "\n", scars, provenance: ledger.eot() };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
@@ -167,7 +154,14 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
 
   console.log(`\n=== THE FIELD READS THE PROMPT ===`);
   console.log(`  "${task}"\n`);
+  const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind });
+  const taskSource = ledger.source({ kind: "intent", locator: { task, artifact: context.artifact ?? adapter.kind } });
+  ledger.event({ stage: "intent", source_id: taskSource, transform: "request→task" });
+  const priorSource = ledger.source({ kind: "prior", locator: { adapter: adapter.kind, constraints: context.constraints ?? {}, verification: context.verification ?? {} } });
+  ledger.event({ stage: "prior", source_id: priorSource, parent: taskSource, transform: "constraints+verification→generation-prior" });
+  context.provenanceLedger = ledger;
   let units = await adapter.readUnits(task, context);
+  ledger.event({ stage: "read", source_id: taskSource, parent: priorSource, transform: "task→units", detail: { units: (units ?? []).map((u) => ({ name: u.name, spec: u.spec })) } });
   units = units ?? [];
   let example = null;
   if (args.example) { try { example = JSON.parse(args.example); } catch { example = null; } }
@@ -178,6 +172,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`\n=== THE SPIRAL — field first, hunt second, mouth last ===`);
   const { code, scars, provenance } = await fillUnits(units, adapter, context);
   const verdict = adapter.testUnits(code, units, context);
+  const verifySource = ledger.source({ kind: "verification", locator: { adapter: adapter.kind, verdict: verdict.reason } });
+  ledger.event({ stage: "verify", source_id: verifySource, transform: "artifact→verification", detail: verdict });
   console.log(`  folded: ${code.length} bytes, ${units.length} units`);
   const refs = provenance?.refs ?? [];
   const snipped = refs.filter((p) => p.stage === "corpus");
@@ -191,15 +187,16 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`\n=== THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
   const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
+  ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(code) } });
   const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
   fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
   const eot = {
-    schema: "ArrangementEOT@1", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
+    schema: "ArrangementEOT@2", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
     prompt: task, model: MODEL,
     law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
-    corpus: {
+    provenance,\n    corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
       snipped,
       hunted,
