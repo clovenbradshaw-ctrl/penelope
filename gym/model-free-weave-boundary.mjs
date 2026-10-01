@@ -47,7 +47,7 @@ function summarize(target, result, elapsedMs) {
   const folded = verdict.folded ?? {};
   const gaps = (folded.beats ?? []).filter((b) => b.gap).map((b) => b.title);
   const firstBoundary = events.find((e) => e.stage === "model-required")?.unit ?? null;
-  const unresolved = mouthNeeded + (result.repair?.scars ?? []).filter((s) => s.why === "model-required").length - mouthNeeded;
+  const unresolved = mouthNeeded;
   return {
     target,
     units: unitNames.length,
