@@ -60,14 +60,14 @@ export async function weave({
   output = null,
 } = {}) {
   const task = String(intent ?? "").trim();
-  if (!task) return { schema: "GenerationResult@1", ok: false, status: "gap", error: "generation intent is required" };
+  if (!task) return { schema: "Weaving@1", ok: false, status: "gap", error: "generation intent is required" };
 
   await loadBuiltins();
   const kind = typeof artifact === "string" ? artifact : artifact?.kind;
   const adapter = typeof artifact === "object" && artifact?.readUnits ? artifact : generationAdapter(kind);
   if (!adapter) {
     return {
-      schema: "GenerationResult@1",
+      schema: "Weaving@1",
       ok: false,
       status: "gap",
       error: kind
@@ -102,7 +102,7 @@ export async function weave({
 
   const verified = result.verdict?.ok === true;
   return {
-    schema: "GenerationResult@1",
+    schema: "Weaving@1",
     ok: verified,
     status: verified ? "verified" : "unverified",
     intent: task,
