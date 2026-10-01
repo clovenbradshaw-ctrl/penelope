@@ -36,6 +36,12 @@
   ],
   "agenda": [
    "ordered action list by the item own declared sequence, declared actions, per-item gaps (box; AgendaShape@1 selftest 4/4)"
+  ],
+  "htmlSnip": [
+   "tag-aware, byte-addressed HTML fragment cut — reuse existing markup, never regenerate (box; HtmlSnip@1 selftest 7/7)"
+  ],
+  "resolver": [
+   "the closed 27-cell taxonomy — every task routed to measure/box/engine/mouth or a named void (box; Resolver@1 selftest 34/34)"
   ]
  },
  "mouthResidue": {

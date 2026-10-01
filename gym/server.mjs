@@ -192,7 +192,7 @@ const server = http.createServer(async (req, res) => {
       for await (const c of req) body += c;
       const { runWeave } = await import("./weave-build.mjs");
       const j = JSON.parse(body || "{}");
-      const w = await runWeave({ ask: j.ask, testCommand: j.testCommand, out: j.out, banked: j.class, model: j.model }).catch((e) => ({ ok: false, error: e.message }));
+      const w = await runWeave({ ask: j.ask, testCommand: j.testCommand, out: j.out, banked: j.class, model: j.model, html: j.html, sel: j.sel, image: j.image }).catch((e) => ({ ok: false, error: e.message }));
       res.writeHead(w.ok ? 200 : 400, { "content-type": "application/json" });
       res.end(JSON.stringify(w));
       return;

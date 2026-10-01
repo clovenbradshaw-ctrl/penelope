@@ -63,13 +63,13 @@
 ║  │    │                     │ ·KIN                │ ■ADC ■ADP □CDB ·PAG │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ σ  │ | ÷σ                │ → ≈σ                │ ◊ ×σ                │  ║
-║  │    │ ■SNP ■DOR ·TER      │ ■FLD ■DTF ■ADM ·NET │ ■SEL ■EOT ■BLD ■ASK │  ║
+║  │    │ ■SNP ■DOR ·TER ■WSN │ ■FLD ■DTF ■ADM ·NET │ ■SEL ■EOT ■BLD ■ASK │  ║
 ║  │    │                     │ ■WND ■AGD           │ ■TAP ■LIB □TKB □BPG │  ║
 ║  │    │                     │                     │ ·HOR ·LFL ·SWT ■CCL │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ι  │ = ÷ι                │ ± ≈ι                │ ↔ ×ι                │  ║
 ║  │    │ ■STL ■CUB ■LAW ■GLA │ ■PRB ■TST ■CGT ■BHC │ ■SPR ■BOX ·RSM ·DEM │  ║
-║  │    │ ·GAT                │ ■FRS ■LDR ■NBK ·RUT │                     │  ║
+║  │    │ ·GAT ·STM ■RSR      │ ■FRS ■LDR ■NBK ·RUT │                     │  ║
 ║  │    │                     │ ·GAR ·MAR ·VIS ·APO │                     │  ║
 ║  │    │                     │ ·ANS ·POL ·CRV      │                     │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
@@ -83,19 +83,20 @@
 ║  │ σ  │ σ◦                  │ σ•                  │ σΩ                  │  ║
 ║  │    │ ■DOR ■ADM ■LIB      │ ■FLD ■SNP ■EOT ■DTF │ ■SEL ■BLD ■ASK ■TAP │  ║
 ║  │    │                     │ □TKB ·HOR ·SWT ■WND │ □BPG ·LFL ·TER ·NET │  ║
-║  │    │                     │ ■AGD                │ ■CCL                │  ║
+║  │    │                     │ ■AGD ■WSN           │ ■CCL                │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ι  │ ι◦                  │ ι•                  │ ιΩ                  │  ║
 ║  │    │ ■FRS ·RSM ·APO      │ ■STL ■PRB ■SPR ■TST │ ■CGT ■CUB ■LDR ■BOX │  ║
 ║  │    │                     │ ■BHC ·RUT ·GAR ·MAR │ ■NBK ■LAW ■GLA ·GAT │  ║
-║  │    │                     │ ·VIS ·POL           │ ·DEM ·ANS ·CRV      │  ║
+║  │    │                     │ ·VIS ·POL           │ ·DEM ·ANS ·CRV ·STM │  ║
+║  │    │                     │                     │ ■RSR                │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
 ║  │ ↕  │          ◦          │          •          │          Ω          │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ÷  │ ÷◦                  │ ÷•                  │ ÷Ω                  │  ║
-║  │    │ ■NLB ■DOR           │ ■STL ■SNP ■GAP      │ ■CUB ■LAW ■GLA ·GAT │  ║
-║  │    │                     │                     │ ·TER ·KNL           │  ║
+║  │    │ ■NLB ■DOR           │ ■STL ■SNP ■GAP ■WSN │ ■CUB ■LAW ■GLA ·GAT │  ║
+║  │    │                     │                     │ ·TER ·KNL ·STM ■RSR │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ≈  │ ≈◦                  │ ≈•                  │ ≈Ω                  │  ║
 ║  │    │ ■VDF ■FRS ■ADM ·APO │ ■FLD ■PRB ■TST ■DTF │ ■CGT ■LDR ■NBK ·ANS │  ║
@@ -111,12 +112,12 @@
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ╠═[ ↑ ↓ ]════════════════════════════════════════════════════════════════════╣
 ║ ↑ 4  ■NLBØ◦ ■CUB=Ω ■LDR±Ω ■BOX↔Ω ■LAW=Ω ■GLA=Ω ■TAP◊Ω ■LIB◊◦ ·DEM↔Ω        ║
-║ │    ·KNLØΩ                                                                ║
+║ │    ·KNLØΩ ·STM=Ω                                                         ║
 ║ │ 3  ■CHT●• ■BLD◊Ω ■NBK±Ω ■DOR|◦ ■ASK◊Ω ■ADM→◦ ·PAG●Ω ·LFL◊Ω ·TER|Ω        ║
 ║ │    ·APO±◦                                                                ║
 ║ │ 2  ■TST±• ■SEL◊Ω ■EOT◊• ■CGT±Ω ■DTF→• ■BHC±• ■FRS±◦ □CDB●Ω □BPG◊Ω        ║
 ║ │    ·RSM↔◦ ·GAT=Ω ·RUT±• ·VIS±• ·ANS±Ω ·CRV±Ω ·SWT◊• ■WND→• ■AGD→•        ║
-║ │    ■CCL◊Ω                                                                ║
+║ │    ■CCL◊Ω ■WSN|• ■RSR=Ω                                                  ║
 ║ │ 1  ■VDF○◦ ■RDU●• ■STL=• ■FLD→• ■HNT●◦ ■SNP|• ■PRB±• ■GAPØ• ■ADC●Ω        ║
 ║ │    ■ADP●Ω □TKB◊• □LOK○• ·HOR◊• ·KOE○• ·MAR±• ·SCR○• ·POL±• ·KIN○Ω        ║
 ║ │    ·NET→Ω                                                                ║
@@ -290,6 +291,18 @@
 ║     @ a/council.html a/council-control.html a/council-facing.html          ║
 ║     @ a/council-record.json g/probe-council.mjs GL-WV-01                   ║
 ║     @ /api/council/events /api/council/events/                             ║
+║                                                                            ║
+║· ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║·STM 4 =Ω ‡ steersman                                                       ║
+║     @ o/steersman.mjs o/steersman.test.mjs                                 ║
+║     @ LP/derived-priors/concern-priors/concern-fields GL-WV-11 GL-WV-13    ║
+║     aporia Ø Λ shadow-topics ¬activate ∂† ∂†                               ║
+║                                                                            ║
+║■ ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║■WSN 2 |• ‡ html-snip                                                       ║
+║     @ o/html-snip.mjs GL-WV-13 GL-EN-09                                    ║
+║■RSR 2 =Ω ‡ resolver                                                        ║
+║     @ o/resolver.mjs GL-WV-13 GL-OG-08                                     ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ```

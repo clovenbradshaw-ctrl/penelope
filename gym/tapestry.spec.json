@@ -884,6 +884,51 @@
     "/api/council/events",
     "/api/council/events/"
    ]
+  },
+  {
+   "id": "STM",
+   "name": "steersman",
+   "st": "·",
+   "lvl": 4,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/steersman.mjs",
+    "o/steersman.test.mjs",
+    "LP/derived-priors/concern-priors/concern-fields",
+    "GL-WV-11",
+    "GL-WV-13"
+   ],
+   "ctl": "aporia ∅ ∧ shadow-topics ¬activate ⇒✗"
+  },
+  {
+   "id": "WSN",
+   "name": "html-snip",
+   "st": "■",
+   "lvl": 2,
+   "op": "SEG",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "o/html-snip.mjs",
+    "GL-WV-13",
+    "GL-EN-09"
+   ]
+  },
+  {
+   "id": "RSR",
+   "name": "resolver",
+   "st": "■",
+   "lvl": 2,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/resolver.mjs",
+    "GL-WV-13",
+    "GL-OG-08"
+   ]
   }
  ]
 }

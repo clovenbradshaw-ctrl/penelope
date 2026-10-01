@@ -105,10 +105,91 @@ export async function engineRun({ ask, testCommand, out, model }) {
   return { ok: build.verified === true, engine: "eoreader7 /v1/ask → buildCodeTask", units: build.units ?? [], draws: build.draws ?? 0, tokens: build.tokens ?? 0, verified: build.verified ?? null, verifyError: build.verifyError ?? null, out: build.out ?? null, code: build.code ?? null, disclosure: build.disclosure ?? null };
 }
 
-export async function runWeave({ ask, testCommand, out, banked, model }) {
-  if (banked) return bankedRun(banked);
-  if (!ask) return { ok: false, error: "an ask is required (or --class council for the banked class)" };
-  return engineRun({ ask, testCommand, out, model });
+export async function runWeave({ ask, testCommand, out, banked, model, html, sel, image, attachment }) {
+  // explicit class overrides the resolver; otherwise the closed cube routes
+  if (banked === "html:snip") return seal(await htmlSnipRun({ html, sel }));
+  if (banked === "image:page") return seal(await imagePageRun({ image }));
+  if (banked) return seal(await bankedRun(banked));
+  if (!ask) return { ok: false, error: "an ask (or --class council / html:snip / image:page) is required" };
+  const { classify } = await import(`../organs/resolver.mjs`);
+  const { cell, route } = classify(ask, { attachment });
+  const base = { cell, route: route.route, executor: route.executor ?? null, gap: route.gap ?? null };
+  let res;
+  if (route.route === "void") res = { ok: false, ...base, error: route.gap };
+  else if (route.route === "measure") res = await imagePageRun({ image });
+  else if (route.route === "box" && route.executor === "html:snip") res = await htmlSnipRun({ html, sel });
+  else if (route.route === "box" && route.executor === "feed") res = await bankedRun("council");
+  else res = await engineRun({ ask, testCommand, out, model });
+  return seal({ ...base, ...res });
+}
+
+// The holograph of the run: SOURCES (addressed bytes), RESPONSE (the artifact,
+// tagged), NOTES (verdict, standing, falsifier) — no cloth without the ledger.
+export function seal(result) {
+  const slug = "weave-" + Date.now();
+  const src = [];
+  if (result.image) src.push({ ref: "image", addr: result.image, bytes: result.chars ?? null });
+  if (result.start != null) src.push({ ref: "snip", addr: `html bytes ${result.start}..${result.end}`, bytes: result.bytes });
+  if (result.class === "council/agenda" || result.class?.includes("feed")) src.push({ ref: "feed", addr: "webapi.legistar.com/v1/nashville/Events (via the gym door)", bytes: result.verdict?.windowed ?? null });
+  if (result.engine) src.push({ ref: "engine", addr: result.engine });
+  const response = result.ok
+    ? (result.html ?? result.fragment ?? result.code ?? "assembled") .slice(0, 4000)
+    : String(result.error ?? result.gap ?? "failed");
+  const notes = [
+    `route: ${result.route ?? result.class ?? "?"} · executor: ${result.executor ?? "box/engine"} · cell: ${result.cell ? JSON.stringify(result.cell) : "?"}`,
+    `mouthCalls: ${result.mouthCalls ?? 0} · verdict: ${result.verified ?? (result.ok ? "pass" : "fail")}`,
+    result.standing ? `standing: ${result.standing}` : null,
+    `falsifier: the swatch must equal this run's EOT provenance (mouth bytes vs measured/box bytes), never asserted`,
+  ].filter(Boolean);
+  const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const facing = `<!doctype html><meta charset="utf-8"><title>holograph ${slug}</title>
+<style>body{font:14px/1.5 ui-monospace,Menlo,monospace;max-width:760px;margin:0 auto;padding:24px;background:#faf7f0;color:#241d15}h1{font-size:17px}.src{border-left:3px solid #7a6a4f;padding:4px 10px;margin:6px 0;background:#f1eadb;color:#4a3f2a}.resp{white-space:pre-wrap;border:1px solid #c9bda0;border-radius:6px;padding:12px;background:#fff}.tag{color:#8a2f2f;font-weight:700}.note{color:#5b4a2f;margin:4px 0}</style>
+<h1>◇ holograph — ${esc(slug)}</h1>
+<h2>SOURCES</h2>${src.length ? src.map((s) => `<div class="src">[S#] <b>${esc(s.ref)}</b> @ ${esc(s.addr)} · ${s.bytes != null ? s.bytes + " bytes" : "addressed"}</div>`).join("") : `<div class="src">(none — box-computed, no external bytes)</div>`}
+<h2>RESPONSE</h2><div class="resp">${esc(response)}</div>
+<h2>NOTES</h2>${notes.map((n) => `<div class="note">· ${esc(n)}</div>`).join("")}`;
+  const p = path.join(ROOT, "apps", "weaves", `${slug}-facing.html`);
+  fs.writeFileSync(p, facing);
+  return { ...result, holograph: p, slug };
+}
+
+// ── html:snip — reuse the markup that already exists, never regenerate it ──
+export async function htmlSnipRun({ html, sel }) {
+  const { snip } = await import(`../organs/html-snip.mjs`);
+  const selObj = {};
+  if (String(sel ?? "").startsWith("#")) selObj.id = sel.slice(1);
+  else if (String(sel ?? "").startsWith(".")) selObj.cls = sel.slice(1);
+  else if (sel && /^\d+$/.test(String(sel))) selObj.at = Number(sel);
+  else if (sel) selObj.name = sel;
+  const r = snip(String(html ?? ""), selObj);
+  if (!r.ok) return { ok: false, class: "html:snip", gap: r.gap };
+  swatch({ weave: "snip:" + r.name, class: "html:snip", engine: "box (organs/html-snip.mjs)", mouthCalls: 0, mouthBytes: 0, corpusBytes: r.bytes, huntBytes: 0, boxBytes: 0, verdict: "pass", evidence: "GL-WV-13" });
+  return { ok: true, class: "html:snip", fragment: r.fragment, start: r.start, end: r.end, bytes: r.bytes, name: r.name, mouthCalls: 0 };
+}
+
+// ── image:page — measure the image (look.js, tesseract, no model) → HTML ──
+// Referenced at source (GL-OG-07: coupled organs are read at home, never
+// copied): look.js is the merged eye. The mechanical OCR path runs on this
+// box (tesseract present); the region-structure path needs VISUAL_DETECT_PYTHON
+// or the unmerged screenshot pipeline — disclosed, never faked (GL-IM-01/05).
+export async function imagePageRun({ image }) {
+  if (!image) return { ok: false, error: "image:page needs an image path" };
+  const LOOK = "/Users/mlacy/Documents/3.0/eoreader7/native/organs/look.js";
+  let look = null;
+  try { look = await import(LOOK); } catch (e) { return { ok: false, error: `look.js not loadable: ${String(e.message).slice(0, 120)}` }; }
+  let text;
+  try { text = look.ocrFullImage(image); } catch (e) { return { ok: false, error: `OCR failed (${String(e.message).slice(0, 120)})` }; }
+  const paras = String(text ?? "").split(/\n{2,}/).map((p) => p.replace(/\s+/g, " ").trim()).filter(Boolean);
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const regionNote = process.env.VISUAL_DETECT_PYTHON
+    ? "measured structure (OpenCV regions available)"
+    : "OCR-measured text only — region structure needs VISUAL_DETECT_PYTHON or the unmerged screenshot pipeline (GL-IM-01)";
+  const page = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>measured page</title>
+<style>body{font:16px/1.55 system-ui,serif;max-width:720px;margin:0 auto;padding:24px} .note{font:12px monospace;color:#666;border-top:1px solid #ccc;margin-top:20px;padding-top:8px}</style>
+<main>${paras.length ? paras.map((p) => `<p>${esc(p)}</p>`).join("\n") : `<p>(no measurable text — unread is a gap, not a guess)</p>`}</main>
+<div class="note">measured from ${esc(image)} · ${esc(regionNote)} · one witness, not applied as fact (GL-IM-03)</div>`;
+  swatch({ weave: "image:" + String(image).slice(-24), class: "image:page", engine: "box (look.js ocrFullImage, tesseract)", mouthCalls: 0, mouthBytes: 0, corpusBytes: text.length, huntBytes: 0, boxBytes: page.length, verdict: paras.length ? "pass" : "gap", evidence: "GL-WV-13, GL-IM-01" });
+  return { ok: true, class: "image:page", html: page, words: paras.length, chars: text.length, standing: regionNote, mouthCalls: 0 };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {

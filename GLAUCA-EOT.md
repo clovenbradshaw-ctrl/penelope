@@ -1231,3 +1231,37 @@ Hora sets each unit down whole before the next. Lovelace computes the structure
 and lets the test decide. Bayes measures competence, never assumes it. And
 Mnemosyne — the record — is where every draw, every scar, every remedy lands,
 so the next weave starts from what this one learned.
+
+### GL-WV-13 — The steersman: the shadow types mattering; Thea steers activation; logos is untouched
+- pipeline: organs (the "for whom" of the turn)
+- status: standing
+- supersedes: —
+- evidence: organs/steersman.mjs + organs/steersman.test.mjs (gate 8/8, 2026-10-01); the shadow is ConcernField@1, one prior per speakable archon built from the FULL ORIGINAL canon (live_priors/derived-priors/concern-priors/, 60 priors over the whole 83-handle cast: 23 named gaps — Shakespeare's source missing, the 22 silent archons' canon not in the priors (copyrighted_deferred/not_found), never shadowed from nothing · gate: determinism/provenance/null-floor/distinctiveness all PASS). The steersman types the discourse move (Socrates' elenctic moves, closed vocabulary), performs the consumption move (Terry Gross: the prior turn is carried — the anti-schizoid seam, one thread), and activates archons whose concern terms clear the population null (|shadow|·|topic|/|U| — never a hand-set floor); a topic token touching more than half the cast is common ground and is excluded. The envelope covers the WHOLE cast: activated + present (shadowed, untouched) + refused (named, never ventriloquized) = 83/83. Neither lane → APORIA, reason named. The metadata lane is disclosed-weak (pythia's autoPick surface measures ~chance, AUC 0.542): a pointer, never a ground. The pathos law rides in every envelope: never a gate, never a grade. The permutation null was measured and refused for the shadow (it admits die/nicht/ein as German dwellings — it cannot see grammatical regularity); the population null stands.
+- falsifying control: an envelope that activates an archon whose concern field does not touch the topic, or that draws a response from an archon on an aporia turn, or a shadow term whose byte span does not contain it — any of these breaks the steering.
+
+# Addendum E — the closed resolver and the holograph of the run (2026-10-01)
+
+// The design made code. The taxonomy of "any arbitrary generation task" is now
+// complete by CLOSURE, not enumeration (the law: named gaps, never invented
+// lists): the cube is closed (9 operations × 3 grains = 27 cells, one declared
+// void), the resolver lands every task in one cell and routes it, and every run
+// is sealed as a holograph (SOURCES / RESPONSE / NOTES) — no cloth without the
+// ledger of its making.
+
+## organs — the closed resolver
+
+### GL-WV-13 — The taxonomy is complete by closure; every task lands in one cell, routed or a named void
+- pipeline: organs
+- status: standing
+- supersedes: —
+- evidence: organs/resolver.mjs (Resolver@1, selftest 34/34 — all 27 cells enumerated and routed or void, exactly one declared void DEF·Ground; routes: image→measure (look.js, no model), html→box:html:snip, data feed→box:feed (window+agenda), code→engine (/v1/ask→/v1/code), prose INS→engine, unroutable→mouth, DEF·Ground→void loudly); organs/html-snip.mjs (HtmlSnip@1, selftest 7/7 — the tag-aware, byte-addressed HTML snipper, GL-EN-09's analogue for markup); gym/weave-build.mjs (runWeave routes through classify(); every run sealed by seal() into apps/weaves/<slug>-facing.html)
+- falsifying control: a task that lands in no cell, a second cell double-routed, a void cell that is not named, or a run sealed without a holograph (no SOURCES/NOTES), contradicts this; the resolver's word-boundary scorer must not misfire a modality (the "json"⊂"js" collision was caught and fixed with \b-boundaries).
+
+## engine — the holograph of the run
+
+### GL-WV-14 — Every run is a holograph: SOURCES addressed, RESPONSE tagged, NOTES disclosed
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: gym/weave-build.mjs seal() (writes apps/weaves/<slug>-facing.html: [S#] SOURCES @ permanent address · bytes, RESPONSE = the artifact/fragment/code, NOTES = route·cell·mouthCalls·verdict·standing·falsifier); the council/feed run's SOURCES = the legistar feed via the gym door; the snip run's SOURCES = the html byte span; the image run's SOURCES = the image + OCR standing (GL-IM-01)
+- falsifying control: a run whose facing page hides the mouthCalls, or whose RESPONSE carries a claim with no SOURCES entry, contradicts this — the holograph is the ledger of its own making (GL-00, GL-BD-04).
