@@ -335,7 +335,11 @@
    "typing": "‡",
    "refs": [
     "LOOMS.md",
-    "GL-BD-03"
+    "GL-BD-03",
+    "g/weave-build.mjs",
+    "/api/weave",
+    "GL-WV-07",
+    "GL-WV-12"
    ]
   },
   {

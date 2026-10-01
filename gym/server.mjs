@@ -183,6 +183,20 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(score()));
       return;
     }
+    // The build loom's door: Penelope orchestrates, eoreader7 engines.
+    // POST /api/weave {ask?, testCommand?, out?, class?} — banked classes
+    // verify from the library (0 draws); new classes go through eoreader7's
+    // /v1/build (the engine plans, draws, assembles; the testCommand gates).
+    if (req.method === "POST" && u.pathname === "/api/weave") {
+      let body = "";
+      for await (const c of req) body += c;
+      const { runWeave } = await import("./weave-build.mjs");
+      const j = JSON.parse(body || "{}");
+      const w = await runWeave({ ask: j.ask, testCommand: j.testCommand, out: j.out, banked: j.class, model: j.model }).catch((e) => ({ ok: false, error: e.message }));
+      res.writeHead(w.ok ? 200 : 400, { "content-type": "application/json" });
+      res.end(JSON.stringify(w));
+      return;
+    }
     // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
     // 2026-10-01), so a browser cannot fetch it cross-origin — the loom fetches
     // at home and the browser reads the hunt through the door. Bounded retry on

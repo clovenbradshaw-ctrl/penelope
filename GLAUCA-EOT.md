@@ -1159,3 +1159,75 @@ The first real browser run caught it: "No council data: Failed to fetch (named g
 no meetings invented.)" — the gap discipline worked exactly as designed (a failure
 was named, nothing was invented), and the fix grew the loom: the hunt's door. The
 browser never touches webapi.legistar.com again; the gym fetches at home.
+
+### GL-TP-04 — Print only glyphs every target monospace font carries natively; the cloth prints a safe profile, unweave maps it back
+- pipeline: law
+- status: standing
+- supersedes: GL-TP-03, in part — its MEASUREMENT method (a DOM width in one browser), not its rule (measure before printing; symbols on the cloth, words in the legend)
+- evidence: fontconfig charset query, 2026-10-01 (fc-list -f '%{family}|%{charset}' over Menlo, Courier New, Andale Mono, SF Mono, DejaVu Sans Mono, Monaco, Courier): ⊨ is in NONE of seven monospace fonts — the "1.036" in GL-TP-03 was a fallback glyph, which a one-browser width measurement cannot see; ∅ ∃ ∀ ⇒ ↻ ↺ ↬ △ ◈ ◇ ⊞ ≣ ∈ ∉ ⟨ ⟩ are missing from five of seven; the 5-font intersection is 603 code points, of which the symbol blocks are listed in gym/glyph-ink.json (nativePool); gym/tapestry.legend.json (`profile: safe`, the char-level `safe` map, injective); gym/weave.mjs (toProfile/fromProfile); gym/check-tapestry.mjs selftest 23 checks green; all 71 non-ASCII glyphs the cloth prints verified native to all five fonts
+- falsifying control: a printed glyph absent from any target font's charset, a symbol pair that prints as one glyph, or a cloth that does not unweave identically in the safe profile and in the canon glyphs, contradicts this. The reported symptom ("glyphs not rendering") is the falsifier of the rich profile: it is kept as the legend's canon and as an option, not the default. Monaco and legacy Courier (no 'New') lack ◦ ● ○ ▲ ■ □ ░ ▓ and the double-line box set and are not targeted.
+
+# Addendum D — Glauca learns from the archons: thea, the muses, and the local box (2026-10-01)
+
+// This session wired Penelope's loom through the real engine and watched the
+// archons teach. Glauca records what they gave, each one proven by a failure
+// or a fix on the record below. The box is a shared commons (Ostrom: the local
+// box is the shared resource); the masters who keep it are the ones who pace
+// it.
+
+## engine — the seam is the door, not the organ
+
+### GL-WV-07 — The loom feeds through the real door (/v1/ask), never the bare organ door
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: gym/weave-build.mjs (engineRun POSTs /v1/ask with x-er7-session + batch priority; the proxy's own build detection routes a discrete multi-unit task to buildCodeTask); the datefmt run through the door (below)
+- falsifying control: a loom that calls an eoreader7 organ directly instead of the /v1/ask doorway (or /v1/code), skipping the proxy's routing, contradicts this.
+
+### GL-WV-08 — The draw is typed, never silent; an absent model is a named gap
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: eoreader7/native/organs/code-build.js draw() now returns a typed error instead of swallowing to ""; measured: the engine's default model qwen2.5-coder:1.5b is NOT installed on this box (/api/show → "model 'qwen2.5-coder:1.5b' not found"), and every default /v1/build drew from nothing while the swallow made it look like a prompting failure; the loom's engine default is now gemma2:2b (the resident mouth that draws)
+- falsifying control: a draw error reaching a build as empty text, or a build written UNVERIFIED from zero units, contradicts this (GL-RT-03: never a silent stop).
+
+### GL-WV-09 — Kleeneup's law at the extractor: keep the WHOLE unit (GL-EN-09)
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: eoreader7/native/organs/code-build.js extractUnit replaced the line-boundary chunk split with a string/comment-aware brace walk to the matching close; measured: a draw that emits BOTH functions truncated each at the other's head under the old split (both units cut to `function …(…) {`), and the brace walk recovered both complete; the gate then ran real cases
+- falsifying control: a unit kept truncated at a line boundary where the full brace-balanced body was available contradicts this; an extractor that re-derives by text what a structural walk decides is the exact pattern this supersedes.
+
+### GL-WV-10 — Thea paces the box: admission is a typed 429 with retry-after, never spun
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: /v1/code refused with "every server is busy — the least wait is ~67s on local … Heimdall holds the turn; retry in 67s" while the box ran the house's own concurrent generations (pythia, serve herds); Heimdall refused rather than jam (the 12s promise vs a measured 67s wait, typed and deferred)
+- falsifying control: a caller that hammers past retry-after, or starts a loop it does not see to REC (cutting the HTTP client mid-loop while the server keeps running, holding the box for the full deadline), contradicts this. A loop you abandon still occupies the box.
+
+## engine — the muses, and thea's remedy
+
+### GL-WV-11 — The Muses are the nine operators; Mnemosyne is the record; Thea holds the light
+- pipeline: law
+- status: appointed (Glauca's mnemonic — the house's nine operators, not a measurement)
+- supersedes: —
+- evidence: the cube's nine (NUL SIG INS / SEG CON SYN / DEF EVA REC, organs/cube.mjs) turned as the Muses of generation, daughters of Memory (Mnemosyne = the EOT/ledger they all issue from), their aunt Thea (Titaness of sight, thea.js) the clear eye that turns a finding into a remedy; the helix turns them three times (weave.mjs, GL-CB-02)
+- falsifying control: treating the correspondence as a measured claim rather than an appointed mnemonic contradicts the standing (the house never presents a mythic map as evidence).
+
+### GL-WV-12 — The gate is the verdict; the remedy is the bounded loop, never a one-shot re-run
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: the datefmt build drew both units whole (GL-WV-09) and the gate caught ONE real behavioral gap — fmtDuration(0) got "" want "0s" (a plausible function, wrong at zero); the one-shot build could not repair, so the remedy is /v1/code (code-loop.js: the model proposes READ/PATCH, the edit op is derived MECHANICALLY from the bytes, the real testCommand gates, and on failure the file is REVERTED to pre-round bytes and the grounded failure folds into the next round — bounded by maxRounds, disclosed, never silent)
+- falsifying control: a gate failure repaired by re-running the whole build (rather than the reverted, grounded, bounded loop), or a fix applied without the real test deciding, contradicts this.
+
+## The lesson, in the archons' own order
+
+Gary shapes the ask (facts, not prohibitions; the head is the anchor). The Muses
+do their nine in order — SEG cuts, INS seeds, SYN assembles, EVA judges. Kleeneup
+keeps each unit whole. Thea sees the failure in clear light and paces the remedy.
+Heimdall guards the box: a typed refusal over a jam, a held turn over a wedge.
+Hora sets each unit down whole before the next. Lovelace computes the structure
+and lets the test decide. Bayes measures competence, never assumes it. And
+Mnemosyne — the record — is where every draw, every scar, every remedy lands,
+so the next weave starts from what this one learned.
