@@ -360,6 +360,21 @@ append-only, always revisable).
 <!-- tapestry:end -->
 
 ## Weave — the single generation operation
+## Provenance is foldable EOT
+
+Weave provenance is itself an artifact that can travel through the pipeline as EOT. It is not a repeated citation blob.
+
+- `Provenance@2` has a deduplicated source table plus compact transformation events.
+- Events carry stable foreign keys, optional byte anchors, parent lineage, and a transformation label.
+- An `ibid` event points to an existing provenance event instead of copying its source/material payload. This is the provenance equivalent of IBID.
+- Re-admitting provenance can therefore fold the lineage forward: the new artifact records **what happened to prior material**, not the same source over and over.
+- Priors are explicit provenance stages, including constraints, verification requirements, adapter/domain priors, and other grounded assumptions supplied to the weave.
+- Grounding distinguishes corpus/autofill and hunt material from model-drawn material.
+- Draws, sharpened retries, folds, verification, repair, and materialization are separate transformation stages.
+- Stable foreign keys and byte addresses are the preferred compact anchors. Reconciliation can later resolve or merge identities without rewriting every downstream event.
+
+The invariant is: **anything that materially influences the artifact must have a traceable lineage, while repeated identity/payload is represented by reference rather than duplication.**
+
 
 Penelope has one public artifact-generation operation: **Weave**.
 
