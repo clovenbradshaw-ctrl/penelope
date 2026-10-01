@@ -121,6 +121,14 @@ async function fillUnits(units, adapter, ctx = {}) {
       if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
     }
 
+    // Model-free diagnostics stop at the real mouth boundary. No draw is made.
+    if (ctx.noModel === true) {
+      const source = addSource({ kind: "draw", locator: { adapter: adapter.kind, unit: u.name, mode: "model-free" } });
+      ledger.event({ stage: "model-required", source_id: source, parent: unitSource, unit: u.name, transform: "field+hunt-exhausted", detail: { modelDraws: 0 } });
+      scars.push({ unit: u.name, why: "model-required", stage: "mouth", spec: u.spec });
+      continue;
+    }
+
     let attempt = 0;
     let atom = u.spec;
     while (attempt < 4) {
