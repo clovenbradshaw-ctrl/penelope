@@ -211,6 +211,26 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(score()));
       return;
     }
+    // THE UNIFIED ARTIFACT API. Raw model draws remain at /api/generate;
+    // this endpoint runs the full intent→adapter→verification lifecycle.
+    if (req.method === "POST" && u.pathname === "/api/generation") {
+      let body = "";
+      for await (const c of req) body += c;
+      const j = JSON.parse(body || "{}");
+      const { generate } = await import("../organs/generation/api.mjs");
+      const result = await generate({
+        intent: j.intent,
+        artifact: j.artifact,
+        constraints: j.constraints,
+        context: j.context,
+        verification: j.verification,
+        model: j.model,
+        output: j.output,
+      }).catch((e) => ({ schema: "GenerationResult@1", ok: false, status: "error", error: String(e?.message ?? e).slice(0, 500) }));
+      res.writeHead(result.ok ? 200 : 422, { "content-type": "application/json" });
+      res.end(JSON.stringify(result));
+      return;
+    }
     // THE GENERATION DOOR (2026-10-01, "all generation related to eoreader7
     // runs through Penelope"): the seam eoreader7's own engine draws route
     // through (streamOllamaChat → this door, ER7_GENERATION_DOOR). The door
