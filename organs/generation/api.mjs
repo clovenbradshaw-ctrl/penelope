@@ -38,7 +38,7 @@ async function loadBuiltins() {
 function normalizeArtifact(result, kind) {
   return {
     kind,
-    value: result.html ?? result.code ?? result.result?.code ?? result.result?.html ?? null,
+    value: result.code ?? result.html ?? result.result?.code ?? result.result?.html ?? null,
   };
 }
 
@@ -82,6 +82,7 @@ export async function generate({
   const result = await arrange({
     task,
     args,
+    context: ctx,
     adapter: {
       ...adapter,
       readUnits: (t) => adapter.readUnits(t, ctx),
