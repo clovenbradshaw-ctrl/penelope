@@ -1498,3 +1498,39 @@ so the next weave starts from what this one learned.
   (provenance source "mouth" for a category shape), a box-computed unit whose
   body fails its own golden cases, or a category that the medium leaks (a
   python ask routed through the js anchor/extractor) contradicts this.
+
+# Addendum J — the reading door (2026-10-01)
+
+// The holodeck (a surface, a fold) calls eoreader7's POST /v1/read to read each
+// added document — khora perceives, model-free. The chase found the door
+// missing (404 "no such route"; never existed, absent from git history), so the
+// holodeck's reading half was down. The door is now wired: the constitutional
+// reader (legacy host) over { name, text } → EORead@1 ground, the mouth never
+// consulted. Reading and generation now both flow through the holodeck's
+// composition without regressions.
+
+## door — the reading door, khora perceives
+
+### GL-RR-06 — The reading door: POST /v1/read — khora perceives, model-free, the mouth never consulted
+- pipeline: door + engine
+- status: standing
+- supersedes: —
+- evidence: eoreader7/proxy.mjs (POST /v1/read — the constitutional reader,
+  legacy host: createSession → admitChunked → sessionReferents, imported
+  lazily; { name, text } → EORead@1 with referents [{surfaces, routes, grain}],
+  gaps, basis naming the assembly and the stages run / not run per S1/P2/P3);
+  measured 2026-10-01: "test-klaus.txt" read in 20ms — referents Fischer,
+  Vienna, Continuum, Care, Dr, Marsh, Tuesday, the README's measured defects
+  reproduced verbatim ("Continuum of Care" split at "of"; "Tuesday" admitted);
+  gaps honest (no_abbreviation_prior_for_language — bin/priors/lang/en.json
+  absent, engine floor used and disclosed; pronoun resolution gaps). The
+  holodeck surface accepts the response (schema EORead@1, the exact shape
+  hdEngineRead checks) and treats the referents as a witness beside its own
+  finder, never a replacement. Generation unchanged: the toCamelCase/
+  toSnakeCase weave still computes both units in the box — draws 0, mouthCalls
+  0, boxBytes 512, verified true, gate 10/10 — zero regressions from the seam
+  fixes (GL-BD-09/10/11/12, GL-RR-04/05).
+- falsifying control: a read that consults the mouth, a read response without
+  the assembly + stages-named basis (S1/P2), or a generation weave that
+  regresses (a category drawn from the mouth, a gate not run) after the
+  reading door lands, contradicts this.
