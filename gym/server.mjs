@@ -211,24 +211,37 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(score()));
       return;
     }
-    // THE UNIFIED ARTIFACT API. Raw model draws remain at /api/generate;
-    // this endpoint runs the full intent→adapter→verification lifecycle.
-    if (req.method === "POST" && u.pathname === "/api/generation") {
+    // THE WEAVE DOOR — Penelope's one public generation operation.
+    // Text, code, application, and future artifact kinds all enter here.
+    // Raw model draws remain below at /api/generate; they are a primitive,
+    // not a competing generation API.
+    if (req.method === "POST" && u.pathname === "/api/weave") {
       let body = "";
       for await (const c of req) body += c;
       const j = JSON.parse(body || "{}");
-      const { generate } = await import("../organs/generation/api.mjs");
-      const result = await generate({
-        intent: j.intent,
-        artifact: j.artifact,
-        constraints: j.constraints,
-        context: j.context,
-        verification: j.verification,
-        model: j.model,
-        output: j.output,
-      }).catch((e) => ({ schema: "GenerationResult@1", ok: false, status: "error", error: String(e?.message ?? e).slice(0, 500) }));
-      res.writeHead(result.ok ? 200 : 422, { "content-type": "application/json" });
-      res.end(JSON.stringify(result));
+      // Artifact generation uses the canonical lifecycle. The legacy build
+      // loom is retained only for its banked/measurement-specific routes.
+      if (j.intent || j.artifact) {
+        const { weave } = await import("../organs/generation/api.mjs");
+        const result = await weave({
+          intent: j.intent,
+          artifact: j.artifact,
+          constraints: j.constraints,
+          context: j.context,
+          verification: j.verification,
+          model: j.model,
+          output: j.output,
+        }).catch((e) => ({ schema: "GenerationResult@1", ok: false, status: "error", error: String(e?.message ?? e).slice(0, 500) }));
+        res.writeHead(result.ok ? 200 : 422, { "content-type": "application/json" });
+        res.end(JSON.stringify(result));
+        return;
+      }
+      // Legacy specialized weave classes remain reachable without creating
+      // another public generation surface.
+      const { runWeave } = await import("./weave-build.mjs");
+      const w = await runWeave({ ask: j.ask, testCommand: j.testCommand, out: j.out, banked: j.class, model: j.model, html: j.html, sel: j.sel, image: j.image });
+      res.writeHead(w.ok ? 200 : 400, { "content-type": "application/json" });
+      res.end(JSON.stringify(w));
       return;
     }
     // THE GENERATION DOOR (2026-10-01, "all generation related to eoreader7
@@ -247,21 +260,7 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(r));
       return;
     }
-    // The build loom's door: Penelope orchestrates, eoreader7 engines.
-    // POST /api/weave {ask?, testCommand?, out?, class?} — banked classes
-    // verify from the library (0 draws); new classes go through eoreader7's
-    // /v1/build (the engine plans, draws, assembles; the testCommand gates).
-    if (req.method === "POST" && u.pathname === "/api/weave") {
-      let body = "";
-      for await (const c of req) body += c;
-      const { runWeave } = await import("./weave-build.mjs");
-      const j = JSON.parse(body || "{}");
-      const w = await runWeave({ ask: j.ask, testCommand: j.testCommand, out: j.out, banked: j.class, model: j.model, html: j.html, sel: j.sel, image: j.image }).catch((e) => ({ ok: false, error: e.message }));
-      res.writeHead(w.ok ? 200 : 400, { "content-type": "application/json" });
-      res.end(JSON.stringify(w));
-      return;
-    }
-    // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
+    // Specialized weave routing is handled inside the canonical /api/weave door above.\n    // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
     // 2026-10-01), so a browser cannot fetch it cross-origin — the loom fetches
     // at home and the browser reads the hunt through the door. Bounded retry on
     // 429, then the typed status — never a silent stop (GL-RT-03).
