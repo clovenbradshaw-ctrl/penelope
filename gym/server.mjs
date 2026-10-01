@@ -16,17 +16,45 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const EXP = "/var/folders/ck/tztwm60n4s9dxwrjfwlsmz3m0000gn/T/opencode/launch-exp";
-const OLLAMA = "http://localhost:11434";
+const PROXY = "http://127.0.0.1:11436"; // Heimdall admission lives here; no direct model URL remains
 const LOG = path.join(HERE, "ladder-live.jsonl");
 
+// All draws route through Heimdall admission (the proxy's shared mouth),
+// never ollama direct: x-er7-session gives Penelope her own profile,
+// x-er7-priority: batch queues her behind interactive. 429/503 +
+// Retry-After are honored with bounded backoff, then a typed refusal —
+// never a silent stop, never a wedge.
+const er7model = (m) => (String(m).startsWith("er7:") ? m : `er7:${m}`);
+
 async function draw(model, prompt, num_predict = 260) {
-  const r = await fetch(`${OLLAMA}/api/generate`, {
-    method: "POST", headers: { "content-type": "application/json" },
-    body: JSON.stringify({ model, prompt, stream: false, options: { num_predict, temperature: 0 } }),
-    signal: AbortSignal.timeout(150000),
+  const body = JSON.stringify({
+    model: er7model(model), stream: false, max_tokens: num_predict, temperature: 0,
+    messages: [{ role: "user", content: prompt }],
   });
-  const j = await r.json();
-  return j.response ?? "";
+  let last = null;
+  for (let a = 0; a < 3; a += 1) {
+    const r = await fetch(`${PROXY}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-er7-session": "penelope-gym",
+        "x-er7-priority": "batch",
+      },
+      body,
+      signal: AbortSignal.timeout(150000),
+    });
+    if (r.status === 429 || r.status === 503) {
+      last = r.status;
+      const wait = Math.min(60000, (Number(r.headers.get("retry-after")) || 20) * 1000);
+      await new Promise((res) => setTimeout(res, wait));
+      continue;
+    }
+    const j = await r.json();
+    const text = j.choices?.[0]?.message?.content ?? j.answer ?? "";
+    if (text) return text;
+    throw new Error(`heimdall-ok-but-empty (status ${r.status})`);
+  }
+  throw new Error(`heimdall-refused (${last}) after bounded backoff — named gap, retry later`);
 }
 const snipJs = (t) => String(t ?? "").replace(/```[a-z]*/gi, "").trim();
 function loadJs(src, names) {
