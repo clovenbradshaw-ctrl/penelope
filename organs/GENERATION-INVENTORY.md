@@ -15,6 +15,9 @@ copied — copying them would fork their kernel dependencies and rot.
 | `detail-fetch.mjs` | born here (R9–R10) | penelope founding | no imports |
 | `behavior-check.mjs` | born here (R11) | penelope founding | no imports |
 | `freshness.mjs` | born here (R12) | penelope founding | no imports |
+| `window.mjs` | born here (council weave) | penelope 2026-10-01 | no imports — next-N dated records + countdown, any dated feed |
+| `agenda-shape.mjs` | born here (council weave) | penelope 2026-10-01 | no imports — ordered action lists, own sequence, declared actions |
+| `cube.mjs` | copy of `eoreader7/native/kernel/cube.js` + THE-27-CELLS.md | cube.js 6a11c1d (2026-09-17) | no imports; the coordinate system the tapestry is woven on (selftest 15 checks) |
 
 ## Referenced (coupled — read at source, do not copy)
 

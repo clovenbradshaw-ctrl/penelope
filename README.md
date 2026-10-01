@@ -76,8 +76,8 @@ append-only, always revisable).
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ⊞  │ | ∩⊞                │ → ≈⊞                │ △ ∪⊞                │  ║
 ║  │    │ ■SNP ■DOR ·TER      │ ■FLD ■DTF ■ADM ·NET │ ■SEL ■EOT ■BLD ■ASK │  ║
-║  │    │                     │                     │ ■TAP ■LIB □TKB □BPG │  ║
-║  │    │                     │                     │ ·HOR ·LFL ·SWT      │  ║
+║  │    │                     │ ■WND ■AGD           │ ■TAP ■LIB □TKB □BPG │  ║
+║  │    │                     │                     │ ·HOR ·LFL ·SWT ■CCL │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ∀  │ = ∩∀                │ ⊨ ≈∀                │ ↬ ∪∀                │  ║
 ║  │    │ ■STL ■CUB ■LAW ■GLA │ ■PRB ■TST ■CGT ■BHC │ ■SPR ■BOX ·RSM ·DEM │  ║
@@ -94,7 +94,8 @@ append-only, always revisable).
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ⊞  │ ⊞∘                  │ ⊞◆                  │ ⊞◈                  │  ║
 ║  │    │ ■DOR ■ADM ■LIB      │ ■FLD ■SNP ■EOT ■DTF │ ■SEL ■BLD ■ASK ■TAP │  ║
-║  │    │                     │ □TKB ·HOR ·SWT      │ □BPG ·LFL ·TER ·NET │  ║
+║  │    │                     │ □TKB ·HOR ·SWT ■WND │ □BPG ·LFL ·TER ·NET │  ║
+║  │    │                     │ ■AGD                │ ■CCL                │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ∀  │ ∀∘                  │ ∀◆                  │ ∀◈                  │  ║
 ║  │    │ ■FRS ·RSM ·APO      │ ■STL ■PRB ■SPR ■TST │ ■CGT ■CUB ■LDR ■BOX │  ║
@@ -112,12 +113,13 @@ append-only, always revisable).
 ║  │    │ ■VDF ■FRS ■ADM ·APO │ ■FLD ■PRB ■TST ■DTF │ ■CGT ■LDR ■NBK ·ANS │  ║
 ║  │    │                     │ ■BHC □LOK ·KOE ·RUT │ ·CRV ·KIN ·NET      │  ║
 ║  │    │                     │ ·GAR ·MAR ·VIS ·SCR │                     │  ║
-║  │    │                     │ ·POL                │                     │  ║
+║  │    │                     │ ·POL ■WND ■AGD      │                     │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ∪  │ ∪∘                  │ ∪◆                  │ ∪◈                  │  ║
 ║  │    │ ■HNT ■LIB ·RSM      │ ■RDU ■MTH ■SPR ■EOT │ ■SEL ■BOX ■BLD ■ASK │  ║
 ║  │    │                     │ ■CHT □TKB ·HOR ·SWT │ ■ADC ■ADP ■TAP □CDB │  ║
 ║  │    │                     │                     │ □BPG ·PAG ·DEM ·LFL │  ║
+║  │    │                     │                     │ ■CCL                │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ╠═[ ↑ ↓ ]════════════════════════════════════════════════════════════════════╣
 ║ ↑ 4  ■NLB∅∘ ■CUB=◈ ■LDR⊨◈ ■BOX↬◈ ■LAW=◈ ■GLA=◈ ■TAP△◈ ■LIB△∘ ·DEM↬◈        ║
@@ -125,7 +127,8 @@ append-only, always revisable).
 ║ │ 3  ■CHT●◆ ■BLD△◈ ■NBK⊨◈ ■DOR|∘ ■ASK△◈ ■ADM→∘ ·PAG●◈ ·LFL△◈ ·TER|◈        ║
 ║ │    ·APO⊨∘                                                                ║
 ║ │ 2  ■TST⊨◆ ■SEL△◈ ■EOT△◆ ■CGT⊨◈ ■DTF→◆ ■BHC⊨◆ ■FRS⊨∘ □CDB●◈ □BPG△◈        ║
-║ │    ·RSM↬∘ ·GAT=◈ ·RUT⊨◆ ·VIS⊨◆ ·ANS⊨◈ ·CRV⊨◈ ·SWT△◆                      ║
+║ │    ·RSM↬∘ ·GAT=◈ ·RUT⊨◆ ·VIS⊨◆ ·ANS⊨◈ ·CRV⊨◈ ·SWT△◆ ■WND→◆ ■AGD→◆        ║
+║ │    ■CCL△◈                                                                ║
 ║ │ 1  ■VDF○∘ ■RDU●◆ ■STL=◆ ■FLD→◆ ■HNT●∘ ■SNP|◆ ■PRB⊨◆ ■GAP∅◆ ■ADC●◈        ║
 ║ │    ■ADP●◈ □TKB△◆ □LOK○◆ ·HOR△◆ ·KOE○◆ ·MAR⊨◆ ·SCR○◆ ·POL⊨◆ ·KIN○◈        ║
 ║ │    ·NET→◈                                                                ║
@@ -197,7 +200,8 @@ append-only, always revisable).
 ║■NBK 3 ⊨◈ ‡ book                                                            ║
 ║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
 ║■DOR 3 |∘ ‡ door                                                            ║
-║     @ g/server.mjs GL-RT-01 GL-RT-04                                       ║
+║     @ g/server.mjs GL-RT-01 GL-RT-04 /api/chat-stream /api/rung /api/score ║
+║     @ /api/asks /api/ask /api/answer /chat /api/chat                       ║
 ║■ASK 3 △◈ ‡ ask-back                                                        ║
 ║     @ g/server.mjs g/asks.jsonl g/chat.html GL-BD-08                       ║
 ║■ADM 3 →∘ ‡ admit                                                           ║
@@ -290,6 +294,15 @@ append-only, always revisable).
 ║·NET 1 →◈ ‡ weave                                                           ║
 ║     @ FOLD/network.js                                                      ║
 ║     arrangement recurs ∧ ¬bound ⇒✗                                         ║
+║                                                                            ║
+║■ ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║■WND 2 →◆ ‡ window                                                          ║
+║     @ o/window.mjs GL-WV-02 GL-LD-06                                       ║
+║■AGD 2 →◆ ‡ agenda                                                          ║
+║     @ o/agenda-shape.mjs GL-WV-03 GL-OG-04                                 ║
+║■CCL 2 △◈ ‡ council                                                         ║
+║     @ a/council.html a/council-control.html a/council-facing.html          ║
+║     @ a/council-record.json g/probe-council.mjs GL-WV-01                   ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ```

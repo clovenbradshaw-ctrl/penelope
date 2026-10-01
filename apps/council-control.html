@@ -1,0 +1,68 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Council Watch — control (list only, no search, no hero)</title>
+<style>
+body{font:15px system-ui,sans-serif;margin:0;background:#141014;color:#e5e7eb}
+header{padding:14px 16px}header h1{font-size:18px;margin:0}header .sub{color:#9ca3af;font-size:12px;margin-top:2px}
+#meta,#stale{padding:0 16px 8px;color:#9ca3af;font-size:13px}#stale{color:#fbbf24}
+#gap{display:none;margin:16px;padding:12px;border:1px solid #b45309;background:#451a03;border-radius:8px}
+ol#meetings{list-style:none;margin:0;padding:0 16px 24px;max-width:720px}
+ol#meetings li{padding:10px 4px;border-bottom:1px solid #1f2937}
+ol#meetings .cd{font-variant-numeric:tabular-nums;color:#fbbf24;font-weight:700}
+ol#meetings .body{font-weight:600;margin-top:2px}ol#meetings .sub{color:#9ca3af;font-size:13px;margin-top:2px}
+</style></head><body>
+<header><h1>Council Watch — control</h1><div class="sub">Same feed, same window, same countdown. No search, no hero, no agenda fanout — layout differs only.</div></header>
+<div id="meta">Loading…</div>
+<div id="stale"></div>
+<div id="gap" role="alert"></div>
+<ol id="meetings"></ol>
+<script id="factors">
+function fmtCd(ms,now){const d=ms-now;if(d<0)return 'T+'+fmtDur(-d);return 'T-'+fmtDur(d);}
+function fmtDur(abs){if(abs<60000)return'00d 00h 00m 00s';const p=n=>String(n).padStart(2,'0');const s=Math.floor(abs/1000);return p(Math.floor(s/86400))+'d '+p(Math.floor(s%86400/3600))+'h '+p(Math.floor(s%3600/60))+'m '+p(s%60)+'s';}
+function minutesOf(t){const s=String(t||'').trim();if(!s)return null;const m12=s.match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);if(m12){let h=Number(m12[1])%12;if(/^P/i.test(m12[3]))h+=12;return h*60+Number(m12[2]);}const m24=s.match(/^(\d{1,2}):(\d{2})$/);if(!m24)return null;const h=Number(m24[1]);return h>23?null:h*60+Number(m24[2]);}
+function toEpoch(dateStr,timeStr){const d=new Date(dateStr);if(isNaN(d.getTime()))return null;const m=minutesOf(timeStr);return m==null?d.getTime()+12*3600000:d.getTime()+m*60000;}
+function upcoming(now,meetings,n){const rows=[],gaps=[];for(let i=0;i<(meetings||[]).length;i+=1){const at=toEpoch(meetings[i].date,meetings[i].time);if(at==null){gaps.push(i);continue;}if(at<now)continue;rows.push({rec:meetings[i],at,cd:fmtCd(at,now)});}rows.sort((a,b)=>a.at-b.at);return{rows:rows.slice(0,n),gaps,total:rows.length};}
+function freshLabel(fetchedAt,now,ttl){const a=now-fetchedAt;if(!(a>=0))return{state:'unknown',badge:'time unknown'};if(a<=ttl)return{state:'fresh',badge:'updated '+Math.floor(a/1000)+'s ago'};if(a<=3*ttl)return{state:'stale',badge:'stale — last good '+new Date(fetchedAt).toUTCString()};return{state:'expired',badge:'data expired — refresh failed (named gap)'};}
+</script>
+<script id="wiring">
+const N=8,TOP=12,TTL=300000,API='https://webapi.legistar.com/v1/nashville/';
+let meetings=[],fetchedAt=0;
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const FEED=()=>API+'Events?$filter=EventDate ge datetime\''+today()+'T00:00:00\'&$orderby=EventDate&$top='+TOP;
+function showGap(m){const g=document.getElementById('gap');g.style.display='block';g.textContent='No council data: '+m+' (named gap — no meetings invented.)';}
+function hideGap(){document.getElementById('gap').style.display='none';}
+async function fetchRetry(url,tries){let last=null;for(let a=0;a<tries;a+=1){const r=await fetch(url);last=r;if(r.status!==429)return r;const wait=Math.min(10000,(Number(r.headers.get('Retry-After'))||2)*1000);await new Promise(res=>setTimeout(res,wait));}return last;}
+function renderList(){
+  const ol=document.getElementById('meetings');ol.innerHTML='';
+  for(const {rec:m,at,cd} of upcoming(Date.now(),meetings,N).rows){
+    const li=document.createElement('li');
+    const c=document.createElement('div');c.className='cd';c.dataset.at=at;c.textContent=cd;
+    const b=document.createElement('div');b.className='body';b.textContent=m.body;
+    const s=document.createElement('div');s.className='sub';
+    s.textContent=[m.date.replace('T00:00:00','')+' '+m.time,m.loc,m.status?('agenda '+m.status):''].filter(Boolean).join(' — ');
+    li.append(c,b,s);
+    ol.append(li);
+  }
+}
+function tick(){
+  document.querySelectorAll('[data-at]').forEach(el=>{el.textContent=fmtCd(Number(el.dataset.at),Date.now());});
+  if(!fetchedAt)return;
+  const l=freshLabel(fetchedAt,Date.now(),TTL);
+  document.getElementById('stale').textContent=l.state==='fresh'?'':l.badge;
+  if(l.state==='expired'){document.getElementById('meetings').innerHTML='';showGap(l.badge);}
+}
+async function load(){
+  hideGap();
+  document.getElementById('meta').textContent='Loading council feed…';
+  const r=await fetchRetry(FEED(),3);if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  if(!Array.isArray(j)||!j.length)throw new Error('feed returned zero results');
+  meetings=j.map(x=>({id:x.EventId,body:x.EventBodyName||'Unnamed body',date:x.EventDate||'',time:x.EventTime||null,loc:x.EventLocation||'',status:x.EventAgendaStatusName||null}));
+  fetchedAt=Date.now();hideGap();
+  document.getElementById('meta').textContent=meetings.length+' upcoming meetings, soonest first';
+  renderList();
+}
+setInterval(tick,1000);
+setInterval(()=>load().catch(e=>{const l=freshLabel(fetchedAt||0,Date.now(),TTL);document.getElementById('stale').textContent=l.badge;}),TTL);
+load().catch(e=>{document.getElementById('meta').textContent='Feed unreachable.';showGap(String(e.message||e).slice(0,160));});
+</script></body></html>

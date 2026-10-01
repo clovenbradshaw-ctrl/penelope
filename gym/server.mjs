@@ -270,9 +270,9 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({ ...row, score: score() }));
       return;
     }
-    // static: launch-exp first, then chat-sys dir
+    // static: launch-exp first, then the woven apps, then the gym dir
     const rel = decodeURIComponent(u.pathname).replace(/^\/+/, "").replace(/\.\./g, "");
-    for (const base of [EXP, HERE]) {
+    for (const base of [EXP, path.join(HERE, "..", "apps"), HERE]) {
       const fp = path.join(base, rel || "index.html");
       if (fs.existsSync(fp) && fs.statSync(fp).isFile()) {
         res.writeHead(200, { "content-type": MIME[path.extname(fp)] ?? "application/octet-stream" });

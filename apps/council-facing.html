@@ -1,0 +1,66 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Council Watch — facing page (the seal)</title>
+<style>
+body{font:15px/1.55 Georgia,serif;margin:0;background:#f6f1e7;color:#2b2118}
+main{max-width:720px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:22px}h2{font-size:16px;margin-top:28px;border-bottom:1px solid #cbbfa8;padding-bottom:4px}
+code{font:12px ui-monospace,Menlo,monospace;background:#efe8d8;padding:1px 5px;border-radius:4px}
+.kv{font:13px ui-monospace,Menlo,monospace}.kv div{margin:2px 0}
+.ok{color:#1a6b3c;font-weight:700}.gap{color:#a34a17;font-weight:700}
+table{border-collapse:collapse;font:13px ui-monospace,Menlo,monospace}td,th{border:1px solid #cbbfa8;padding:5px 9px;text-align:left}
+th{background:#efe8d8}a{color:#1f4e79}
+</style></head><body>
+<main>
+<h1>Council Watch — the seal</h1>
+<p>The second weave on Penelope's loom. First weave: launches (LL2 feed, rung-proven R13). This weave: the Metro Council — meetings soonest first, each agenda in its own declared order — from the house's own Legistar machinery (<code>legistar-surveillance-scanner</code>), <b>zero mouth calls</b>. The window and the agenda are new organs, selftested, box-owned.</p>
+
+<h2>What it shows</h2>
+<ul>
+<li><a href="council.html">council.html</a> — the app: next 8 meetings soonest-first, countdown tick, agenda per meeting (tap to load, ordered by the item's own sequence), search across titles/files/actions, named gaps, freshness badge.</li>
+<li><a href="council-control.html">council-control.html</a> — the control: same feed, same window, same countdown; no search, no hero, no agenda fanout. Layout differs only.</li>
+<li><a href="council-record.json">council-record.json</a> — the record (EOT-shaped).</li>
+</ul>
+
+<h2>Feed (the hunt's address)</h2>
+<div class="kv">
+<div>events: <code>https://webapi.legistar.com/v1/nashville/Events?$filter=EventDate ge datetime'{today}'&amp;$orderby=EventDate&amp;$top=12</code></div>
+<div>items:  <code>https://webapi.legistar.com/v1/nashville/Events/{id}/EventItems</code></div>
+<div>paths:  <code>EventId · EventBodyName · EventDate · EventTime · EventLocation · EventAgendaStatusName · EventInSiteURL</code></div>
+<div>items:  <code>EventItemAgendaSequence · EventItemAgendaNumber · EventItemTitle · EventItemMatterFile · EventItemMatterType · EventItemActionName</code></div>
+</div>
+
+<h2>Organs grown by this weave (the loom parts)</h2>
+<table>
+<tr><th>organ</th><th>schema</th><th>selftest</th><th>what it owns</th></tr>
+<tr><td>organs/window.mjs</td><td>Window@1</td><td class="ok">12/12</td><td>next-N dated records → soonest-first + countdown (any feed: launches, court dates, evictions)</td></tr>
+<tr><td>organs/agenda-shape.mjs</td><td>AgendaShape@1</td><td class="ok">4/4</td><td>an agenda is an ordered action list — own sequence, declared actions, per-item gaps</td></tr>
+<tr><td>detail-fetch.mjs</td><td>DetailFetch@1</td><td class="ok">4/4</td><td>bounded-concurrency fanout, per-item gaps (items hop)</td></tr>
+<tr><td>freshness.mjs</td><td>Freshness@1</td><td class="ok">4/4</td><td>fresh / stale / expired — expired is a named gap, never silent old rows</td></tr>
+<tr><td>behavior-check.mjs</td><td>BehaviorCheck@1</td><td class="ok">3/3</td><td>factors exist, are pure, pass declared cases — a control without a factor fails</td></tr>
+</table>
+
+<h2>The zero-mouth proof</h2>
+<div class="kv">
+<div>mouth calls in this artifact: <span class="ok">0</span> (box-owned window, agenda, sort, gaps, render)</div>
+<div>models: none asked. Every string traces to live Legistar bytes or box arithmetic.</div>
+<div>next time: the council shape class is box-owned — a "show me council meetings" ask autofills from the library and the organs; no draw.</div>
+</div>
+
+<h2>Gap discipline (probe)</h2>
+<div class="kv">
+<div>fetch-fail / zero-results → named <span class="gap">#gap</span>, never invented meetings</div>
+<div>a meeting with no parseable date → gapped index, feed survives</div>
+<div>an agenda item with no title / no sequence → gapped item, agenda survives</div>
+<div>expired data → rows cleared, named gap, never silent old rows</div>
+</div>
+
+<h2>Provenance</h2>
+<div class="kv">
+<div>feed bytes: <code>webapi.legistar.com/v1/nashville</code> (live, 2026-10-01)</div>
+<div>house data line: <code>3.0/legistar-surveillance-scanner</code> (matters.jsonl, 8,439 matters) — the same API, already fetched by the house</div>
+<div>organs: <code>organs/window.mjs</code>, <code>organs/agenda-shape.mjs</code> (born this weave, GL-WV-02/03)</div>
+<div>record: <code>apps/council-record.json</code> · EOT: <code>GLAUCA-EOT.md</code> Addendum C · swatch: <code>gym/swatch.jsonl</code> row 1</div>
+</div>
+</main>
+</body></html>

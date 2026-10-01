@@ -13,16 +13,16 @@
   "LP/": "../live_priors/",
   "FOLD/": "../the-fold/"
  },
- "spine": "VDF \u203a RDU \u203a STL \u203a ( FLD \u2228 HNT \u2228 MTH ) \u203a SNP \u203a PRB \u21ba SPR \u203a TST \u203a SEL \u203a EOT",
+ "spine": "VDF › RDU › STL › ( FLD ∨ HNT ∨ MTH ) › SNP › PRB ↺ SPR › TST › SEL › EOT",
  "threads": [
   {
    "id": "VDF",
    "name": "void",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "SIG",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/engine.mjs",
     "E7/organs/void-holarchy.js",
@@ -33,11 +33,11 @@
   {
    "id": "RDU",
    "name": "read",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "INS",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-10"
@@ -46,11 +46,11 @@
   {
    "id": "STL",
    "name": "settle",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "DEF",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/adapters/code.mjs",
     "GL-EN-08"
@@ -59,11 +59,11 @@
   {
    "id": "FLD",
    "name": "field",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "CON",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-02",
@@ -73,11 +73,11 @@
   {
    "id": "HNT",
    "name": "hunt",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "INS",
    "grain": "Ground",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-04"
@@ -86,11 +86,11 @@
   {
    "id": "MTH",
    "name": "mouth",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 0,
    "op": "INS",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-05",
@@ -100,11 +100,11 @@
   {
    "id": "SNP",
    "name": "snip",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "SEG",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/adapters/code.mjs",
     "GL-EN-09",
@@ -114,11 +114,11 @@
   {
    "id": "PRB",
    "name": "probe",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-07"
@@ -127,11 +127,11 @@
   {
    "id": "SPR",
    "name": "spiral",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 0,
    "op": "REC",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-EN-06",
@@ -141,11 +141,11 @@
   {
    "id": "GAP",
    "name": "gap",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "NUL",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "GL-BD-02",
     "GL-OG-04"
@@ -154,11 +154,11 @@
   {
    "id": "TST",
    "name": "test",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-BD-01",
@@ -168,11 +168,11 @@
   {
    "id": "SEL",
    "name": "seal",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "a/launch-facing.html",
     "a/record.json",
@@ -183,11 +183,11 @@
   {
    "id": "EOT",
    "name": "record",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "SYN",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
     "GL-00",
@@ -197,11 +197,11 @@
   {
    "id": "CGT",
    "name": "gate",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "EVA",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/consensus-gate.mjs",
     "GL-OG-02",
@@ -212,11 +212,11 @@
   {
    "id": "NLB",
    "name": "null",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "NUL",
    "grain": "Ground",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "o/consensus-gate.mjs",
     "E7/organs/measure.js",
@@ -227,11 +227,11 @@
   {
    "id": "DTF",
    "name": "detail",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "CON",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/detail-fetch.mjs",
     "GL-OG-04"
@@ -240,11 +240,11 @@
   {
    "id": "BHC",
    "name": "behave",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/behavior-check.mjs",
     "GL-OG-05",
@@ -254,11 +254,11 @@
   {
    "id": "FRS",
    "name": "fresh",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 2,
    "op": "EVA",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/freshness.mjs",
     "GL-OG-06"
@@ -267,11 +267,11 @@
   {
    "id": "CUB",
    "name": "cube",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "DEF",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/cube.mjs",
     "E7/kernel/cube.js",
@@ -281,11 +281,11 @@
   {
    "id": "LDR",
    "name": "ladder",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "EVA",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "l/r1-r8.json",
     "l/r9-r13.json",
@@ -297,11 +297,11 @@
   {
    "id": "BOX",
    "name": "box",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "REC",
    "grain": "Pattern",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "l/mouth-last.json",
     "l/nomouth-rows.txt",
@@ -313,11 +313,11 @@
   {
    "id": "CHT",
    "name": "chat",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "INS",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "g/server.mjs",
     "g/chat.html",
@@ -328,11 +328,11 @@
   {
    "id": "BLD",
    "name": "build",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "LOOMS.md",
     "GL-BD-03"
@@ -341,11 +341,11 @@
   {
    "id": "NBK",
    "name": "book",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "EVA",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "g/to-notebook.mjs",
     "penelope-notebook.ipynb",
@@ -355,25 +355,33 @@
   {
    "id": "DOR",
    "name": "door",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "SEG",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "g/server.mjs",
     "GL-RT-01",
-    "GL-RT-04"
+    "GL-RT-04",
+    "/api/chat-stream",
+    "/api/rung",
+    "/api/score",
+    "/api/asks",
+    "/api/ask",
+    "/api/answer",
+    "/chat",
+    "/api/chat"
    ]
   },
   {
    "id": "ASK",
    "name": "ask-back",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "g/server.mjs",
     "g/asks.jsonl",
@@ -384,11 +392,11 @@
   {
    "id": "ADM",
    "name": "admit",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 3,
    "op": "CON",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "g/server.mjs",
     "ER7/heimdall.mjs",
@@ -399,11 +407,11 @@
   {
    "id": "ADC",
    "name": "code",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "INS",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/adapters/code.mjs",
     "GL-EN-01"
@@ -412,11 +420,11 @@
   {
    "id": "ADP",
    "name": "prose",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 1,
    "op": "INS",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/adapters/prose.mjs",
     "GL-EN-11"
@@ -425,11 +433,11 @@
   {
    "id": "LAW",
    "name": "law",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "DEF",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "README.md",
     "GL-00",
@@ -440,11 +448,11 @@
   {
    "id": "GLA",
    "name": "owl",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "DEF",
    "grain": "Pattern",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "GLAUCA-EOT.md",
     "GL-TP-01"
@@ -453,11 +461,11 @@
   {
    "id": "TAP",
    "name": "loom",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "TAPESTRY.md",
     "g/tapestry.spec.json",
@@ -471,11 +479,11 @@
   {
    "id": "LIB",
    "name": "library",
-   "st": "\u25a0",
+   "st": "■",
    "lvl": 4,
    "op": "SYN",
    "grain": "Ground",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "LP/derived-priors",
     "o/GENERATION-INVENTORY.md",
@@ -485,11 +493,11 @@
   {
    "id": "CDB",
    "name": "fan",
-   "st": "\u25a1",
+   "st": "□",
    "lvl": 2,
    "op": "INS",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/code-build.js",
     "GL-CD-07"
@@ -498,11 +506,11 @@
   {
    "id": "TKB",
    "name": "talk",
-   "st": "\u25a1",
+   "st": "□",
    "lvl": 1,
    "op": "SYN",
    "grain": "Figure",
-   "typing": "\u00a7",
+   "typing": "§",
    "refs": [
     "E7/organs/talk-build.js",
     "GL-PS-01"
@@ -511,11 +519,11 @@
   {
    "id": "BPG",
    "name": "render",
-   "st": "\u25a1",
+   "st": "□",
    "lvl": 2,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/adapters/build/belief-page.js",
     "E7/adapters/build/music-medium.js"
@@ -524,11 +532,11 @@
   {
    "id": "LOK",
    "name": "look",
-   "st": "\u25a1",
+   "st": "□",
    "lvl": 1,
    "op": "SIG",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/look.js",
     "GL-IM-01"
@@ -537,181 +545,181 @@
   {
    "id": "HOR",
    "name": "set-down",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "SYN",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/hora.js",
     "ER7/CODING-LESSONS.md",
     "GL-EN-14"
    ],
-   "ctl": "\u22a8u \u2261 \u22a8W"
+   "ctl": "⊨u ≡ ⊨W"
   },
   {
    "id": "RSM",
    "name": "resume",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "REC",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/kernel/artifact.js",
     "E7/docs/THE-LOG-IS-THE-MEMORY.md",
     "GL-EN-14"
    ],
-   "ctl": "resume \u2260 run \u2228 \u0394d \u2265 0"
+   "ctl": "resume ≠ run ∨ Δd ≥ 0"
   },
   {
    "id": "KOE",
    "name": "pointer",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "SIG",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/output-holograph.js",
     "GL-EN-14"
    ],
-   "ctl": "\u25cfu \u2260 self \u2228 \u25c6u \u2209 addr"
+   "ctl": "●u ≠ self ∨ ◆u ∉ addr"
   },
   {
    "id": "GAT",
    "name": "gates",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "DEF",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/the-fold/spiral-contract.js",
     "GL-EN-15"
    ],
-   "ctl": "\u2193\u2717 \u2227 \u00acrevise \u2228 \u221erevise"
+   "ctl": "↓✗ ∧ ¬revise ∨ ∞revise"
   },
   {
    "id": "RUT",
    "name": "show",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/build-check.js",
     "ER7/ONE-PIPELINE.md"
    ],
-   "ctl": "send\u2205key \u22a8 ok \u2228 always ok"
+   "ctl": "send∅key ⊨ ok ∨ always ok"
   },
   {
    "id": "PAG",
    "name": "create",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 3,
    "op": "INS",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/hora.js",
     "LOOMS.md",
     "GL-BD-03"
    ],
-   "ctl": "bare(size\u2191) flat"
+   "ctl": "bare(size↑) flat"
   },
   {
    "id": "DEM",
    "name": "policy",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 4,
    "op": "REC",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/coding-policy.js",
     "E7/organs/coding-policy-trial.js"
    ],
-   "ctl": "twin \u2261 held"
+   "ctl": "twin ≡ held"
   },
   {
    "id": "LFL",
    "name": "ledger",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 3,
    "op": "SYN",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/long-form.js",
     "GL-PS-08"
    ],
-   "ctl": "window \u2264 ledger"
+   "ctl": "window ≤ ledger"
   },
   {
    "id": "TER",
    "name": "tree",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 3,
    "op": "SEG",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/territory.js",
     "GL-PS-09"
    ],
-   "ctl": "\u00acgain>0 \u2227 homogeneous \u00acsplit"
+   "ctl": "¬gain>0 ∧ homogeneous ¬split"
   },
   {
    "id": "GAR",
    "name": "fact",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 0,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/gary.js",
     "GL-CD-05"
    ],
-   "ctl": "fact-rewrite pass\u2193"
+   "ctl": "fact-rewrite pass↓"
   },
   {
    "id": "MAR",
    "name": "copy",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/martial.js"
    ],
-   "ctl": "distinct \u2209 finding \u2228 generic \u2208 finding"
+   "ctl": "distinct ∉ finding ∨ generic ∈ finding"
   },
   {
    "id": "VIS",
    "name": "eye",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "SP/organs/visual-pathos.js",
     "SP/organs/visual-hierarchy.js"
    ],
-   "ctl": "textless \u2208 contrast \u2228 flat \u2208 pass"
+   "ctl": "textless ∈ contrast ∨ flat ∈ pass"
   },
   {
    "id": "SCR",
    "name": "pixel",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "SIG",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "SP/docs/SCREENSHOT-PIPELINE.md",
     "GL-IM-03"
@@ -721,110 +729,155 @@
   {
    "id": "APO",
    "name": "pulse",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 3,
    "op": "EVA",
    "grain": "Ground",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/organs/apollo.js",
     "E7/organs/thea.js"
    ],
-   "ctl": "steady alarm \u2228 hang \u00acalarm"
+   "ctl": "steady alarm ∨ hang ¬alarm"
   },
   {
    "id": "ANS",
    "name": "answer",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "EVA",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "ER7/CODING-LESSONS.md",
     "GL-PS-06"
    ],
-   "ctl": "linked \u2227 \u00acanswers \u2227 sealed"
+   "ctl": "linked ∧ ¬answers ∧ sealed"
   },
   {
    "id": "POL",
    "name": "polar",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "EVA",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "ER7/CODING-LESSONS.md",
     "GL-PS-05"
    ],
-   "ctl": "negation \u2228 swap \u2228 numword links"
+   "ctl": "negation ∨ swap ∨ numword links"
   },
   {
    "id": "CRV",
    "name": "curve",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "EVA",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "SP/organs/visual-pathos.js"
    ],
-   "ctl": "\u00acmeasured \u2227 verdict"
+   "ctl": "¬measured ∧ verdict"
   },
   {
    "id": "SWT",
    "name": "swatch",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 2,
    "op": "SYN",
    "grain": "Figure",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "o/generation/engine.mjs"
    ],
-   "ctl": "\u2211swatch \u2260 \u2211{\u2261 \u21bb \u25cf}"
+   "ctl": "∑swatch ≠ ∑{≡ ↻ ●}"
   },
   {
    "id": "KIN",
    "name": "kind",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "SIG",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/kernel/kind-induction.js"
    ],
-   "ctl": "induced \u00acbeat null"
+   "ctl": "induced ¬beat null"
   },
   {
    "id": "KNL",
    "name": "null",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 4,
    "op": "NUL",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "E7/kernel/entity-kind-induction.js",
     "GL-LD-07"
    ],
-   "ctl": "promote(count) \u2261 promote(null)"
+   "ctl": "promote(count) ≡ promote(null)"
   },
   {
    "id": "NET",
    "name": "weave",
-   "st": "\u00b7",
+   "st": "·",
    "lvl": 1,
    "op": "CON",
    "grain": "Pattern",
-   "typing": "\u2021",
+   "typing": "‡",
    "refs": [
     "FOLD/network.js"
    ],
-   "ctl": "arrangement recurs \u2227 \u00acbound"
+   "ctl": "arrangement recurs ∧ ¬bound"
+  },
+  {
+   "id": "WND",
+   "name": "window",
+   "st": "■",
+   "lvl": 2,
+   "op": "CON",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "o/window.mjs",
+    "GL-WV-02",
+    "GL-LD-06"
+   ]
+  },
+  {
+   "id": "AGD",
+   "name": "agenda",
+   "st": "■",
+   "lvl": 2,
+   "op": "CON",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "o/agenda-shape.mjs",
+    "GL-WV-03",
+    "GL-OG-04"
+   ]
+  },
+  {
+   "id": "CCL",
+   "name": "council",
+   "st": "■",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "a/council.html",
+    "a/council-control.html",
+    "a/council-facing.html",
+    "a/council-record.json",
+    "g/probe-council.mjs",
+    "GL-WV-01"
+   ]
   }
  ]
 }

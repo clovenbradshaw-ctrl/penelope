@@ -1060,3 +1060,65 @@ probability of the low), and per holon level in the ↑ ↓ rows.
 The loom is allowed to stop and ask instead of fabricating. Every ask and
 answer is on the record (gym/asks.jsonl + ladder-live.jsonl), so the
 clarification is itself evidence, never a hidden steering.
+
+# Addendum C — the second weave: Council Watch (2026-10-01)
+
+// Woven by this session, on the record. First weave: launches (LL2 feed,
+// rung-proven R13, box-owned shapes). Second weave: the Metro Council —
+// meetings soonest-first, each agenda in its own declared order — from the
+// house's own Legistar machinery (webapi.legistar.com/v1/nashville, the same
+// API legistar-surveillance-scanner fetched 8,439 matters from). Zero mouth
+// calls. The two new organs generalize the launch loom's box shapes so the
+// NEXT dated-feed weave (court dates, evictions, hearings) starts from the
+// library, not from nothing.
+
+## build — the second weave
+
+### GL-WV-01 — Council Watch: the second weave, zero mouth calls
+- pipeline: build
+- status: standing
+- supersedes: —
+- evidence: apps/council.html + apps/council-control.html + apps/council-facing.html + apps/council-record.json (all box-written); gym/probe-council.mjs (live probe 2026-10-01: 8 meetings windowed, 3 agendas shaped, sort + own-sequence verified on live bytes); the mouth was never asked — no model URL, no draw, in any file
+- falsifying control: any council-class build that needs a mouth call contradicts this — the shape class is box-owned; a future council ask must autofill from the library (organs + feed spec), not re-draw.
+
+The weave: live feed (Events, OData window) → bounded fanout (EventItems) →
+window (Window@1) → agenda (AgendaShape@1) → render with search, countdown
+tick, freshness badge, named gaps. The control ships beside it (same feed,
+same window, same countdown; no search/hero/agenda — layout differs only).
+The seal is artifact + control + facing + record.
+
+### GL-WV-02 — The window organ: every dated feed gets the same next-N soonest + countdown
+- pipeline: organs
+- status: standing
+- supersedes: —
+- evidence: organs/window.mjs (Window@1, selftest 12/12 — the launch loom's box-owned countdown, generalized: minutesOf 12h/24h, toEpoch with noon default disclosed, cdLabel T-/+ with zero-pad, window next-N soonest with per-record gaps); ladder/mouth-last.json (countdown: mouth failed, box owns — GL-LD-02/06)
+- falsifying control: a dated feed that gets different window semantics than this organ (a second countdown implementation, a hardcoded date path) contradicts this; a record with an unparseable date that is invented rather than gapped contradicts it.
+
+### GL-WV-03 — The agenda organ: an agenda is an ordered action list
+- pipeline: organs
+- status: standing
+- supersedes: —
+- evidence: organs/agenda-shape.mjs (AgendaShape@1, selftest 4/4 — the item's OWN declared sequence orders the agenda, never the fetch's arrival order; declared actions ride through (null until the body acts); per-item gaps named); apps/council-record.json (probe: 2201 items ordered by EventItemAgendaSequence, first seq 8 = E2. 26-162 Appointment)
+- falsifying control: an agenda rendered in fetch order where the item's own sequence was available contradicts this; an item whose title or sequence is missing but is shown without a named gap contradicts it.
+
+## engine — the keeper, verified
+
+### GL-WV-04 — The keeper grew: the picture resolves its own addresses and cross-checks its citations
+- pipeline: engine
+- status: standing (observed at ship — the keeper was rebuilt by the concurrent hand; this entry records the verification)
+- supersedes: —
+- evidence: gym/check-tapestry.mjs (spec-driven: resolve() maps the spec's prefixes (o/=organs/ … FOLD/=../the-fold/) so every ref resolves to a real path, siblings skipped honestly; refProblems() cross-checks every GL id the cloth cites against GLAUCA-EOT.md's entries — GL-TP-02's falsifier "a referenced file or EOT entry that does not exist" is now mechanical; coverProblems() flags an organ named by no thread; inspect() proves TAPESTRY.md === weave(spec, legend) and the unweave is lossless; watched() excludes runtime artifacts (server.log, spec, legend); selftest constructs each violation, GL-QA-01)
+- falsifying control: a commit that adds or re-routes a process while check-tapestry passes on a stale picture contradicts this — the keeper must fire; a GL id the cloth cites that has no entry must fail the check.
+
+## law — the swatch, first row
+
+### GL-WV-05 — The swatch is measured, not asserted: the economy of the weave, on the record
+- pipeline: law
+- status: standing (row 1: the council weave, 0 mouth bytes)
+- supersedes: —
+- evidence: gym/swatch.jsonl row 1 (Swatch@1: weave=council, mouthCalls=0, mouthBytes=0, artifactsBytes+N, derived from the EOT trail — GL-WV-01's provenance is 0 draws); the tapestry's SWT thread carries the falsifier: ∑swatch ≠ ∑{≡ ↻ ●} ⇒✗
+- falsifying control: a weave whose swatch sum disagrees with its EOT provenance (a draw recorded in one and not the other) contradicts this; a box-owned class with mouth bytes > 0 contradicts it.
+
+The swatch is the picture's economy: beauty as a measured number. Every
+future weave appends a row; the mouth's share is what it is — never asserted,
+always summed from the record.
