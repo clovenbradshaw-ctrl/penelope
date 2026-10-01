@@ -8,6 +8,33 @@ The autonomous app pipeline: a user describes an app in plain words, and
 the system remembers (library), derives (box), gets (hunt), and asks the
 local mouth only for what none of those can say — usually nothing.
 
+## Public generation API
+
+All artifact generation should enter through Penelope's artifact-neutral API.
+The current public HTTP contract is `POST /api/generation`:
+
+```json
+{
+  "intent": "Describe the thing to produce",
+  "artifact": "code",
+  "constraints": {},
+  "context": {},
+  "verification": {},
+  "model": "gemma2:2b",
+  "output": null
+}
+```
+
+The response is `GenerationResult@1`: artifact bytes, materialization,
+verification verdict, provenance/EOT evidence, and repair scars. The built-in
+adapters currently include `code` and `prose`. Registering a new adapter adds
+a medium without creating a second orchestration engine. Unsupported media are
+returned as explicit gaps; Penelope does not guess an adapter.
+
+The lower-level `POST /api/generate` remains the raw draw door. It is not the
+artifact-generation API. Existing `POST /api/weave` remains the specialized
+build/classification workflow while its migration is staged.
+
 ## The tapestry — how generation works now
 
 Kept true by `node gym/check-tapestry.mjs` (source: [TAPESTRY.md](TAPESTRY.md);
