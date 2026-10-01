@@ -15,7 +15,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const EXP = "/var/folders/ck/tztwm60n4s9dxwrjfwlsmz3m0000gn/T/opencode/launch-exp";
+const EXP = path.join(HERE, "..", "apps"); // serve the repo's own apps (single source of truth)
 const PROXY = "http://127.0.0.1:11436"; // Heimdall admission lives here; no direct model URL remains
 const LOG = path.join(HERE, "ladder-live.jsonl");
 
@@ -155,6 +155,50 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && u.pathname === "/api/score") {
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify(score()));
+      return;
+    }
+    if (req.method === "POST" && u.pathname === "/api/chat-stream") {
+      // SSE live tokens. Direct ollama, measured 2026-10-01: both proxy
+      // streaming doors hang (code 000, 90s, zero bytes — /v1/chat/completions
+      // and /api/chat); non-stream heimdall works but shows nothing until the
+      // whole draw lands. The stream is the chat loom now; /api/chat keeps the
+      // heimdall-routed non-stream path. Every chat is logged either way.
+      let body = "";
+      for await (const c of req) body += c;
+      const { prompt, model } = JSON.parse(body || "{}");
+      res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache", connection: "keep-alive" });
+      const flush = (o) => res.write(`data: ${JSON.stringify(o)}\n\n`);
+      let full = "";
+      try {
+        const r = await fetch(`${OLLAMA}/api/generate`, {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ model: model ?? "gemma2:2b", prompt: String(prompt ?? ""), stream: true, options: { temperature: 0 } }),
+          signal: AbortSignal.timeout(240000),
+        });
+        if (!r.ok || !r.body) throw new Error("draw failed HTTP " + r.status);
+        const reader = r.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let nl;
+          while ((nl = buf.indexOf("\n")) >= 0) {
+            const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
+            if (!line.trim()) continue;
+            let j;
+            try { j = JSON.parse(line); } catch { continue; }
+            const tok = j.response ?? "";
+            if (tok) { full += tok; flush({ t: tok }); }
+            if (j.done) { flush({ done: true }); break; }
+          }
+        }
+      } catch (e) {
+        flush({ err: String(e.message ?? e).slice(0, 200) });
+      }
+      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", stream: true, model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200), text: full.slice(0, 400) }) + "\n");
+      res.end();
       return;
     }
     if (req.method === "POST" && (u.pathname === "/api/chat" || u.pathname === "/api/rung")) {

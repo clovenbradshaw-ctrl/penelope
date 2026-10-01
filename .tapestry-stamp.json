@@ -1,0 +1,24 @@
+{
+  "schema": "TapestryStamp@1",
+  "woven": "2026-10-01",
+  "files": {
+    "LOOMS.md": "eef9dab8b184a44d97e7b5423280423d263d1d8ccccc5af3a143fc80ae150b00",
+    "apps/record.json": "87230a0693e7231f516dcda8642d7fbe832df64140dc540a64d1242262aa24c0",
+    "gym/chat.html": "3a0fd841b926f0daf8a1c2d07a264de1044a8f74d611a7033446f6117a3338e9",
+    "gym/server.mjs": "9d0e98a5694f362e64f776184e7be345e1887ef0e3d62c37a3b3211d1ff93962",
+    "gym/to-notebook.mjs": "2a1acaf5b37ac008b86ed2c174bd1ccf79372a8f6c569acb87941721f6165380",
+    "ladder/mouth-last.json": "4f2a0ab2d1ab6d335386162f9b8ecf6a2478e7156e00996e2b19a6d1668f7cc7",
+    "ladder/nomouth-rows.txt": "4d0270b912a9730bfd4c3e54fca56976235950293295191e07f3c46a4741255d",
+    "ladder/r1-r8.json": "ad65ed13f884aa3ef7880fe3933ef29cff77b87e1e771c8c3930dfa7c812bf0f",
+    "ladder/r9-r13-record.json": "2c8f2172ef0f18f2f405c16f925cb7e3b640b4a8957dea4d4558d9fdd40da8ce",
+    "ladder/r9-r13.json": "4889709b9f69efd8f574f0eb00246c8a774bad3d41c031c3277fe624983b0a7d",
+    "organs/GENERATION-INVENTORY.md": "262c37073db2fc6954c4249562724516ba16f25400a2185045bd7e7a490d935d",
+    "organs/behavior-check.mjs": "721c44786655667ac9cfc68215e9d05c1cf5e519de81f30c5236274d624e7958",
+    "organs/consensus-gate.mjs": "092ce89298fe3a41d9dba5a8a2d4b17da536f87c8f7e36d8d9b32930d14a2503",
+    "organs/detail-fetch.mjs": "cd1fd912d4d207129933f5ec5d3368a2e12482375c8182141030e9695dc5cc77",
+    "organs/freshness.mjs": "ae7629f48cac2d2ff0aaa188294e1f7cb62e83effe9586f2f2056654e05220f7",
+    "organs/generation/adapters/code.mjs": "e4aaeae96af2d74c9f96fc740c18a0baec4e301490064fa7d3cb7dd9d19e6fdc",
+    "organs/generation/adapters/prose.mjs": "dc62ccd32ace14e89240660ed8562b3d1a9245f483bbaa5a771fd8bfd9ef8f33",
+    "organs/generation/engine.mjs": "e5a02c863aea4d5ab583eda63f0ed19c0037c42af95e65ddab124fbfa652a4be"
+  }
+}
