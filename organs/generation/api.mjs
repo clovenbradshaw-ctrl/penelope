@@ -116,7 +116,12 @@ export async function weave({
       verdict: result.verdict ?? null,
     },
     evidence: {
-      provenance: result.provenance ?? [],
+      provenance: result.provenance ?? {
+        schema: "Provenance@1",
+        sources: [],
+        refs: [],
+        addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" },
+      },
       eot: result.eot ?? null,
     },
     repair: {
