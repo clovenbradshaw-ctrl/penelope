@@ -1122,3 +1122,28 @@ The seal is artifact + control + facing + record.
 The swatch is the picture's economy: beauty as a measured number. Every
 future weave appends a row; the mouth's share is what it is — never asserted,
 always summed from the record.
+
+### GL-LD-08 — CSS-scene composition is a library/box shape, not a mouth draw (fishing build)
+- pipeline: ladder
+- status: standing
+- supersedes: —
+- evidence: measured 2026-10-01, fishing-animation build (fish2 + fish3), 9
+  code-loop rounds + 1 direct draw: gemma2:2b (the loop's mouth) replaced the
+  anchor but drew a pure-black gradient div, duplicated `<body>`, produced no
+  water keyword in any round, then drifted to a nonexistent `solution.py`
+  path (unlocated, refused); deepseek-r1:8b returned an empty draw (700
+  tokens counted, zero response — its standing empty-under-load quirk). The
+  per-behavior gate decomposition (scene/man/fish/motion, GL-CD-01) is sound
+  and the loop addressed app.html correctly once decomposed; only the
+  composition content walls. Cross-check: the same box that computes fmtAgo
+  and the zero-mouth feed list owns layout templates in live_priors
+  (layout-priors).
+- falsifying control: a single gemma2:2b or deepseek-r1:8b draw that composes
+  a recognizable water+fish+man CSS scene would reopen the shape to the
+  mouth; a run that asks the mouth for this shape again without that new
+  evidence contradicts this.
+
+The man-fishing animation is a LIBRARY/BOX shape (a scene template in
+layout-priors, rendered mechanically — the remembered layer), not a
+residue for the mouth. The build fished; the catch is a measured wall and
+its named next rung: seed the scene template, render it, mouth last.
