@@ -59,6 +59,8 @@ export function parseArgs(argv) {
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
 export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch" } = {}) {
+  // Explicit model-free mode: never substitute the configured default model.
+  if (model === null) return "";
   // Every model draw enters Penelope's draw door. The engine remains the
   // orchestrator; admission/routing belongs to the door, not this engine.
   const { runDrawDoor } = await import("../generation-door.mjs");
