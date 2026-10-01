@@ -16,25 +16,37 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const EXP = path.join(HERE, "..", "apps"); // serve the repo's own apps (single source of truth)
-const PROXY = "http://127.0.0.1:11436"; // Heimdall admission lives here; no direct model URL remains
+const PROXY = "http://127.0.0.1:11436"; // the proxy door (chat + build admission)
+const CHANNEL = "http://127.0.0.1:11434"; // Heimdall's channel — one door for servers, held not bounced
 const LOG = path.join(HERE, "ladder-live.jsonl");
 
-// All draws route through Heimdall admission (the proxy's shared mouth),
-// never ollama direct: x-er7-session gives Penelope her own profile,
-// x-er7-priority: batch queues her behind interactive. 429/503 +
+// ONE IDENTITY, ALL DOORS (2026-10-01, "all generation related to eoreader7
+// runs through Penelope"): every door Penelope speaks through — the gym chat,
+// the rung probes, the stream, the weave build, the generation door — carries
+// the same person key, so Heimdall's queue holds ONE place for her (one app,
+// one place in line — the house rule), and the kind header feeds the box's
+// fair-share round robin: chat/probe/stream/build rotate by measured service,
+// never by arrival alone. The channel keys a headerless call by its resolved
+// server; Penelope declares herself instead.
+const ID = { "x-er7-user": "penelope", "x-er7-caller": "penelope-gym" };
+
+// All draws route through Heimdall admission (the proxy's shared mouth or the
+// channel), never ollama direct: x-er7-user gives Penelope her one place in
+// line, x-er7-priority queues batch behind interactive work. 429/503 +
 // Retry-After are honored with bounded backoff, then a typed refusal —
 // never a silent stop, never a wedge.
 const er7model = (m) => (String(m).startsWith("er7:") ? m : `er7:${m}`);
 
-// Two routes, by evidence (2026-10-01):
-// - chat goes through Heimdall admission (shared mouth er7:gemma2:2b).
-// - code draws go DIRECT to ollama. Measured reason: the chat doors'
-//   hard-meaning auto-route swallows code prompts whole and returns a
-//   swarm verdict instead of a draw ("Hard meaning (truncated_end)…",
-//   logged). This matches house precedent (code-build.js and the
-//   arrangement engine both draw direct). Consolidation falsified for
-//   code draws — disclosed, not hidden.
-const OLLAMA = "http://localhost:11434";
+// Two routes, by evidence (2026-10-01, updated from the 2026-10-01 original):
+// - chat goes through the proxy door (heimdall admission, shared mouth).
+// - code draws go through the CHANNEL (heimdall's held door). Measured reason:
+//   the chat doors' hard-meaning auto-route swallows code prompts whole and
+//   returns a swarm verdict instead of a draw ("Hard meaning (truncated_end)…",
+//   logged); the channel holds a batch caller on the socket instead of
+//   bouncing it, and the streaming doors on the proxy hang (code 000, 90s,
+//   zero bytes). This matches house precedent (code-build.js and the
+//   arrangement engine both draw through the channel). Consolidation
+//   falsified for code draws — disclosed, not hidden.
 
 // The hunt's fetch, bounded: honor 429 + Retry-After with backoff, then hand
 // back the last status — the door reports what the feed said (GL-RT-03).
@@ -50,7 +62,11 @@ async function fetchRetryLegistar(url, tries) {
   return last;
 }
 
-async function drawChat(prompt) {
+// The channel's own rule, reused, never invented: a PAGE on this box is a
+// person at a page — interactive, so it gets a person's place in line and
+// the on-device substitute ladder; anything else is a server — batch.
+const pageOrigin = (o) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(String(o ?? ""));
+async function drawChat(prompt, { interactive = false } = {}) {
   const body = JSON.stringify({
     model: "er7:gemma2:2b", stream: false, temperature: 0,
     messages: [{ role: "user", content: prompt }],
@@ -61,8 +77,9 @@ async function drawChat(prompt) {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-er7-session": "penelope-gym",
-        "x-er7-priority": "batch",
+        ...ID,
+        "x-er7-priority": interactive ? "interactive" : "batch",
+        "x-er7-kind": "chat",
       },
       body,
       signal: AbortSignal.timeout(150000),
@@ -82,13 +99,24 @@ async function drawChat(prompt) {
 }
 
 async function draw(model, prompt, num_predict = 260) {
-  const r = await fetch(`${OLLAMA}/api/generate`, {
-    method: "POST", headers: { "content-type": "application/json" },
-    body: JSON.stringify({ model, prompt, stream: false, options: { num_predict, temperature: 0 } }),
-    signal: AbortSignal.timeout(150000),
-  });
-  const j = await r.json();
-  return j.response ?? "";
+  let last = null;
+  for (let a = 0; a < 3; a += 1) {
+    const r = await fetch(`${CHANNEL}/api/generate`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...ID, "x-er7-priority": "batch", "x-er7-kind": "probe" },
+      body: JSON.stringify({ model, prompt, stream: false, options: { num_predict, temperature: 0 } }),
+      signal: AbortSignal.timeout(150000),
+    });
+    if (r.status === 429 || r.status === 503) {
+      last = r.status;
+      const wait = Math.min(60000, (Number(r.headers.get("retry-after")) || 20) * 1000);
+      await new Promise((res) => setTimeout(res, wait));
+      continue;
+    }
+    const j = await r.json();
+    return j.response ?? "";
+  }
+  throw new Error(`heimdall-refused (${last}) after bounded backoff — named gap, retry later`);
 }
 // The chat door talks (prose around code); raw generate didn't. So the
 // snip extracts function-shaped spans instead of loading whole text.
@@ -183,6 +211,22 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify(score()));
       return;
     }
+    // THE GENERATION DOOR (2026-10-01, "all generation related to eoreader7
+    // runs through Penelope"): the seam eoreader7's own engine draws route
+    // through (streamOllamaChat → this door, ER7_GENERATION_DOOR). The door
+    // checks the box (organs), draws only the residue through Heimdall's
+    // channel with Penelope's one identity + the draw's kind, and records
+    // every draw on the swatch — the economy is measured, never asserted.
+    if (req.method === "POST" && u.pathname === "/api/generate") {
+      let body = "";
+      for await (const c of req) body += c;
+      const { runDrawDoor } = await import("../organs/generation-door.mjs");
+      const j = JSON.parse(body || "{}");
+      const r = await runDrawDoor(j).catch((e) => ({ ok: false, error: String(e?.message ?? e).slice(0, 300) }));
+      res.writeHead(r.ok ? 200 : 502, { "content-type": "application/json" });
+      res.end(JSON.stringify(r));
+      return;
+    }
     // The build loom's door: Penelope orchestrates, eoreader7 engines.
     // POST /api/weave {ask?, testCommand?, out?, class?} — banked classes
     // verify from the library (0 draws); new classes go through eoreader7's
@@ -247,11 +291,10 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (req.method === "POST" && u.pathname === "/api/chat-stream") {
-      // SSE live tokens. Direct ollama, measured 2026-10-01: both proxy
-      // streaming doors hang (code 000, 90s, zero bytes — /v1/chat/completions
-      // and /api/chat); non-stream heimdall works but shows nothing until the
-      // whole draw lands. The stream is the chat loom now; /api/chat keeps the
-      // heimdall-routed non-stream path. Every chat is logged either way.
+      // SSE live tokens. Through the CHANNEL (heimdall's held door), measured
+      // 2026-10-01: both proxy streaming doors hang (code 000, 90s, zero
+      // bytes — /v1/chat/completions and /api/chat); the channel streams the
+      // ollama wire fine. Every chat is logged either way.
       let body = "";
       for await (const c of req) body += c;
       const { prompt, model } = JSON.parse(body || "{}");
@@ -259,8 +302,9 @@ const server = http.createServer(async (req, res) => {
       const flush = (o) => res.write(`data: ${JSON.stringify(o)}\n\n`);
       let full = "";
       try {
-        const r = await fetch(`${OLLAMA}/api/generate`, {
-          method: "POST", headers: { "content-type": "application/json" },
+        const r = await fetch(`${CHANNEL}/api/generate`, {
+          method: "POST",
+          headers: { "content-type": "application/json", ...ID, "x-er7-priority": "interactive", "x-er7-kind": "stream" },
           body: JSON.stringify({ model: model ?? "gemma2:2b", prompt: String(prompt ?? ""), stream: true, options: { temperature: 0 } }),
           signal: AbortSignal.timeout(240000),
         });
@@ -295,7 +339,7 @@ const server = http.createServer(async (req, res) => {
       for await (const c of req) body += c;
       const { prompt, task, model } = JSON.parse(body || "{}");
       if (u.pathname === "/api/chat") {
-        const text = await drawChat(String(prompt ?? ""));
+        const text = await drawChat(String(prompt ?? ""), { interactive: pageOrigin(req.headers.origin) });
         fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "chat", model: model ?? "gemma2:2b", prompt: String(prompt).slice(0, 200) }) + "\n");
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ text }));

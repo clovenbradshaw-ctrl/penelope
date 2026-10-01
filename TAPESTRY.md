@@ -189,12 +189,14 @@
 ║■NBK 3 ±Ω ‡ book                                                            ║
 ║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
 ║■DOR 3 |◦ ‡ door                                                            ║
-║     @ g/server.mjs GL-RT-01 GL-RT-04 /api/chat-stream /api/rung /api/score ║
-║     @ /api/asks /api/ask /api/answer /chat /api/chat                       ║
+║     @ g/server.mjs organs/generation-door.mjs GL-RT-01 GL-RT-04            ║
+║     @ /api/chat-stream /api/rung /api/score /api/asks /api/ask /api/answer ║
+║     @ /chat /api/chat /api/generate                                        ║
 ║■ASK 3 ◊Ω ‡ ask-back                                                        ║
 ║     @ g/server.mjs g/asks.jsonl g/chat.html GL-BD-08                       ║
 ║■ADM 3 →◦ ‡ admit                                                           ║
-║     @ g/server.mjs ER7/heimdall.mjs GL-CH-03 GL-RT-03                      ║
+║     @ g/server.mjs ER7/heimdall.mjs organs/generation-door.mjs GL-CH-03    ║
+║     @ GL-RT-03                                                             ║
 ║■ADC 1 ●Ω ‡ code                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
 ║■ADP 1 ●Ω ‡ prose                                                           ║

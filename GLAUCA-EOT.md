@@ -1265,3 +1265,40 @@ so the next weave starts from what this one learned.
 - supersedes: — (renumbered from GL-WV-14 2026-10-01, id corrected in place, disclosed)
 - evidence: gym/weave-build.mjs seal() (writes apps/weaves/<slug>-facing.html: [S#] SOURCES @ permanent address · bytes, RESPONSE = the artifact/fragment/code, NOTES = route·cell·mouthCalls·verdict·standing·falsifier); the council/feed run's SOURCES = the legistar feed via the gym door; the snip run's SOURCES = the html byte span; the image run's SOURCES = the image + OCR standing (GL-IM-01)
 - falsifying control: a run whose facing page hides the mouthCalls, or whose RESPONSE carries a claim with no SOURCES entry, contradicts this — the holograph is the ledger of its own making (GL-00, GL-BD-04).
+
+# Addendum F — the generation door and the round-robin (2026-10-01)
+
+// The operator's direction: "heimdall work with penelope to vastly improve our
+// ability to round robin different requests fairly and efficiently" and "all
+// generation related to eoreader7 will run through Penelope." Two seams land:
+// (1) EVERY door Penelope speaks through now carries ONE identity
+// (x-er7-user: penelope) and a request kind, so Heimdall's queue holds one
+// place for her and rotates kinds by measured service; (2) eoreader7's own
+// draws route through Penelope's generation door (organs/generation-door.mjs,
+// mounted at /api/generate), which checks the box first and draws only the
+// residue through Heimdall's channel — every draw on the swatch.
+
+## door — the generation door and the one identity
+
+### GL-RR-01 — All of Penelope's doors share one identity and declare their kind; Heimdall round-robins the kinds fairly
+- pipeline: door
+- status: standing
+- supersedes: — (the 2026-10-01 "two routes" note in gym/server.mjs is superseded in place, disclosed)
+- evidence: gym/server.mjs (ID = { x-er7-user: penelope, x-er7-caller: penelope-gym } on drawChat / draw / chat-stream; kinds: chat interactive-if-page (the channel's own pageOrigin rule, reused), stream interactive, probe batch, build batch in gym/weave-build.mjs HDRS); eoreader7/heimdall.mjs kindOf() closed vocabulary + laneCmp (lane → kind pressure → last-served) + kindServed/kindTurnMs EWMAs + kind-aware ETA (queueOf); tests/heimdall-queue.test.mjs 9/9 incl. KIND FAIR-SHARE (a kind served more yields to a kind served less) and KIND FALLBACK; verified live on a test port: /heimdall disclosure shows kinds.served {chat:1} after one admitted kind-chat turn
+- falsifying control: a call from any Penelope door that does not carry x-er7-user: penelope, or a queue where a served-more kind still leads over a served-less kind, breaks this.
+
+### GL-RR-02 — The generation door: eoreader7's draws run through Penelope; the box checks first, the mouth draws the residue through Heimdall's channel, and every draw lands on the swatch
+- pipeline: organs + door
+- status: standing
+- supersedes: —
+- evidence: organs/generation-door.mjs runDrawDoor() (box first — today a named gap, "no organ holds a raw-draw shape"; mouth draws through the channel with ID + x-er7-kind + the turn's re-entry hop; keepAliveS holds residency across a long turn; bounded defer on 429/503; every draw + every refusal lands on gym/swatch.jsonl, schema Swatch@1); eoreader7/proxy-runner.mjs streamOllamaChat door branch (ER7_GENERATION_DOOR, default the penelope door; gate first, door second, output guard still holds the door's text; a door that is UNREACHABLE is a named finding and the draw falls through to the direct host path — the box stays alive, never a silent bypass; a door that is UP but refuses is a typed throw, never a retry storm); live run 2026-10-01: POST /api/generate {prompt:"Say the single word: DONE", kind:"probe", hop:1} → {ok:true, text:"DONE", winner:"mouth", ms:897} with the swatch row "draw:probe" recorded
+- falsifying control: a draw that bypasses the door without the draw_door_unreachable note, a swatch row whose verdict does not match the winner, or a door that answers a draw the box already holds — any of these breaks this.
+
+## engine — the heimdall side (the fair share and the spread)
+
+### GL-RR-03 — Heimdall's queue is kind-fair and its ETA is kind-measured; the host picker spreads within one measured load cost; the online tier rotates measured-equal providers
+- pipeline: engine (the admission and the steering)
+- status: standing
+- supersedes: —
+- evidence: eoreader7/heimdall.mjs (laneCmp sorts lane → kind pressure → last-served; noteKindServed at both serve sites; kindTurnMs per-kind EWMA feeds queueOf's ETA; pickHost's SPREAD: hosts whose wait exceeds the best by ≤ the cheapest MEASURED loadMs rotate least-picked-first — the 2026-09-21 lesson, a naive round robin pays a cold load and discards every prefix cache; reason "spread_within_load_cost"); eoreader7/native/kernel/online-mouths.js pick() (rotate across MEASURED providers within one EWMA smoothing step of the best latency — measured-equal windows are shared, never burned one at a time; unmeasured providers are never rotated as equal); tests 9/9 queue, 4/4 spread, 7/7 online
+- falsifying control: a host rotated to when its wait exceeds the best by more than the cheapest measured load, a provider rotated to that is clearly slower than the best by more than the smoothing step, or a queue that serves a served-more kind ahead of a served-less one — any of these breaks this.

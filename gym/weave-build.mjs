@@ -70,8 +70,11 @@ export async function bankedRun(cls) {
 // (GL-WV-07, GL-WV-12). Every draw routes through the door, never the loom.
 // Thea paces: 429 retry-after is honored with a bounded defer, never spun
 // (GL-WV-10).
-const HDRS = { "content-type": "application/json", "x-er7-session": "penelope-loom", "x-er7-priority": "batch" };
-async function pacedPost(url, body, { timeoutMs = 600000, maxDefer = 6 } = {}) {
+// ONE IDENTITY (2026-10-01): the loom speaks as penelope, the same person key
+// every other door uses — one app, one place in line — and declares its kind
+// so Heimdall's fair-share round robin sees the build work as builds.
+const HDRS = { "content-type": "application/json", "x-er7-user": "penelope", "x-er7-caller": "penelope-loom", "x-er7-priority": "batch", "x-er7-kind": "build" };
+async function pacedPost(url, body, { timeoutMs = 900000, maxDefer = 6 } = {}) {
   for (let d = 0; d < maxDefer; d += 1) {
     const r = await fetch(url, { method: "POST", headers: HDRS, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
     if (r.status === 429) {

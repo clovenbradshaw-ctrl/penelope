@@ -366,6 +366,7 @@
    "typing": "‡",
    "refs": [
     "g/server.mjs",
+    "organs/generation-door.mjs",
     "GL-RT-01",
     "GL-RT-04",
     "/api/chat-stream",
@@ -375,7 +376,8 @@
     "/api/ask",
     "/api/answer",
     "/chat",
-    "/api/chat"
+    "/api/chat",
+    "/api/generate"
    ]
   },
   {
@@ -404,6 +406,7 @@
    "refs": [
     "g/server.mjs",
     "ER7/heimdall.mjs",
+    "organs/generation-door.mjs",
     "GL-CH-03",
     "GL-RT-03"
    ]
