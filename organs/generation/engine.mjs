@@ -89,7 +89,10 @@ async function fillUnits(units, adapter, ctx = {}) {
   const addSource = (spec) => ledger.source(spec);
   const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
     const text = String(code ?? "");
-    const offset = drawn.length ? Buffer.byteLength(drawn.join("\n\n") + "\n") : 0;
+    const offset = drawn.length ? Buffer.byteLength(drawn.join("
+
+") + "
+") : 0;
     if (text) drawn.push(text);
     const end = offset + Buffer.byteLength(text);
     ledger.event({ stage, source_id, unit: unit.name, parent, range: byteRange(offset, end), detail, transform });
@@ -143,8 +146,14 @@ async function fillUnits(units, adapter, ctx = {}) {
     }
   }
 
-  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("\n\n") + "\n"), units: units.length } });
-  return { code: drawn.join("\n\n") + "\n", scars, provenance: ledger.eot() };
+  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("
+
+") + "
+"), units: units.length } });
+  return { code: drawn.join("
+
+") + "
+", scars, provenance: ledger.eot() };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
@@ -152,8 +161,10 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   const outDir = path.resolve(args.out || path.join(HERE, "..", "arrangement-out"));
   fs.mkdirSync(outDir, { recursive: true });
 
-  console.log(`\n=== THE FIELD READS THE PROMPT ===`);
-  console.log(`  "${task}"\n`);
+  console.log(`
+=== THE FIELD READS THE PROMPT ===`);
+  console.log(`  "${task}"
+`);
   const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind });
   const taskSource = ledger.source({ kind: "intent", locator: { task, artifact: context.artifact ?? adapter.kind } });
   ledger.event({ stage: "intent", source_id: taskSource, transform: "request→task" });
@@ -169,7 +180,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`  units + per-unit specs (from the reading, not a dictionary):`);
   for (const u of units) console.log(`    ${u.name}: ${u.spec}${u.settle ? `  [settle: ${u.settle}]` : ""}`);
 
-  console.log(`\n=== THE SPIRAL — field first, hunt second, mouth last ===`);
+  console.log(`
+=== THE SPIRAL — field first, hunt second, mouth last ===`);
   const { code, scars, provenance } = await fillUnits(units, adapter, context);
   const verdict = adapter.testUnits(code, units, context);
   const verifySource = ledger.source({ kind: "verification", locator: { adapter: adapter.kind, verdict: verdict.reason } });
@@ -184,7 +196,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   if (drawn.length) console.log(`  drawn by the mouth: ${drawn.map((p) => p.unit).join(", ")}`);
   console.log(`  test:   ${verdict.reason}${verdict.ok ? "" : " — " + verdict.detail}`);
 
-  console.log(`\n=== THE PRODUCT ===`);
+  console.log(`
+=== THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
   const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
   ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(code) } });
@@ -196,7 +209,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
     prompt: task, model: MODEL,
     law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
-    provenance,\n    corpus: {
+    provenance,
+    corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
       snipped,
       hunted,
@@ -210,7 +224,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`  widget: ${path.join(outDir, `${slug}.html`)}`);
   console.log(`  eot:    ${path.join(outDir, `${slug}.eot.json`)}`);
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
-  if (scars.length) { console.log(`\n  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
+  if (scars.length) { console.log(`
+  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
   return { slug, html, code, eot, verdict, scars, provenance };
 }
 
