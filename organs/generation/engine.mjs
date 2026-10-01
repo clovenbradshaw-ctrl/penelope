@@ -236,7 +236,8 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
   if (scars.length) { console.log(`
   scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
-  return { slug, html, code, eot, verdict, scars, provenance };
+  eot.provenance = ledger.eot();
+  return { slug, html, code, eot, verdict, scars, provenance: eot.provenance };
 }
 
 export { execSync };
