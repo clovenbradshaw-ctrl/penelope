@@ -359,6 +359,22 @@ append-only, always revisable).
 </details>
 <!-- tapestry:end -->
 
+## Weave — the single generation operation
+
+Penelope has one public artifact-generation operation: **Weave**.
+
+`POST /api/weave` is the canonical door. It accepts an intent plus an explicit artifact kind and runs the shared lifecycle: reading → field/hunt → mouth → arrangement → verification → materialization → disclosed evidence/repair. Text is not a separate API: it is a first-class `text` artifact backed by the prose adapter. Code and future media use the same contract with medium-specific adapters.
+
+`/api/generate` remains only the lower-level model-draw door used by the arrangement engine. It is not a competing artifact-generation API. The adapter boundary is where genuinely medium-specific behavior belongs; the orchestration boundary does not split by text/code/application.
+
+Example request:
+
+`POST /api/weave`
+
+`{"intent":"Explain how a closure captures variables","artifact":"text"}`
+
+The stable response schema is `GenerationResult@1`. Unknown artifact kinds are named gaps rather than silently guessed.
+
 ## Layout
 
 ```
