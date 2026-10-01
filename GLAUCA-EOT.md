@@ -952,3 +952,111 @@ The chat loom has two faces now: /api/chat (admission, whole-reply) and
 /api/chat-stream (live tokens, direct ollama). Nothing previously logged
 is lost — the stream route appends to the same ladder-live.jsonl as the
 non-stream and rung rows.
+
+
+---
+
+# Addendum B — the cube, the watchmakers, the two gates (2026-10-01)
+
+// Appended by the second hand. The tapestry (gym/tapestry.spec.json, woven
+// by gym/weave.mjs) now carries all 57 threads on the EO cube; these are the
+// entries behind it. Evidence paths are relative to ~/Documents/3.0/.
+
+## law — the cube
+
+### GL-CB-01 — The cube is Penelope's coordinate system; three faces, each axis stated twice, is the checksum
+- pipeline: law
+- status: standing
+- supersedes: —
+- evidence: organs/cube.mjs:1-60 (27 cells = 9 operators × 3 grains; operator = (mode, domain), stance = (mode, grain), terrain = (domain, grain); a copy of eoreader7/native/kernel/cube.js at 6a11c1d, selftest 15 checks green); eoreader7/native/docs/THE-27-CELLS.md §1 (cells classify MOVES, never content); gym/unweave.mjs:36 (the tapestry's three face panels, the holon rows, the helix map and the ring of 27 stations are each read back and must agree)
+- falsifying control: a thread whose Act, Site and Stance placements disagree on an axis comes back grain-mixed (gym/check-tapestry.mjs selftest builds each violation: 16 checks green); an operator pair (mode, domain) that repeats, or a grid that is not 27 distinct addresses, is a copy drifted from cube.js.
+
+Where the writing-code-in-eo skill's worked examples (DEF(Lens, Making),
+EVA(Lens, Dissecting)) disagree with cube.js — DEF is a Differentiate
+operator, so its Lens stance is Dissecting; EVA is Relate, so Binding — the
+kernel wins and cube.mjs pins it. The tapestry holds 26 of 27 cells; the one
+void is DEF·Ground, the same cell the house leaves empty ("no workable
+specimen yet", THE-27-CELLS.md §4): a lead, never a verdict.
+
+### GL-CB-02 — The spine follows the helix better than chance, and its inversions are Hora's order (measured; typings mostly nominated)
+- pipeline: law
+- status: standing (open: 43 of 57 cell typings are nominated here, not registered in the house documents)
+- supersedes: —
+- evidence: gym/weave.mjs:72 (helixOrder: Kendall t of the spine's operator order against NUL…REC, p over 20,000 seeded shuffles of the same stages) — all 12 stages t = 0.475, p = 0.026; the 8 stages whose cells the house registers (§) t = 0.667, p = 0.025; the 4 nominated stages alone t = 0.333, p = 0.375 (too few to say). 16 of 66 pairs are inverted, every one involving STL (the settle defines first) or SEL/EOT (the seal composes after judging) — exactly Hora's "declare, assemble, set down, verify, compose" (skill Law 2; CODING-LESSONS.md:1423)
+- falsifying control: a re-typing of the same stages that gives t ≤ the shuffle median, or a shuffle null that ties the registered-only t, would show the order is the typist's, not the pipeline's. A fit with a nine- or twenty-seven-fold tradition proves little by itself (people carve things into threes and nines); only the order test against shuffles of the same cells is fair.
+
+The helix orders composition; the per-unit loop is Hora's. Both are on the
+record, neither smoothed into the other.
+
+## engine — the watchmakers
+
+### GL-EN-14 — Hora, not Tempus: stable sub-assemblies, set down one at a time (the engine does not yet)
+- pipeline: engine
+- status: standing (open: Penelope's engine has no per-unit set-down, no resume, no holon nesting, no holograph pointers; measured Hora-vs-Tempus numbers: none)
+- supersedes: —
+- evidence: eoreader7/CODING-LESSONS.md:1423-1441 (lesson 68: Tempus builds each watch whole and loses it to every interruption; Hora builds stable subassemblies and loses only the one in hand; the floor is true by construction, a loop that loses ground is undone, a throwing level leaves the last stable loop); eoreader7/native/organs/hora.js:141,192,205,225 (one ask per void cell carrying only its own path; each part checked alone at ["whole", part]; the whole sealed once, at the end); organs/generation/engine.mjs:90-152 (fillUnits pushes to an in-memory array; testUnits runs once on the whole; files are written only at the end)
+- falsifying control: threads HOR, RSM, KOE on the tapestry carry their own — kill a run at a random unit and resume from the last set-down: the output must be byte-equal to the uninterrupted run with fewer draws (a different byte, or no saving, falsifies); per-unit set-down must yield more usable partial output than a whole-only test (equal outcomes falsify).
+
+Koestler's holon is the same idea at every grain: a whole to its parts, a
+part to its whole. The tapestry nests five levels (atom, unit, artifact,
+loom, house) and every thread declares its level.
+
+### GL-EN-15 — Every layer: ONE typed product, two gates — the low sets possibility, the high sets probability
+- pipeline: engine
+- status: standing in the house; unwoven in Penelope (thread GAT)
+- supersedes: —
+- evidence: eoreader7/CODING-LESSONS.md:760-770 (the-fold/spiral-contract.js: "hyper-defined layers, explicit revisable work product at each loop; low sets possibility for high, high probability for low" — the LOW gate asks only whether there is anything for the next layer to work on; the HIGH gate asks whether the product is good enough for the next layer to ACT on; a failing HIGH gate names the missing signal and that signal IS a same-layer revision, bounded by a budget; the revised product supersedes the old, the old is kept); eoreader7/CODING-LESSONS.md:20-24 (lesson 3: breed variants low = possibility, the test selects = probability; never let the high holon guess, it measures); eoreader7/native/organs/martial.js:1-40 (holon-aware at every level)
+- falsifying control: a Penelope layer that ships a product with no gate beside it (the unwoven GAT thread) is unmeasured; a failing HIGH gate that does not become a revision on the record, or a revision with no budget (∞), contradicts this.
+
+In symbols the tapestry carries the law twice: ∘ ↑ ◈ (the low, Ground,
+sets the possibility of the high, Pattern) and ◈ ↓ ∘ (the high sets the
+probability of the low), and per holon level in the ↑ ↓ rows.
+
+### GL-EN-16 — The void is defined first: every unit is a void cell, filled in order, never skipped
+- pipeline: engine
+- status: standing
+- supersedes: —
+- evidence: eoreader7/native/organs/hora.js:152-186 (plan declares the whole: name, parts, cardinalities, the details each shows; defineLevelVoid per part, void-holarchy.js:78; one small ask per empty cell); eoreader7/ONE-PIPELINE.md:25 (an ask the mouth left silent is a declared void (NUL) scoped to the asks); organs/generation/engine.mjs:90-132 (units read first, then each filled field → hunt → mouth, a miss is a scar or a named gap)
+- falsifying control: a unit filled that was never declared a void cell, a mouth ask that carries the whole tree rather than its own path, or an empty cell dressed as a filled one contradicts this.
+
+## ladder — an open finding
+
+### GL-LD-07 — The three-strike promotion is a hand-set count (open finding)
+- pipeline: ladder
+- status: open
+- supersedes: —
+- evidence: ladder/r9-r13-record.json (filterLaunches mouth 0/3 → BOX-OWNED, "the same 3-strike rule as fmtAgo"); GL-LD-03 above; README.md (law: no hardcoded numbers — every bound derives from a null + a budget); the tapestry's cube map: NUL·Pattern (a declared kind challenged against a null) is held only by the unwoven thread KNL
+- falsifying control: promote by the unit's draws against a kind-null (eoreader7/native/kernel/entity-kind-induction.js::testKindMembers) on the same rungs; if promotion by count and promotion by null agree on every rung, the count is harmless and this finding closes; if they differ, the count was wrong somewhere and GL-LD-03 is superseded by the null.
+
+## law — the tapestry, and its symbols
+
+### GL-TP-02 — The tapestry is spec → weave → cloth → unweave → spec; edit the spec, never the cloth
+- pipeline: law
+- status: standing
+- supersedes: GL-TP-01, in part — the mechanism (a hand-woven picture and a text-contains coverage scan) is replaced; GL-TP-01's rule (a process change that does not touch the picture is unfinished) stands
+- evidence: gym/tapestry.spec.json (57 threads, the single source); gym/weave.mjs:117 (deterministic: same spec, same bytes); gym/unweave.mjs:36 (the cloth alone yields the spec back; the three faces, the holon rows, the helix map and the 27-station ring each cross-check every thread); gym/check-tapestry.mjs:108,173 (weave, unweave, README, legend, refs, coverage, drift; selftest 16 checks green, each failure constructed and watched)
+- falsifying control: a cloth edited by hand that still passes; an unweave that is lossy yet passes; a legend symbol printed but undefined, or defined but never printed; a referenced file or EOT entry that does not exist; an organ named by no thread — any of these passing contradicts this.
+
+### GL-TP-03 — Symbols on the cloth, words in the legend; measure the glyph before printing it
+- pipeline: law
+- status: standing
+- supersedes: —
+- evidence: gym/tapestry.legend.json (every non-ASCII symbol defined, both directions checked); gym/glyph-ink.json (widths measured 2026-10-01 in the GitHub code font: ∅ ○ ● △ ↬ and the box, shade and ring glyphs are exactly one cell; ⊨ 1.036; ｜ 1.661, ⋈ 1.283, ⊢ 1.247 are not, so cube.mjs prints SEG, CON, DEF as | → = while keeping the EO canon glyphs in the legend); organs/cube.mjs:62-70
+- falsifying control: a printed symbol absent from glyph-ink.json's oneCell set, or a column that shifts on GitHub, contradicts this; a different font or theme is a different instrument — re-measure, never reuse (dark theme not measured).
+
+### GL-BD-08 — A build may pause and ask; asking is not a failure, guessing is
+- pipeline: build
+- status: standing
+- supersedes: —
+- evidence: gym/server.mjs (/api/ask, /api/answer, /api/asks; gym/asks.jsonl);
+  eoreader7/native/organs/build-clarify.js:1,302 (the recursive ask-back door,
+  run as the reverse prompt); gym/chat.html pending-asks panel. An answer that
+  moves nothing is never re-asked (build-clarify's own law).
+- falsifying control: a build that silently guesses a requirement it could
+  have asked about — with an operator present to answer — contradicts this;
+  a re-ask of the same question after an answer that already moved the build
+  also contradicts it (an answer that moves nothing is never re-asked).
+
+The loom is allowed to stop and ask instead of fabricating. Every ask and
+answer is on the record (gym/asks.jsonl + ladder-live.jsonl), so the
+clarification is itself evidence, never a hidden steering.

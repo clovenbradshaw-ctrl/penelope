@@ -1,145 +1,282 @@
-# The tapestry — how generation works now
+# ◇ tapestry
 
-The present tense of Penelope's generation pipelines. [GLAUCA-EOT.md](GLAUCA-EOT.md)
-is the append-only history that explains each thread; this picture is
-rewoven whenever a process changes, and `node gym/check-tapestry.mjs` fails
-when it is stale (an organ, adapter, route or rung missing from it, a
-dangling reference, a README that differs, or a watched file changed since
-the last weave).
+[legend](LEGEND.md) · unweave: `node gym/unweave.mjs` · weave: `node gym/weave.mjs` · check: `node gym/check-tapestry.mjs`
 
-<!-- tapestry:external: code-build.js talk-build.js talk-reader.js talk-reason.js belief-page.js music-medium.js widget-build.mjs look.js -->
-<!-- tapestry:generated: ladder-live.jsonl -->
 <!-- tapestry:begin -->
 ```text
-#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-#                                                                            #
-#                P E N E L O P E  --  T H E   T A P E S T R Y                #
-#  how generation works, woven 2026-10-01 (present tense of GLAUCA-EOT.md)   #
-#                                                                            #
-# THE ASK   "a launch tracker" . "a pomodoro widget" . "an essay on X"       #
-#    |                                                                       #
-#    +----------------------+---------------------------+                    #
-#    |                      |                           |                    #
-#  CHAT, the shuttle     BUILD, the cloth           NOTEBOOK, pattern-book   #
-#  gym/server.mjs        ladder r1-r13 + the        gym/to-notebook.mjs      #
-#  /api/chat-stream      engine (see SPINE)         cells replay to verdict  #
-#  /api/chat /api/rung   in: prompt (+ workspace)   markdown = recorded,     #
-#  free talk; anything   out: artifact + control    never replayed           #
-#  unverified arrives    + facing page + EOT        code = organ selftests   #
-#  TYPED, scars ride     needs a create-capable     re-run, outputs stored   #
-#    |                   door; null-hit = a NAMED   history appends, nothing #
-#    |                   GAP, never invented cloth  overwrites               #
-#    |                      |                           |                    #
-#    +----------------------+---------------------------+                    #
-#                           |                                                #
-# =[ THE LAW ]============================================================== #
-#   library ---> box ---> hunt ---> mouth        (the mouth is LAST)         #
-#   remembered   derived  gotten    drawn: only the irreducible residue      #
-#   no hardcoded numbers: every bound = a null + a budget                    #
-#   named gaps, never invented lists . red rungs become rules, never retries #
-# ========================================================================== #
-#                           |                                                #
-#  THE SPINE  (organs/generation/engine.mjs owns order, retries, scars,      #
-#  |           EOT, files; an adapter owns what differs by medium)           #
-#  |                                                                         #
-#  READ    one small ask, JSON out -> [{name, spec}]. a structure, never a   #
-#  |       regex. a malformed reading is an EMPTY reading; the gate shows it #
-#  |                                                                         #
-#  SETTLE  the BOX derives what proves each unit from a declared example     #
-#  |       grid; the settle calls the unit's own name; mouth never guesses   #
-#  |                                                                         #
-#  FILL    per unit, first hit wins, in this order only:                     #
-#  |        1 FIELD  corpus match by FRAME not name -> snip, byte address    #
-#  |        2 HUNT   search -> raw source -> extract -> frame check          #
-#  |                 (wrong world REFUSED and disclosed, never spliced)      #
-#  |        3 MOUTH  one single-part framed fragment, temp 0, a completion   #
-#  |                 anchor, never steered. the test decides                 #
-#  |                                                                         #
-#  SNIP    structural brace-walk (string/comment aware), EXACTLY the named   #
-#  |       unit; prose around code (chat door talks) -> cut function spans   #
-#  |                                                                         #
-#  PROBE   the swarm, many framings: settle deepEq + spec words + frame      #
-#  |        fail -> SPIRAL: name why, sharpen the atom (the unit's OWN args, #
-#  |                never a clock), re-draw fresh (never "fix this"), scar   #
-#  |        3 strikes on a shape -> BOX-OWNED standing rule, no 4th draw     #
-#  |        still failing -> REFUSED: typed, shipped as dissent (4 of 6, not #
-#  |                a false 6 of 6)                                          #
-#  |                                                                         #
-#  TEST    assembled whole + held-out cases. compile+exec is the floor; only #
-#  |       a test that CALLS the code decides. no other hand strings the bow #
-#  |                                                                         #
-#  SEAL    artifact + facing page + EOT (ArrangementEOT@1): scars, refusals, #
-#          provenance (snipped@addr / hunted@url / drawn), swarm verdict     #
-#                           |                                                #
-# =[ ORGANS ]  pure . selftested . schema-tagged . no model, no DOM ======== #
-#  consensus-gate  ConsensusGate@1  many comps, one mode survives the null   #
-#                                   CALLABLE|MORE|DISSOLVED|EXHAUSTED        #
-#                                   frequency + growth, never loudness       #
-#  detail-fetch    DetailFetch@1    two-hop fan-out; a failed item is a gap, #
-#                                   the list survives                        #
-#  behavior-check  BehaviorCheck@1  dead controls FAIL; checked where app    #
-#                                   FACTORS its logic (pure functions)       #
-#  freshness       Freshness@1      fresh | stale (badge + last-good) |      #
-#                                   expired (a named gap, never silent rows) #
-# ========================================================================== #
-#                           |                                                #
-#  THE MEDIA  (one skeleton, a medium is an adapter)                         #
-#  code     generation/adapters/code.mjs    units -> functions               #
-#  prose    generation/adapters/prose.mjs   void cells = units; the          #
-#                                           fold re-admits, names gaps       #
-#  page     talk-build.js + belief-page.js  the mouth only TALKS; the        #
-#                                           ledger is the build              #
-#  image    look.js + screen sense (prov.)  MEASURE, never describe          #
-#  music    music-medium.js                 snipped bars, licensed           #
-#  (resident = copied with a pinned commit; referenced = read at home,       #
-#   never forked. an unroutable task FAILS LOUDLY at intake)                 #
-#                           |                                                #
-#  PROSE GROUND  no view from nowhere                                        #
-#    handed-over -> live_priors -> hunted -> NONE (stop: "No ground")        #
-#    a sentence is LINKED to one source sentence or it is UNGROUNDED         #
-#                           |                                                #
-# =[ THE DOORS ]  routed by measured evidence, disclosed =================== #
-#  chat --> Heimdall admission, non-stream /api/chat (shared mouth,          #
-#           x-er7-session penelope-gym, batch; 429/503 + Retry-After ->      #
-#           bounded backoff -> a typed refusal; never a hang)                #
-#  stream --> ollama DIRECT (both proxy streaming doors hang — measured      #
-#           2026-10-01: /v1/chat/completions and /api/chat, code 000, 90s,   #
-#           zero bytes; the SSE route is the chat loom's live face)          #
-#  code --> ollama DIRECT (the chat door's hard-meaning route swallows code  #
-#           prompts whole and answers a swarm verdict, not a draw)           #
-# ========================================================================== #
-#                           |                                                #
-#  THE LADDER   mouth draws, organs decide; one rung at a time               #
-#  |                                                                         #
-#  |  BY DAY  weave                      BY NIGHT  unweave                   #
-#  |  assemble from library spec +       revert the failing patch            #
-#  |  traced fields; r1-r8 baseline,     dissolve what is not pattern        #
-#  |  r9-r13 teeth, mouth-last order     demote the mouth's shape to the box #
-#  |                                                                         #
-#  |  a red rung is the mouth's boundary: R4 fmtAgo 0/4 -> box-computed;     #
-#  |  filterLaunches 0/3 -> box-owned; feed->list proven ZERO-mouth, 20/20   #
-#  |  scoreboard /api/score says who won each rung: mouth | box              #
-#                           |                                                #
-# =[ THE RECORD ]  no cloth without the ledger of its making =============== #
-#  apps/record.json . ladder/*.json . gym/ladder-live.jsonl                  #
-#  gym/chat.html (chat page) . ladder/nomouth-rows.txt (zero-mouth proof)    #
-#  penelope-notebook.ipynb . GLAUCA-EOT.md (best practices, append-only)     #
-#  Odysseus voyages, Penelope weaves: material crosses only as addressed     #
-#  record, never as assertion                                                #
-# ========================================================================== #
-#                                                                            #
-#   re-weave: node gym/check-tapestry.mjs --stamp   history: GLAUCA-EOT.md   #
-#                                                                            #
-=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+╔════════════════════════════════════════════════════════════════════════════╗
+║░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒║
+║                                                                            ║
+║  ,___,                                                                     ║
+║  {o,o}      P E N E L O P E                                                ║
+║  /)__)      ◇ 2026-10-01 ◇                                                 ║
+║  -"-"-      ■ □ ·                                                          ║
+║                                                                            ║
+╠═[ ∘ ◆ ◈ ]══════════════════════════════════════════════════════════════════╣
+║                                     ∅                                      ║
+║  ◈ ↓ ∘                                                              ∘ ↑ ◈  ║
+║                              ◦◦◦◦◦◦◦·◦◦◦◦◦◦◦                               ║
+║                  ↬     ◦◦◦◦◦◦               ◦◦◦◦◦◦     ○                   ║
+║                     ◦◦◦                           ◦◦◦                      ║
+║                  ◦◦■                                 ·◦◦                   ║
+║                 ◦◦            ◦◦◦◦◦◦■◦◦◦◦◦◦            ◦◦                  ║
+║              ◦◦◦          ◦◦◦◦◦           ◦◦◦◦◦          ◦◦◦               ║
+║              ◦         ◦◦■                     □◦◦         ◦               ║
+║             ◦         ◦◦                         ◦◦◦        ◦              ║
+║            ◦        ◦◦          ◦◦◦◦■◦◦◦◦          ◦◦        ◦             ║
+║       ⊨   ■◦        ◦        ◦◦·◦       ◦■◦◦        ◦        ◦■   ●        ║
+║           ◦        ■        ■◦             ◦■        ■        ◦            ║
+║           ◦        ◦        ◦       ◇       ◦        ◦        ◦            ║
+║           ◦        ◦        ◦◦             ◦◦        ◦        ◦            ║
+║           ◦◦        ◦        ▫◦◦◦       ◦◦◦■        ◦        ◦◦            ║
+║            ◦        ◦◦          ◦■◦◦∘◦◦■◦          ◦◦        ◦             ║
+║             ◦        ■◦◦                         ◦◦■        ◦              ║
+║              ◦         ◦◦◦                     ◦◦◦         ◦               ║
+║           =  ■◦◦          ◦◦◦◦◦           ◦◦◦◦◦          ◦◦·  |            ║
+║                 ◦◦            ■◦◦◦◦◦◆◦◦◦◦◦■            ◦◦                  ║
+║                  ◦◦◦                                 ◦◦◦                   ║
+║                     ◦◦◦                           ◦◦◦                      ║
+║                        ◦◦◦◦■◦               ◦·◦◦◦◦                         ║
+║                              ◦◦◦◦◦◦◦◈◦◦◦◦◦◦◦                               ║
+║                           △                   →                            ║
+║                                                                            ║
+╠═[ ∅ ○ ● | → △ = ⊨ ↬ ]══════════════════════════════════════════════════════╣
+║     ╳      ∅ ∩∃  ∘■ ◆■ ◈·                                                  ║
+║   ╱   ╲    ○ ≈∃  ∘■ ◆□ ◈·   ■VDF∘                                          ║
+║ ╲       ╱  ● ∪∃  ∘■ ◆■ ◈■   ■RDU◆ ■HNT∘ ■MTH◆                              ║
+║   ╲   ╱    | ∩⊞  ∘■ ◆■ ◈·   ■SNP◆                                          ║
+║     ╳      → ≈⊞  ∘■ ◆■ ◈·   ■FLD◆                                          ║
+║   ╱   ╲    △ ∪⊞  ∘■ ◆■ ◈■   ■SEL◈ ■EOT◆                                    ║
+║  ╲     ╱   = ∩∀  ∘▫ ◆■ ◈■   ■STL◆                                          ║
+║   ╲   ╱    ⊨ ≈∀  ∘■ ◆■ ◈■   ■PRB◆ ■TST◆                                    ║
+║     ╳      ↬ ∪∀  ∘· ◆■ ◈■   ■SPR◆                                          ║
+║                                                                            ║
+║  VDF › RDU › STL › ( FLD ∨ HNT ∨ MTH ) › SNP › PRB ↺ SPR › TST › SEL › EOT ║
+║  ≣ t=0.475 p=0.026 n=20000                                                 ║
+║                                                                            ║
+╠═[ ◀ ▲ ▶ ]══════════════════════════════════════════════════════════════════╣
+║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
+║  │ ◀  │          ∩          │          ≈          │          ∪          │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∃  │ ∅ ∩∃                │ ○ ≈∃                │ ● ∪∃                │  ║
+║  │    │ ■GAP ■NLB ·KNL      │ ■VDF □LOK ·KOE ·SCR │ ■RDU ■HNT ■MTH ■CHT │  ║
+║  │    │                     │ ·KIN                │ ■ADC ■ADP □CDB ·PAG │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ⊞  │ | ∩⊞                │ → ≈⊞                │ △ ∪⊞                │  ║
+║  │    │ ■SNP ■DOR ·TER      │ ■FLD ■DTF ■ADM ·NET │ ■SEL ■EOT ■BLD ■ASK │  ║
+║  │    │                     │                     │ ■TAP ■LIB □TKB □BPG │  ║
+║  │    │                     │                     │ ·HOR ·LFL ·SWT      │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∀  │ = ∩∀                │ ⊨ ≈∀                │ ↬ ∪∀                │  ║
+║  │    │ ■STL ■CUB ■LAW ■GLA │ ■PRB ■TST ■CGT ■BHC │ ■SPR ■BOX ·RSM ·DEM │  ║
+║  │    │ ·GAT                │ ■FRS ■LDR ■NBK ·RUT │                     │  ║
+║  │    │                     │ ·GAR ·MAR ·VIS ·APO │                     │  ║
+║  │    │                     │ ·ANS ·POL ·CRV      │                     │  ║
+║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
+║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
+║  │ ▲  │          ∘          │          ◆          │          ◈          │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∃  │ ∃∘                  │ ∃◆                  │ ∃◈                  │  ║
+║  │    │ ■VDF ■HNT ■NLB      │ ■RDU ■MTH ■GAP ■CHT │ ■ADC ■ADP □CDB ·PAG │  ║
+║  │    │                     │ □LOK ·KOE ·SCR      │ ·KIN ·KNL           │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ⊞  │ ⊞∘                  │ ⊞◆                  │ ⊞◈                  │  ║
+║  │    │ ■DOR ■ADM ■LIB      │ ■FLD ■SNP ■EOT ■DTF │ ■SEL ■BLD ■ASK ■TAP │  ║
+║  │    │                     │ □TKB ·HOR ·SWT      │ □BPG ·LFL ·TER ·NET │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∀  │ ∀∘                  │ ∀◆                  │ ∀◈                  │  ║
+║  │    │ ■FRS ·RSM ·APO      │ ■STL ■PRB ■SPR ■TST │ ■CGT ■CUB ■LDR ■BOX │  ║
+║  │    │                     │ ■BHC ·RUT ·GAR ·MAR │ ■NBK ■LAW ■GLA ·GAT │  ║
+║  │    │                     │ ·VIS ·POL           │ ·DEM ·ANS ·CRV      │  ║
+║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
+║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
+║  │ ▶  │          ∘          │          ◆          │          ◈          │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∩  │ ∩∘                  │ ∩◆                  │ ∩◈                  │  ║
+║  │    │ ■NLB ■DOR           │ ■STL ■SNP ■GAP      │ ■CUB ■LAW ■GLA ·GAT │  ║
+║  │    │                     │                     │ ·TER ·KNL           │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ≈  │ ≈∘                  │ ≈◆                  │ ≈◈                  │  ║
+║  │    │ ■VDF ■FRS ■ADM ·APO │ ■FLD ■PRB ■TST ■DTF │ ■CGT ■LDR ■NBK ·ANS │  ║
+║  │    │                     │ ■BHC □LOK ·KOE ·RUT │ ·CRV ·KIN ·NET      │  ║
+║  │    │                     │ ·GAR ·MAR ·VIS ·SCR │                     │  ║
+║  │    │                     │ ·POL                │                     │  ║
+║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
+║  │ ∪  │ ∪∘                  │ ∪◆                  │ ∪◈                  │  ║
+║  │    │ ■HNT ■LIB ·RSM      │ ■RDU ■MTH ■SPR ■EOT │ ■SEL ■BOX ■BLD ■ASK │  ║
+║  │    │                     │ ■CHT □TKB ·HOR ·SWT │ ■ADC ■ADP ■TAP □CDB │  ║
+║  │    │                     │                     │ □BPG ·PAG ·DEM ·LFL │  ║
+║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
+╠═[ ↑ ↓ ]════════════════════════════════════════════════════════════════════╣
+║ ↑ 4  ■NLB∅∘ ■CUB=◈ ■LDR⊨◈ ■BOX↬◈ ■LAW=◈ ■GLA=◈ ■TAP△◈ ■LIB△∘ ·DEM↬◈        ║
+║ │    ·KNL∅◈                                                                ║
+║ │ 3  ■CHT●◆ ■BLD△◈ ■NBK⊨◈ ■DOR|∘ ■ASK△◈ ■ADM→∘ ·PAG●◈ ·LFL△◈ ·TER|◈        ║
+║ │    ·APO⊨∘                                                                ║
+║ │ 2  ■TST⊨◆ ■SEL△◈ ■EOT△◆ ■CGT⊨◈ ■DTF→◆ ■BHC⊨◆ ■FRS⊨∘ □CDB●◈ □BPG△◈        ║
+║ │    ·RSM↬∘ ·GAT=◈ ·RUT⊨◆ ·VIS⊨◆ ·ANS⊨◈ ·CRV⊨◈ ·SWT△◆                      ║
+║ │ 1  ■VDF○∘ ■RDU●◆ ■STL=◆ ■FLD→◆ ■HNT●∘ ■SNP|◆ ■PRB⊨◆ ■GAP∅◆ ■ADC●◈        ║
+║ │    ■ADP●◈ □TKB△◆ □LOK○◆ ·HOR△◆ ·KOE○◆ ·MAR⊨◆ ·SCR○◆ ·POL⊨◆ ·KIN○◈        ║
+║ │    ·NET→◈                                                                ║
+║ ↓ 0  ■MTH●◆ ■SPR↬◆ ·GAR⊨◆                                                  ║
+╠═[ ▫ ■ ]════════════════════════════════════════════════════════════════════╣
+║   ∅     ▫ ▫ ▫ ▫ ▫ ▫                                                        ║
+║   ≡∨↻∨●  ≡ ≡ ↻ ● ✗ ▫                                                       ║
+║   △     ■ ■ ■ ■ ▫ ▫                                                        ║
+║                                                                            ║
+║░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+```text
+╔═[ ⟨⟩ ]═════════════════════════════════════════════════════════════════════╗
+║  o/=organs/ g/=gym/ l/=ladder/ a/=apps/ E7/=../eoreader7/native/           ║
+║  SP/=../eoreader7-screenshot-pipeline/native/ ER7/=../eoreader7/           ║
+║  LP/=../live_priors/ FOLD/=../the-fold/                                    ║
+║                                                                            ║
+║■ ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║■VDF 1 ○∘ ‡ void                                                            ║
+║     @ o/generation/engine.mjs E7/organs/void-holarchy.js GL-EN-10 GL-EN-16 ║
+║■RDU 1 ●◆ § read                                                            ║
+║     @ o/generation/engine.mjs GL-EN-10                                     ║
+║■STL 1 =◆ ‡ settle                                                          ║
+║     @ o/generation/adapters/code.mjs GL-EN-08                              ║
+║■FLD 1 →◆ ‡ field                                                           ║
+║     @ o/generation/engine.mjs GL-EN-02 GL-EN-03                            ║
+║■HNT 1 ●∘ § hunt                                                            ║
+║     @ o/generation/engine.mjs GL-EN-04                                     ║
+║■MTH 0 ●◆ § mouth                                                           ║
+║     @ o/generation/engine.mjs GL-EN-05 GL-LD-05                            ║
+║■SNP 1 |◆ § snip                                                            ║
+║     @ o/generation/adapters/code.mjs GL-EN-09 GL-RT-02                     ║
+║■PRB 1 ⊨◆ § probe                                                           ║
+║     @ o/generation/engine.mjs GL-EN-07                                     ║
+║■SPR 0 ↬◆ § spiral                                                          ║
+║     @ o/generation/engine.mjs GL-EN-06 GL-EN-12                            ║
+║■GAP 1 ∅◆ § gap                                                             ║
+║     @ GL-BD-02 GL-OG-04                                                    ║
+║■TST 2 ⊨◆ § test                                                            ║
+║     @ o/generation/engine.mjs GL-BD-01 GL-CD-06                            ║
+║■SEL 2 △◈ ‡ seal                                                            ║
+║     @ a/launch-facing.html a/record.json GL-BD-01 GL-BD-04                 ║
+║■EOT 2 △◆ § record                                                          ║
+║     @ o/generation/engine.mjs GL-00 GL-BD-07                               ║
+║■CGT 2 ⊨◈ ‡ gate                                                            ║
+║     @ o/consensus-gate.mjs GL-OG-02 GL-OG-03 GL-BD-05                      ║
+║■NLB 4 ∅∘ § null                                                            ║
+║     @ o/consensus-gate.mjs E7/organs/measure.js GL-01 GL-OG-02             ║
+║■DTF 2 →◆ ‡ detail                                                          ║
+║     @ o/detail-fetch.mjs GL-OG-04                                          ║
+║■BHC 2 ⊨◆ ‡ behave                                                          ║
+║     @ o/behavior-check.mjs GL-OG-05 GL-BD-06                               ║
+║■FRS 2 ⊨∘ ‡ fresh                                                           ║
+║     @ o/freshness.mjs GL-OG-06                                             ║
+║■CUB 4 =◈ ‡ cube                                                            ║
+║     @ o/cube.mjs E7/kernel/cube.js GL-CB-01                                ║
+║■LDR 4 ⊨◈ ‡ ladder                                                          ║
+║     @ l/r1-r8.json l/r9-r13.json l/r9-r13-record.json GL-LD-01 GL-LD-03    ║
+║■BOX 4 ↬◈ § box                                                             ║
+║     @ l/mouth-last.json l/nomouth-rows.txt GL-LD-02 GL-LD-06 GL-LD-07      ║
+║■CHT 3 ●◆ ‡ chat                                                            ║
+║     @ g/server.mjs g/chat.html GL-CH-01 GL-CH-02                           ║
+║■BLD 3 △◈ ‡ build                                                           ║
+║     @ LOOMS.md GL-BD-03                                                    ║
+║■NBK 3 ⊨◈ ‡ book                                                            ║
+║     @ g/to-notebook.mjs penelope-notebook.ipynb GL-NB-01                   ║
+║■DOR 3 |∘ ‡ door                                                            ║
+║     @ g/server.mjs GL-RT-01 GL-RT-04                                       ║
+║■ASK 3 △◈ ‡ ask-back                                                        ║
+║     @ g/server.mjs g/asks.jsonl g/chat.html GL-BD-08                       ║
+║■ADM 3 →∘ ‡ admit                                                           ║
+║     @ g/server.mjs ER7/heimdall.mjs GL-CH-03 GL-RT-03                      ║
+║■ADC 1 ●◈ ‡ code                                                            ║
+║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
+║■ADP 1 ●◈ ‡ prose                                                           ║
+║     @ o/generation/adapters/prose.mjs GL-EN-11                             ║
+║■LAW 4 =◈ ‡ law                                                             ║
+║     @ README.md GL-00 GL-01 GL-EN-02                                       ║
+║■GLA 4 =◈ § owl                                                             ║
+║     @ GLAUCA-EOT.md GL-TP-01                                               ║
+║■TAP 4 △◈ ‡ loom                                                            ║
+║     @ TAPESTRY.md g/tapestry.spec.json g/tapestry.legend.json g/weave.mjs  ║
+║     @ g/unweave.mjs g/check-tapestry.mjs GL-TP-02                          ║
+║■LIB 4 △∘ § library                                                         ║
+║     @ LP/derived-priors o/GENERATION-INVENTORY.md GL-01                    ║
+║                                                                            ║
+║□ ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║□CDB 2 ●◈ ‡ fan                                                             ║
+║     @ E7/organs/code-build.js GL-CD-07                                     ║
+║□TKB 1 △◆ § talk                                                            ║
+║     @ E7/organs/talk-build.js GL-PS-01                                     ║
+║□BPG 2 △◈ ‡ render                                                          ║
+║     @ E7/adapters/build/belief-page.js E7/adapters/build/music-medium.js   ║
+║□LOK 1 ○◆ ‡ look                                                            ║
+║     @ E7/organs/look.js GL-IM-01                                           ║
+║                                                                            ║
+║· ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
+║·HOR 1 △◆ ‡ set-down                                                        ║
+║     @ E7/organs/hora.js ER7/CODING-LESSONS.md GL-EN-14                     ║
+║     ⊨u ≡ ⊨W ⇒✗                                                             ║
+║·RSM 2 ↬∘ ‡ resume                                                          ║
+║     @ E7/kernel/artifact.js E7/docs/THE-LOG-IS-THE-MEMORY.md GL-EN-14      ║
+║     resume ≠ run ∨ Δd ≥ 0 ⇒✗                                               ║
+║·KOE 1 ○◆ ‡ pointer                                                         ║
+║     @ E7/organs/output-holograph.js GL-EN-14                               ║
+║     ●u ≠ self ∨ ◆u ∉ addr ⇒✗                                               ║
+║·GAT 2 =◈ ‡ gates                                                           ║
+║     @ E7/the-fold/spiral-contract.js GL-EN-15                              ║
+║     ↓✗ ∧ ¬revise ∨ ∞revise ⇒✗                                              ║
+║·RUT 2 ⊨◆ ‡ show                                                            ║
+║     @ E7/organs/build-check.js ER7/ONE-PIPELINE.md                         ║
+║     send∅key ⊨ ok ∨ always ok ⇒✗                                           ║
+║·PAG 3 ●◈ ‡ create                                                          ║
+║     @ E7/organs/hora.js LOOMS.md GL-BD-03                                  ║
+║     bare(size↑) flat ⇒✗                                                    ║
+║·DEM 4 ↬◈ ‡ policy                                                          ║
+║     @ E7/organs/coding-policy.js E7/organs/coding-policy-trial.js          ║
+║     twin ≡ held ⇒✗                                                         ║
+║·LFL 3 △◈ ‡ ledger                                                          ║
+║     @ E7/organs/long-form.js GL-PS-08                                      ║
+║     window ≤ ledger ⇒✗                                                     ║
+║·TER 3 |◈ ‡ tree                                                            ║
+║     @ E7/organs/territory.js GL-PS-09                                      ║
+║     ¬gain>0 ∧ homogeneous ¬split ⇒✗                                        ║
+║·GAR 0 ⊨◆ ‡ fact                                                            ║
+║     @ E7/organs/gary.js GL-CD-05                                           ║
+║     fact-rewrite pass↓ ⇒✗                                                  ║
+║·MAR 1 ⊨◆ ‡ copy                                                            ║
+║     @ E7/organs/martial.js                                                 ║
+║     distinct ∉ finding ∨ generic ∈ finding ⇒✗                              ║
+║·VIS 2 ⊨◆ ‡ eye                                                             ║
+║     @ SP/organs/visual-pathos.js SP/organs/visual-hierarchy.js             ║
+║     textless ∈ contrast ∨ flat ∈ pass ⇒✗                                   ║
+║·SCR 1 ○◆ ‡ pixel                                                           ║
+║     @ SP/docs/SCREENSHOT-PIPELINE.md GL-IM-03                              ║
+║     1 witness applied ⇒✗                                                   ║
+║·APO 3 ⊨∘ ‡ pulse                                                           ║
+║     @ E7/organs/apollo.js E7/organs/thea.js                                ║
+║     steady alarm ∨ hang ¬alarm ⇒✗                                          ║
+║·ANS 2 ⊨◈ ‡ answer                                                          ║
+║     @ ER7/CODING-LESSONS.md GL-PS-06                                       ║
+║     linked ∧ ¬answers ∧ sealed ⇒✗                                          ║
+║·POL 1 ⊨◆ ‡ polar                                                           ║
+║     @ ER7/CODING-LESSONS.md GL-PS-05                                       ║
+║     negation ∨ swap ∨ numword links ⇒✗                                     ║
+║·CRV 2 ⊨◈ ‡ curve                                                           ║
+║     @ SP/organs/visual-pathos.js                                           ║
+║     ¬measured ∧ verdict ⇒✗                                                 ║
+║·SWT 2 △◆ ‡ swatch                                                          ║
+║     @ o/generation/engine.mjs                                              ║
+║     ∑swatch ≠ ∑{≡ ↻ ●} ⇒✗                                                  ║
+║·KIN 1 ○◈ ‡ kind                                                            ║
+║     @ E7/kernel/kind-induction.js                                          ║
+║     induced ¬beat null ⇒✗                                                  ║
+║·KNL 4 ∅◈ ‡ null                                                            ║
+║     @ E7/kernel/entity-kind-induction.js GL-LD-07                          ║
+║     promote(count) ≡ promote(null) ⇒✗                                      ║
+║·NET 1 →◈ ‡ weave                                                           ║
+║     @ FOLD/network.js                                                      ║
+║     arrangement recurs ∧ ¬bound ⇒✗                                         ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
 ```
 <!-- tapestry:end -->
-
-## Re-weaving (the standing order)
-
-1. Change the process. 2. Re-weave the affected thread above (keep the
-frame 78 wide; ASCII only). 3. `node gym/check-tapestry.mjs --stamp` — it
-verifies coverage, copies this block onto the README's front page, and
-records the watched files' hashes. 4. APPEND the entry (or a superseding
-entry) to GLAUCA-EOT.md. A process change that skips 2–4 is unfinished.
-`external` names are organs referenced at their home (eoreader7), never
-copied; `generated` names are runtime artifacts.

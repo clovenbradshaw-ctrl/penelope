@@ -1,0 +1,830 @@
+{
+ "schema": "TapestrySpec@1",
+ "woven": "2026-10-01",
+ "title": "PENELOPE",
+ "prefixes": {
+  "o/": "organs/",
+  "g/": "gym/",
+  "l/": "ladder/",
+  "a/": "apps/",
+  "E7/": "../eoreader7/native/",
+  "SP/": "../eoreader7-screenshot-pipeline/native/",
+  "ER7/": "../eoreader7/",
+  "LP/": "../live_priors/",
+  "FOLD/": "../the-fold/"
+ },
+ "spine": "VDF \u203a RDU \u203a STL \u203a ( FLD \u2228 HNT \u2228 MTH ) \u203a SNP \u203a PRB \u21ba SPR \u203a TST \u203a SEL \u203a EOT",
+ "threads": [
+  {
+   "id": "VDF",
+   "name": "void",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "SIG",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/engine.mjs",
+    "E7/organs/void-holarchy.js",
+    "GL-EN-10",
+    "GL-EN-16"
+   ]
+  },
+  {
+   "id": "RDU",
+   "name": "read",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "INS",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-10"
+   ]
+  },
+  {
+   "id": "STL",
+   "name": "settle",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "DEF",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/adapters/code.mjs",
+    "GL-EN-08"
+   ]
+  },
+  {
+   "id": "FLD",
+   "name": "field",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "CON",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-02",
+    "GL-EN-03"
+   ]
+  },
+  {
+   "id": "HNT",
+   "name": "hunt",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "INS",
+   "grain": "Ground",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-04"
+   ]
+  },
+  {
+   "id": "MTH",
+   "name": "mouth",
+   "st": "\u25a0",
+   "lvl": 0,
+   "op": "INS",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-05",
+    "GL-LD-05"
+   ]
+  },
+  {
+   "id": "SNP",
+   "name": "snip",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "SEG",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/adapters/code.mjs",
+    "GL-EN-09",
+    "GL-RT-02"
+   ]
+  },
+  {
+   "id": "PRB",
+   "name": "probe",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-07"
+   ]
+  },
+  {
+   "id": "SPR",
+   "name": "spiral",
+   "st": "\u25a0",
+   "lvl": 0,
+   "op": "REC",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-EN-06",
+    "GL-EN-12"
+   ]
+  },
+  {
+   "id": "GAP",
+   "name": "gap",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "NUL",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "GL-BD-02",
+    "GL-OG-04"
+   ]
+  },
+  {
+   "id": "TST",
+   "name": "test",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-BD-01",
+    "GL-CD-06"
+   ]
+  },
+  {
+   "id": "SEL",
+   "name": "seal",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "a/launch-facing.html",
+    "a/record.json",
+    "GL-BD-01",
+    "GL-BD-04"
+   ]
+  },
+  {
+   "id": "EOT",
+   "name": "record",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "o/generation/engine.mjs",
+    "GL-00",
+    "GL-BD-07"
+   ]
+  },
+  {
+   "id": "CGT",
+   "name": "gate",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "o/consensus-gate.mjs",
+    "GL-OG-02",
+    "GL-OG-03",
+    "GL-BD-05"
+   ]
+  },
+  {
+   "id": "NLB",
+   "name": "null",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "NUL",
+   "grain": "Ground",
+   "typing": "\u00a7",
+   "refs": [
+    "o/consensus-gate.mjs",
+    "E7/organs/measure.js",
+    "GL-01",
+    "GL-OG-02"
+   ]
+  },
+  {
+   "id": "DTF",
+   "name": "detail",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "CON",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "o/detail-fetch.mjs",
+    "GL-OG-04"
+   ]
+  },
+  {
+   "id": "BHC",
+   "name": "behave",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "o/behavior-check.mjs",
+    "GL-OG-05",
+    "GL-BD-06"
+   ]
+  },
+  {
+   "id": "FRS",
+   "name": "fresh",
+   "st": "\u25a0",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "o/freshness.mjs",
+    "GL-OG-06"
+   ]
+  },
+  {
+   "id": "CUB",
+   "name": "cube",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "o/cube.mjs",
+    "E7/kernel/cube.js",
+    "GL-CB-01"
+   ]
+  },
+  {
+   "id": "LDR",
+   "name": "ladder",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "EVA",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "l/r1-r8.json",
+    "l/r9-r13.json",
+    "l/r9-r13-record.json",
+    "GL-LD-01",
+    "GL-LD-03"
+   ]
+  },
+  {
+   "id": "BOX",
+   "name": "box",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "REC",
+   "grain": "Pattern",
+   "typing": "\u00a7",
+   "refs": [
+    "l/mouth-last.json",
+    "l/nomouth-rows.txt",
+    "GL-LD-02",
+    "GL-LD-06",
+    "GL-LD-07"
+   ]
+  },
+  {
+   "id": "CHT",
+   "name": "chat",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "INS",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "g/server.mjs",
+    "g/chat.html",
+    "GL-CH-01",
+    "GL-CH-02"
+   ]
+  },
+  {
+   "id": "BLD",
+   "name": "build",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "LOOMS.md",
+    "GL-BD-03"
+   ]
+  },
+  {
+   "id": "NBK",
+   "name": "book",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "EVA",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "g/to-notebook.mjs",
+    "penelope-notebook.ipynb",
+    "GL-NB-01"
+   ]
+  },
+  {
+   "id": "DOR",
+   "name": "door",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "SEG",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "g/server.mjs",
+    "GL-RT-01",
+    "GL-RT-04"
+   ]
+  },
+  {
+   "id": "ASK",
+   "name": "ask-back",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "g/server.mjs",
+    "g/asks.jsonl",
+    "g/chat.html",
+    "GL-BD-08"
+   ]
+  },
+  {
+   "id": "ADM",
+   "name": "admit",
+   "st": "\u25a0",
+   "lvl": 3,
+   "op": "CON",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "g/server.mjs",
+    "ER7/heimdall.mjs",
+    "GL-CH-03",
+    "GL-RT-03"
+   ]
+  },
+  {
+   "id": "ADC",
+   "name": "code",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "INS",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/adapters/code.mjs",
+    "GL-EN-01"
+   ]
+  },
+  {
+   "id": "ADP",
+   "name": "prose",
+   "st": "\u25a0",
+   "lvl": 1,
+   "op": "INS",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/adapters/prose.mjs",
+    "GL-EN-11"
+   ]
+  },
+  {
+   "id": "LAW",
+   "name": "law",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "README.md",
+    "GL-00",
+    "GL-01",
+    "GL-EN-02"
+   ]
+  },
+  {
+   "id": "GLA",
+   "name": "owl",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "\u00a7",
+   "refs": [
+    "GLAUCA-EOT.md",
+    "GL-TP-01"
+   ]
+  },
+  {
+   "id": "TAP",
+   "name": "loom",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "TAPESTRY.md",
+    "g/tapestry.spec.json",
+    "g/tapestry.legend.json",
+    "g/weave.mjs",
+    "g/unweave.mjs",
+    "g/check-tapestry.mjs",
+    "GL-TP-02"
+   ]
+  },
+  {
+   "id": "LIB",
+   "name": "library",
+   "st": "\u25a0",
+   "lvl": 4,
+   "op": "SYN",
+   "grain": "Ground",
+   "typing": "\u00a7",
+   "refs": [
+    "LP/derived-priors",
+    "o/GENERATION-INVENTORY.md",
+    "GL-01"
+   ]
+  },
+  {
+   "id": "CDB",
+   "name": "fan",
+   "st": "\u25a1",
+   "lvl": 2,
+   "op": "INS",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/code-build.js",
+    "GL-CD-07"
+   ]
+  },
+  {
+   "id": "TKB",
+   "name": "talk",
+   "st": "\u25a1",
+   "lvl": 1,
+   "op": "SYN",
+   "grain": "Figure",
+   "typing": "\u00a7",
+   "refs": [
+    "E7/organs/talk-build.js",
+    "GL-PS-01"
+   ]
+  },
+  {
+   "id": "BPG",
+   "name": "render",
+   "st": "\u25a1",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/adapters/build/belief-page.js",
+    "E7/adapters/build/music-medium.js"
+   ]
+  },
+  {
+   "id": "LOK",
+   "name": "look",
+   "st": "\u25a1",
+   "lvl": 1,
+   "op": "SIG",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/look.js",
+    "GL-IM-01"
+   ]
+  },
+  {
+   "id": "HOR",
+   "name": "set-down",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "SYN",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/hora.js",
+    "ER7/CODING-LESSONS.md",
+    "GL-EN-14"
+   ],
+   "ctl": "\u22a8u \u2261 \u22a8W"
+  },
+  {
+   "id": "RSM",
+   "name": "resume",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "REC",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "E7/kernel/artifact.js",
+    "E7/docs/THE-LOG-IS-THE-MEMORY.md",
+    "GL-EN-14"
+   ],
+   "ctl": "resume \u2260 run \u2228 \u0394d \u2265 0"
+  },
+  {
+   "id": "KOE",
+   "name": "pointer",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "SIG",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/output-holograph.js",
+    "GL-EN-14"
+   ],
+   "ctl": "\u25cfu \u2260 self \u2228 \u25c6u \u2209 addr"
+  },
+  {
+   "id": "GAT",
+   "name": "gates",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/the-fold/spiral-contract.js",
+    "GL-EN-15"
+   ],
+   "ctl": "\u2193\u2717 \u2227 \u00acrevise \u2228 \u221erevise"
+  },
+  {
+   "id": "RUT",
+   "name": "show",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/build-check.js",
+    "ER7/ONE-PIPELINE.md"
+   ],
+   "ctl": "send\u2205key \u22a8 ok \u2228 always ok"
+  },
+  {
+   "id": "PAG",
+   "name": "create",
+   "st": "\u00b7",
+   "lvl": 3,
+   "op": "INS",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/hora.js",
+    "LOOMS.md",
+    "GL-BD-03"
+   ],
+   "ctl": "bare(size\u2191) flat"
+  },
+  {
+   "id": "DEM",
+   "name": "policy",
+   "st": "\u00b7",
+   "lvl": 4,
+   "op": "REC",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/coding-policy.js",
+    "E7/organs/coding-policy-trial.js"
+   ],
+   "ctl": "twin \u2261 held"
+  },
+  {
+   "id": "LFL",
+   "name": "ledger",
+   "st": "\u00b7",
+   "lvl": 3,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/long-form.js",
+    "GL-PS-08"
+   ],
+   "ctl": "window \u2264 ledger"
+  },
+  {
+   "id": "TER",
+   "name": "tree",
+   "st": "\u00b7",
+   "lvl": 3,
+   "op": "SEG",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/territory.js",
+    "GL-PS-09"
+   ],
+   "ctl": "\u00acgain>0 \u2227 homogeneous \u00acsplit"
+  },
+  {
+   "id": "GAR",
+   "name": "fact",
+   "st": "\u00b7",
+   "lvl": 0,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/gary.js",
+    "GL-CD-05"
+   ],
+   "ctl": "fact-rewrite pass\u2193"
+  },
+  {
+   "id": "MAR",
+   "name": "copy",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/martial.js"
+   ],
+   "ctl": "distinct \u2209 finding \u2228 generic \u2208 finding"
+  },
+  {
+   "id": "VIS",
+   "name": "eye",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "SP/organs/visual-pathos.js",
+    "SP/organs/visual-hierarchy.js"
+   ],
+   "ctl": "textless \u2208 contrast \u2228 flat \u2208 pass"
+  },
+  {
+   "id": "SCR",
+   "name": "pixel",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "SIG",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "SP/docs/SCREENSHOT-PIPELINE.md",
+    "GL-IM-03"
+   ],
+   "ctl": "1 witness applied"
+  },
+  {
+   "id": "APO",
+   "name": "pulse",
+   "st": "\u00b7",
+   "lvl": 3,
+   "op": "EVA",
+   "grain": "Ground",
+   "typing": "\u2021",
+   "refs": [
+    "E7/organs/apollo.js",
+    "E7/organs/thea.js"
+   ],
+   "ctl": "steady alarm \u2228 hang \u00acalarm"
+  },
+  {
+   "id": "ANS",
+   "name": "answer",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "ER7/CODING-LESSONS.md",
+    "GL-PS-06"
+   ],
+   "ctl": "linked \u2227 \u00acanswers \u2227 sealed"
+  },
+  {
+   "id": "POL",
+   "name": "polar",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "EVA",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "ER7/CODING-LESSONS.md",
+    "GL-PS-05"
+   ],
+   "ctl": "negation \u2228 swap \u2228 numword links"
+  },
+  {
+   "id": "CRV",
+   "name": "curve",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "EVA",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "SP/organs/visual-pathos.js"
+   ],
+   "ctl": "\u00acmeasured \u2227 verdict"
+  },
+  {
+   "id": "SWT",
+   "name": "swatch",
+   "st": "\u00b7",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Figure",
+   "typing": "\u2021",
+   "refs": [
+    "o/generation/engine.mjs"
+   ],
+   "ctl": "\u2211swatch \u2260 \u2211{\u2261 \u21bb \u25cf}"
+  },
+  {
+   "id": "KIN",
+   "name": "kind",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "SIG",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/kernel/kind-induction.js"
+   ],
+   "ctl": "induced \u00acbeat null"
+  },
+  {
+   "id": "KNL",
+   "name": "null",
+   "st": "\u00b7",
+   "lvl": 4,
+   "op": "NUL",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "E7/kernel/entity-kind-induction.js",
+    "GL-LD-07"
+   ],
+   "ctl": "promote(count) \u2261 promote(null)"
+  },
+  {
+   "id": "NET",
+   "name": "weave",
+   "st": "\u00b7",
+   "lvl": 1,
+   "op": "CON",
+   "grain": "Pattern",
+   "typing": "\u2021",
+   "refs": [
+    "FOLD/network.js"
+   ],
+   "ctl": "arrangement recurs \u2227 \u00acbound"
+  }
+ ]
+}

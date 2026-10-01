@@ -129,6 +129,18 @@ const PROBES = {
   },
 };
 
+// The ask-back channel — a build may pause and ask instead of guessing
+// (build-clarify's posture: the reverse prompt; an answer that moves
+// nothing is never re-asked). Pending asks live in gym/asks.jsonl; every
+// ask and answer is logged. The build that asked resumes with the answer
+// on the record.
+const ASK = path.join(HERE, "asks.jsonl");
+const pendingAsks = () => {
+  try { return fs.readFileSync(ASK, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)).filter((a) => !a.answer); }
+  catch { return []; }
+};
+function logAsk(row) { fs.appendFileSync(ASK, JSON.stringify(row) + "\n"); }
+
 function score() {
   let rows = [];
   try { rows = fs.readFileSync(LOG, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)); } catch {}
@@ -155,6 +167,34 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && u.pathname === "/api/score") {
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify(score()));
+      return;
+    }
+    if (req.method === "GET" && u.pathname === "/api/asks") {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify(pendingAsks()));
+      return;
+    }
+    if (req.method === "POST" && (u.pathname === "/api/ask" || u.pathname === "/api/answer")) {
+      let body = "";
+      for await (const c of req) body += c;
+      const j = JSON.parse(body || "{}");
+      if (u.pathname === "/api/ask") {
+        const id = "ask-" + Date.now();
+        const row = { id, t: Date.now(), kind: "ask", question: String(j.question ?? "").slice(0, 500), context: String(j.context ?? "").slice(0, 300), answer: null };
+        logAsk(row);
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify({ id }));
+        return;
+      }
+      const rows = (() => { try { return fs.readFileSync(ASK, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)); } catch { return []; } })();
+      const i = rows.findIndex((r) => r.id === j.id);
+      if (i < 0) { res.writeHead(404); res.end("no such ask"); return; }
+      rows[i].answer = String(j.answer ?? "");
+      rows[i].answeredAt = Date.now();
+      fs.writeFileSync(ASK, rows.map((r) => JSON.stringify(r)).join("\n") + "\n");
+      fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind: "answer", id: j.id, answer: String(j.answer ?? "").slice(0, 300) }) + "\n");
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ ok: true }));
       return;
     }
     if (req.method === "POST" && u.pathname === "/api/chat-stream") {

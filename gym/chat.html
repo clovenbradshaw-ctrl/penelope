@@ -23,13 +23,18 @@ table{width:100%;font-size:12px;border-collapse:collapse}td,th{border-bottom:1px
 <div id="log"></div>
 <div class="row"><input id="q" placeholder="ask the local mouth anything…"><button id="send">send</button></div>
 </div>
-<div id="board"><h3>scoreboard</h3><div id="score">loading…</div></div>
+<div id="board"><h3>scoreboard</h3><div id="score">loading…</div><h3 style="margin-top:18px">pending asks</h3><div id="asks">none</div></div>
 <script>
 const log=document.getElementById('log'),scoreEl=document.getElementById('score');
 const say=(cls,html)=>{const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;log.append(d);log.scrollTop=1e6;};
 async function refresh(){
   const s=await (await fetch('/api/score')).json();
   scoreEl.innerHTML=s.tasks.length?('<table><tr><th>task</th><th>att</th><th>pass</th><th>mouth</th><th>box</th></tr>'+s.tasks.map(t=>`<tr><td>${t.task}</td><td>${t.attempts}</td><td>${t.passes}</td><td>${t.mouth}</td><td>${t.box}</td></tr>`).join('')+'</table>'):'no rung attempts yet — press a button.';
+  const asks=await (await fetch('/api/asks')).json();
+  const aEl=document.getElementById('asks');
+  if(!asks.length){aEl.textContent='none';return;}
+  aEl.innerHTML=asks.map(a=>`<div style="border:1px solid #374151;border-radius:8px;padding:8px;margin:6px 0"><div style="color:#9ca3af;font-size:12px">${new Date(a.t).toLocaleTimeString()}</div><div>${a.question.replace(/</g,'&lt;')}</div><input data-ask="${a.id}" placeholder="answer…" style="margin-top:6px;width:100%;box-sizing:border-box"></div>`).join('');
+  aEl.querySelectorAll('[data-ask]').forEach(inp=>inp.onkeydown=async e=>{if(e.key!=='Enter')return;await fetch('/api/answer',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:inp.dataset.ask,answer:inp.value})});inp.value='';refresh();});
 }
 document.querySelectorAll('[data-rung]').forEach(b=>b.onclick=async()=>{
   say('u','▶ rung: '+b.dataset.rung+' (drawing…)');
