@@ -3,7 +3,7 @@
 // an artifact adapter owns only what is genuinely medium-specific.
 //
 // Contract:
-//   generate({ intent, artifact, constraints, context, verification, ... })
+//   weave({ intent, artifact, constraints, context, verification, ... })
 //
 // The result separates artifact, materialization, verification, evidence, and
 // repair. Adding a medium means registering an adapter, not another engine.
@@ -31,7 +31,7 @@ export function generationKinds() {
 
 async function loadBuiltins() {
   if (!adapters.has("code")) registerGenerationAdapter("code", (await import("./adapters/code.mjs")).default);
-  if (!adapters.has("prose")) registerGenerationAdapter("prose", (await import("./adapters/prose.mjs")).default);
+  if (!adapters.has("text")) registerGenerationAdapter("text", (await import("./adapters/prose.mjs")).default);\n  // "prose" remains an internal compatibility alias; the public artifact kind is text.\n  if (!adapters.has("prose")) registerGenerationAdapter("prose", generationAdapter("text"));
   return adapters;
 }
 
@@ -48,7 +48,7 @@ function normalizeArtifact(result, kind) {
  * artifact may be a registered kind or an adapter object. A missing/unknown
  * kind is a named gap; Penelope never guesses the medium from prose.
  */
-export async function generate({
+export async function weave({
   intent,
   artifact,
   constraints = {},
@@ -127,13 +127,13 @@ export async function generate({
   };
 }
 
-export function selftest() {
+// Compatibility for internal callers during the migration. The public operation is weave().\nexport const generate = weave;\n\nexport function selftest() {
   const before = generationKinds();
   const invalid = { kind: "selftest", readUnits() { return []; }, testUnits() { return { ok: true }; } };
   registerGenerationAdapter("selftest", invalid);
   const registered = generationAdapter("selftest") === invalid && generationKinds().includes("selftest");
   adapters.delete("selftest");
-  const empty = generate({ intent: "   ", artifact: "code" });
+  const empty = weave({ intent: "   ", artifact: "code" });
   return Promise.resolve(empty).then((r) => {
     const ok = registered && r.ok === false && r.status === "gap" && generationKinds().join("|") === before.join("|");
     if (!ok) throw new Error("unified generation API selftest failed");
@@ -141,4 +141,4 @@ export function selftest() {
   });
 }
 
-export default { generate, registerGenerationAdapter, generationAdapter, generationKinds };
+export default { weave, generate, registerGenerationAdapter, generationAdapter, generationKinds };
