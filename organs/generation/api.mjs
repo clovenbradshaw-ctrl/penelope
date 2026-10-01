@@ -130,7 +130,7 @@ export async function weave({
       scars: result.scars ?? [],
       converged: (result.scars ?? []).length === 0 && verified,
     },
-    model: model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b",
+    model: context.noModel === true ? null : (model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b"),
   };
 }
 
