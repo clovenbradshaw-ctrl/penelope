@@ -177,7 +177,7 @@ export async function htmlSnipRun({ html, sel }) {
 // or the unmerged screenshot pipeline — disclosed, never faked (GL-IM-01/05).
 export async function imagePageRun({ image }) {
   if (!image) return { ok: false, error: "image:page needs an image path" };
-  const LOOK = "/Users/mlacy/Documents/3.0/eoreader7/native/organs/look.js";
+  const LOOK = process.env.ER7_HOME ? `${process.env.ER7_HOME}/native/organs/look.js` : decodeURIComponent(new URL("../../eoreader7/native/organs/look.js", import.meta.url).pathname);
   let look = null;
   try { look = await import(LOOK); } catch (e) { return { ok: false, error: `look.js not loadable: ${String(e.message).slice(0, 120)}` }; }
   let text;

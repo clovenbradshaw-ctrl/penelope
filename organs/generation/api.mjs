@@ -126,9 +126,9 @@ export async function weave({
     },
     evidence: {
       provenance: result.provenance ?? {
-        schema: "Provenance@1",
+        schema: "Provenance@2",
         sources: [],
-        refs: [],
+        events: [],
         addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" },
       },
       eot: result.eot ?? null,
@@ -144,9 +144,6 @@ export async function weave({
     noModel: noModel === true,
   };
 }
-
-// Compatibility for internal callers during the migration. The public operation is weave().
-export const generate = weave;
 
 export async function selftest() {
   await loadBuiltins();
@@ -184,4 +181,4 @@ export async function selftest() {
   return { ok: true, checks: 5 };
 }
 
-export default { weave, generate, registerGenerationAdapter, generationAdapter, generationKinds };
+export default { weave, registerGenerationAdapter, generationAdapter, generationKinds };
