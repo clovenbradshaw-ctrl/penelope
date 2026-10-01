@@ -56,21 +56,18 @@ export function parseArgs(argv) {
 
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
-export async function draw(prompt, { maxTokens = 240, retries = 4, model = null } = {}) {
+export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch" } = {}) {
+  // Every model draw enters Penelope's draw door. The engine remains the
+  // orchestrator; admission/routing belongs to the door, not this engine.
+  const { runDrawDoor } = await import("../generation-door.mjs");
+  let last = "";
   for (let a = 0; a < retries; a += 1) {
-    try {
-      const r = await fetch(`${OLLAMA}/api/generate`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ model: model ?? MODEL, prompt, stream: false, options: { num_predict: maxTokens, temperature: 0 } }),
-        signal: AbortSignal.timeout(120000),
-      });
-      const j = await r.json();
-      return j.response ?? "";
-    } catch (e) {
-      await new Promise((r) => setTimeout(r, 3000 * (a + 1)));
-    }
+    const r = await runDrawDoor({ prompt, model: model ?? MODEL, kind, priority, maxTokens });
+    if (r.ok) return r.text;
+    last = r.error ?? "draw failed";
+    await new Promise((res) => setTimeout(res, 3000 * (a + 1)));
   }
-  return "";
+  return last ? "" : "";
 }
 
 let tmpCounter = 0;
@@ -83,14 +80,14 @@ export function writeTmp(code) {
 // ── THE SPIRAL — draw → probe → sharpen the atom → re-draw. The dissent
 // (every defection) is disclosed on the EOT. The FILL ORDER is the law:
 // field (autofill) → hunt → mouth. The mouth is never the first resort. ──
-async function fillUnits(units, adapter) {
+async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
   const provenance = [];
   for (const u of units) {
     // 1. THE FIELD (autofill): the corpus already holds the framed unit —
     //    snipped from its bytes with an address. Match BY FRAME, never name.
-    const fill = adapter.autofill ? adapter.autofill(u) : null;
+    const fill = adapter.autofill ? adapter.autofill(u, ctx) : null;
     if (fill) {
       drawn.push(fill.code);
       provenance.push({ unit: u.name, source: "corpus", address: fill.address, bytes: fill.code.length });
@@ -100,7 +97,7 @@ async function fillUnits(units, adapter) {
     //    not the first resort for structured material.
     let hunted = false;
     if (adapter.hunt) {
-      const res = await adapter.hunt(u);
+      const res = await adapter.hunt(u, ctx);
       if (res) {
         drawn.push(res.code);
         provenance.push({ unit: u.name, source: "hunt", url: res.url, bytes: res.code.length });
@@ -114,17 +111,17 @@ async function fillUnits(units, adapter) {
     let attempt = 0;
     let atom = u.spec;
     while (attempt < 4) {
-      const fragment = adapter.mouthFragment(u, atom);
-      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240 });
+      const fragment = adapter.mouthFragment(u, atom, ctx);
+      const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240, model: ctx.model ?? null, kind: ctx.artifact ?? adapter.kind ?? "other", priority: "batch" });
       const fn = adapter.snip(out, u.name);
-      const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
+      const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
       if (fn && alone.ok) {
         drawn.push(fn);
         provenance.push({ unit: u.name, source: "mouth" });
         break;
       }
       const why = alone.detail;
-      atom = adapter.sharpen ? adapter.sharpen(u, atom, why) : atom;
+      atom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
       scars.push({ unit: u.name, attempt: attempt + 1, why, atom });
       attempt += 1;
     }
@@ -133,23 +130,23 @@ async function fillUnits(units, adapter) {
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
-export async function arrange({ task, args = {}, adapter }) {
+export async function arrange({ task, args = {}, adapter, context = {} }) {
   const outDir = path.resolve(args.out || path.join(HERE, "..", "arrangement-out"));
   fs.mkdirSync(outDir, { recursive: true });
 
   console.log(`\n=== THE FIELD READS THE PROMPT ===`);
   console.log(`  "${task}"\n`);
-  let units = await adapter.readUnits(task);
+  let units = await adapter.readUnits(task, context);
   units = units ?? [];
   let example = null;
   if (args.example) { try { example = JSON.parse(args.example); } catch { example = null; } }
-  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example);
+  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example, context);
   console.log(`  units + per-unit specs (from the reading, not a dictionary):`);
   for (const u of units) console.log(`    ${u.name}: ${u.spec}${u.settle ? `  [settle: ${u.settle}]` : ""}`);
 
   console.log(`\n=== THE SPIRAL — field first, hunt second, mouth last ===`);
-  const { code, scars, provenance } = await fillUnits(units, adapter);
-  const verdict = adapter.testUnits(code, units);
+  const { code, scars, provenance } = await fillUnits(units, adapter, context);
+  const verdict = adapter.testUnits(code, units, context);
   console.log(`  folded: ${code.length} bytes, ${units.length} units`);
   const snipped = (provenance ?? []).filter((p) => p.source === "corpus");
   const drawn = (provenance ?? []).filter((p) => p.source === "mouth");
@@ -161,7 +158,7 @@ export async function arrange({ task, args = {}, adapter }) {
 
   console.log(`\n=== THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
-  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title });
+  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
   const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
   fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
