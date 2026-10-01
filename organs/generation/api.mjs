@@ -31,7 +31,9 @@ export function generationKinds() {
 
 async function loadBuiltins() {
   if (!adapters.has("code")) registerGenerationAdapter("code", (await import("./adapters/code.mjs")).default);
-  if (!adapters.has("text")) registerGenerationAdapter("text", (await import("./adapters/prose.mjs")).default);\n  // "prose" remains an internal compatibility alias; the public artifact kind is text.\n  if (!adapters.has("prose")) registerGenerationAdapter("prose", generationAdapter("text"));
+  if (!adapters.has("text")) registerGenerationAdapter("text", (await import("./adapters/prose.mjs")).default);
+  // "prose" remains an internal compatibility alias; the public artifact kind is text.
+  if (!adapters.has("prose")) registerGenerationAdapter("prose", generationAdapter("text"));
   return adapters;
 }
 
@@ -132,7 +134,10 @@ export async function weave({
   };
 }
 
-// Compatibility for internal callers during the migration. The public operation is weave().\nexport const generate = weave;\n\nexport async function selftest() {
+// Compatibility for internal callers during the migration. The public operation is weave().
+export const generate = weave;
+
+export async function selftest() {
   await loadBuiltins();
   const before = generationKinds();
   const invalid = { kind: "selftest", readUnits() { return []; }, testUnits() { return { ok: true }; } };
