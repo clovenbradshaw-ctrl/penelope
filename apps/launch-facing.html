@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Launch R13 — facing page</title>
+<style>
+body{font:14px system-ui,sans-serif;margin:0;color:#1c1917;background:#fafaf9}
+header{display:flex;gap:8px;align-items:center;padding:10px 16px;background:#1c1917;color:#fff}
+header h1{font-size:16px;margin:0 12px 0 0}
+header button{padding:6px 12px;border-radius:8px;border:1px solid #555;background:#292524;color:#fff;cursor:pointer}
+header button[aria-pressed="true"]{background:#e7e5e4;color:#1c1917}
+.view{display:none}.view.on{display:block}
+#face{display:grid;grid-template-columns:minmax(320px,5fr) 7fr;gap:0;min-height:calc(100vh - 48px)}
+#sources{border-right:1px solid #ddd;overflow:auto;max-height:calc(100vh - 48px);padding:12px 16px}
+#sources h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#57534e}
+.src{border:1px solid #e7e5e4;border-radius:8px;padding:8px 10px;margin:8px 0;background:#fff}
+.src .tag{font-weight:800;color:#0c4a6e}
+.src .addr{font:11px monospace;color:#57534e}
+.src .snip{font:11px monospace;background:#f5f5f4;padding:6px;border-radius:6px;white-space:pre-wrap;margin-top:4px}
+.src .verdict{font-size:12px;margin-top:4px}
+#apppane{padding:0}#apppane iframe{width:100%;height:calc(100vh - 48px);border:0}
+#fold iframe{width:100%;height:calc(100vh - 48px);border:0}
+.map{font-size:12px;color:#444;margin:4px 0}
+</style></head><body>
+<header><h1>Launch R13</h1>
+<button id="bFace" aria-pressed="true">Facing page</button>
+<button id="bFold" aria-pressed="false">Folded app</button>
+</header>
+
+<div class="view on" id="face">
+<div id="sources">
+<h2>Sources — the log that built it</h2>
+<div class="map">Right: the running fold. Every element traces to one source below. [S#] = source fact · [M] = my prose.</div>
+<div class="src"><span class="tag">[S1]</span> <b>R1–R3 tracer</b> [S1]<div class="addr">ladder/record.json · USGS all_day.geojson</div><div class="snip">R1 count 286 · R2 first-of-N mag/place/time · R3 top-5 newest-first verified live</div><div class="verdict">pass — grounds the app's rows [S1]</div></div>
+<div class="src"><span class="tag">[S2]</span> <b>R4 mouth wall</b> [S2]<div class="addr">ladder/record.json · /tmp/ladder_r4.js</div><div class="snip">mouth fmtAgo 0/4 (const-reassign throw); box 5-liner 4/4 held-out</div><div class="verdict">standing: time-math is box-owned — grounds the countdowns [S2]</div></div>
+<div class="src"><span class="tag">[S3]</span> <b>Consensus gate</b> [S3]<div class="addr">consensus-gate.mjs · ConsensusGate@1 · 7/7 selftests</div><div class="snip">launch labels [L,L,L,L,null,null] → CALLABLE-unanimous; quake → MORE</div><div class="verdict">grounds the layout choice [S3]</div></div>
+<div class="src"><span class="tag">[S4]</span> <b>Layout library</b> [S4]<div class="addr">live_priors/derived-priors/layout-priors/layout-prior-launch-list-v1.json</div><div class="snip">row order: when(countdown-or-datetime), mission, vehicle/provider, pad/site, soonest-first — 6 comps, sha256 each</div><div class="verdict">grounds row order + hero shape [S4]</div></div>
+<div class="src"><span class="tag">[S5]</span> <b>R9–R10 detail fan-out</b> [S5]<div class="addr">organs/detail-fetch.mjs · 4/4 selftests</div><div class="snip">paths mission.description + vidURLs.0.url; 8 rows, planted failure gapped at [3]</div><div class="verdict">grounds hero description + webcast + per-item gaps [S5]</div></div>
+<div class="src"><span class="tag">[S6]</span> <b>R11 behavior factors</b> [S6]<div class="addr">organs/behavior-check.mjs · 3/3 selftests</div><div class="snip">filterLaunches mouth 0/3 → box-owned; resolveDetail mouth-green; ship factors 5/5</div><div class="verdict">grounds search + detail-open [S6]</div></div>
+<div class="src"><span class="tag">[S7]</span> <b>R12 freshness</b> [S7]<div class="addr">organs/freshness.mjs · 4/4 selftests</div><div class="snip">fresh → stale(rows kept, last-good) → expired(rows→gap)</div><div class="verdict">grounds the stale badge + expired gap [S7]</div></div>
+<div class="src"><span class="tag">[S8]</span> <b>R13 ship probes</b> [S8]<div class="addr">launch-exp/launch-r13.html · ladder/r9-r13-record.json</div><div class="snip">syntax both blocks; factors 5/5 vs ship; live feed ascending 20/20; mouth calls in artifact: 0</div><div class="verdict">the fold holds [S8]</div></div>
+<div class="map">[M] This page is my prose about the record; the app on the right is the record's fold. Map: rows→[S1][S4], countdowns→[S2], layout→[S3][S4], detail→[S5], search→[S6], stale badge→[S7], whole→[S8].</div>
+</div>
+<div id="apppane"><iframe src="launch-r13.html" title="folded launch app"></iframe></div>
+</div>
+
+<div class="view" id="fold"><iframe src="launch-r13.html" title="folded launch app"></iframe></div>
+
+<script>
+const f=document.getElementById('face'),d=document.getElementById('fold');
+const bf=document.getElementById('bFace'),bd=document.getElementById('bFold');
+bf.onclick=()=>{f.classList.add('on');d.classList.remove('on');bf.setAttribute('aria-pressed','true');bd.setAttribute('aria-pressed','false');};
+bd.onclick=()=>{d.classList.add('on');f.classList.remove('on');bd.setAttribute('aria-pressed','true');bf.setAttribute('aria-pressed','false');};
+</script></body></html>

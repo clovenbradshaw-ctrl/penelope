@@ -1,0 +1,126 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Upcoming Launches (R13: rung-proven assembly)</title>
+<style>
+body{font:15px system-ui,sans-serif;margin:0;background:#0b1020;color:#e5e7eb}
+header{padding:14px 16px}header h1{font-size:18px;margin:0}
+#meta,#stale{padding:0 16px 8px;color:#9ca3af;font-size:13px}#stale{color:#fbbf24}
+#gap{display:none;margin:16px;padding:12px;border:1px solid #b45309;background:#451a03;border-radius:8px}
+#search{margin:0 16px 8px;padding:8px;width:min(400px,80vw);border-radius:8px;border:1px solid #374151;background:#111c34;color:#e5e7eb}
+#hero{margin:0 16px 12px;padding:16px;border:1px solid #374151;border-radius:12px;background:#111c34;max-width:720px}
+#hero .cd{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+#hero .mission{font-size:19px;font-weight:700;margin-top:6px}
+#hero .sub{color:#9ca3af;font-size:13px;margin-top:4px}
+#hero .desc{margin-top:8px;font-size:14px}#hero a{color:#7dd3fc}
+ol#launches{list-style:none;margin:0;padding:0 16px 24px;max-width:720px}
+ol#launches li{display:flex;gap:12px;align-items:baseline;padding:10px 4px;border-bottom:1px solid #1f2937;cursor:pointer}
+ol#launches .cd{min-width:118px;font-variant-numeric:tabular-nums;color:#fbbf24;font-weight:700}
+ol#launches .mission{font-weight:600}ol#launches .sub{color:#9ca3af;font-size:13px}
+ol#launches .nodetail{color:#b45309;font-size:12px}
+</style></head><body>
+<header><h1>Upcoming Launches</h1></header>
+<div id="meta">Loading…</div>
+<div id="stale"></div>
+<div id="gap" role="alert"></div>
+<input id="search" placeholder="filter missions or sites…" aria-label="filter launches">
+<div id="hero" hidden></div>
+<ol id="launches"></ol>
+<script id="factors">
+// PURE FACTORS (R11: behavior-check loads this block alone — no DOM/IO here).
+function fmtCountdown(t){const d=t-Date.now();if(d<0)return 'LIFTOFF';const p=n=>String(n).padStart(2,'0');const s=Math.floor(d/1000);return 'T-'+Math.floor(s/86400)+'d '+p(Math.floor(s%86400/3600))+'h '+p(Math.floor(s%3600/60))+'m '+p(s%60)+'s';}
+function sortLaunches(arr){return (Array.isArray(arr)?arr:[]).slice().sort((a,b)=>new Date(a.net)-new Date(b.net));}
+function filterLaunches(q, items){const n=String(q||"").toLowerCase();return (items||[]).filter(x=>(((x||{}).mission||"")+" "+((x||{}).site||"")).toLowerCase().includes(n));}
+function resolveDetail(id, items){return (items||[]).find(x=>x&&x.id===id)||null;}
+function tracePath(obj,path){let c=obj;for(const s of String(path).split(".")){if(c==null)return undefined;c=/^\d+$/.test(s)?c[Number(s)]:c[s];}return c;}
+function freshLabel(fetchedAt,now,ttl){const a=now-fetchedAt;if(!(a>=0))return{state:'unknown',badge:'time unknown'};if(a<=ttl)return{state:'fresh',badge:'updated '+Math.floor(a/1000)+'s ago'};if(a<=3*ttl)return{state:'stale',badge:'stale — last good '+new Date(fetchedAt).toUTCString()};return{state:'expired',badge:'data expired — refresh failed (named gap)'};}
+</script>
+<script id="wiring">
+// R13 assembly — every line rung-proven. Mouth calls in this artifact: 0.
+// R4/R11 precedent: factors above are box-owned (mouth 3x + 3x red).
+// R10: detail paths mission.description + vidURLs.0.url, per-item gaps. R12: freshness label semantics.
+const FEED='https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=20&mode=list';
+const TTL=300000;
+let launches=[],fetchedAt=0;
+function showGap(m){const g=document.getElementById('gap');g.style.display='block';g.textContent='No launch data: '+m+' (named gap — no launches invented.)';}
+function hideGap(){document.getElementById('gap').style.display='none';}
+function renderList(q){
+  const ol=document.getElementById('launches');ol.innerHTML='';
+  const rows=filterLaunches(q,launches);
+  for(const l of rows){
+    const li=document.createElement('li');li.dataset.id=l.id;
+    const c=document.createElement('div');c.className='cd';c.dataset.net=l.net;c.textContent=fmtCountdown(new Date(l.net).getTime());
+    const d=document.createElement('div');
+    const m=document.createElement('div');m.className='mission';m.textContent=l.mission;
+    const s=document.createElement('div');s.className='sub';s.textContent=[[l.provider,l.vehicle].filter(Boolean).join(' · '),l.site+' — '+new Date(l.net).toUTCString()].filter(Boolean).join(' — ');
+    d.append(m,s);
+    if(l.detailGap){const g=document.createElement('div');g.className='nodetail';g.textContent='detail unavailable ('+l.detailGap.slice(0,60)+')';d.append(g);}
+    li.append(c,d);
+    li.addEventListener('click',()=>showDetail(l.id));
+    ol.append(li);
+  }
+  return rows.length;
+}
+async function showDetail(id){
+  const l=resolveDetail(id,launches);if(!l)return;
+  const hero=document.getElementById('hero');hero.hidden=false;hero.innerHTML='';
+  const cd=document.createElement('div');cd.className='cd';cd.dataset.net=l.net;cd.textContent=fmtCountdown(new Date(l.net).getTime());
+  const mi=document.createElement('div');mi.className='mission';mi.textContent=l.mission;
+  const su=document.createElement('div');su.className='sub';su.textContent=[[l.provider,l.vehicle].filter(Boolean).join(' · '),l.site+' — '+new Date(l.net).toUTCString()].filter(Boolean).join(' — ');
+  hero.append(cd,mi,su);
+  // lazy detail: one fetch per tap (the 429 lesson — never fan out 20 at load)
+  if(typeof l.desc==='string'&&l.desc){const d=document.createElement('div');d.className='desc';d.textContent=l.desc.slice(0,600);hero.append(d);}
+  else{
+    const w=document.createElement('div');w.className='sub';w.textContent='loading detail…';hero.append(w);
+    try{
+      const dr=await fetchRetry(l.url,2);if(!dr.ok)throw new Error('HTTP '+dr.status);
+      const dj=await dr.json();
+      l.desc=tracePath(dj,'mission.description');l.webcast=tracePath(dj,'vidURLs.0.url');
+      w.remove();
+      if(typeof l.desc==='string'&&l.desc){const d=document.createElement('div');d.className='desc';d.textContent=l.desc.slice(0,600);hero.append(d);}
+      if(typeof l.webcast==='string'&&l.webcast){const a=document.createElement('a');a.href=l.webcast;a.textContent='watch webcast';a.target='_blank';a.rel='noopener';hero.append(a);}
+      if(typeof l.desc!=='string'){const g=document.createElement('div');g.className='nodetail';g.textContent='detail unavailable (no description at path)';hero.append(g);}
+    }catch(e){
+      const g=document.createElement('div');g.className='nodetail';g.textContent='detail unavailable ('+String(e.message||e).slice(0,80)+')';
+      w.replaceWith(g);
+      const li=document.querySelector('li[data-id="'+CSS.escape(l.id)+'"] .nodetail')||null;
+      void li;
+    }
+  }
+  if(typeof l.webcast==='string'&&l.webcast){const a=document.createElement('a');a.href=l.webcast;a.textContent='watch webcast';a.target='_blank';a.rel='noopener';hero.append(a);}
+}
+// Retry-After-honoring fetch, bounded (429 lesson: back off, then gap).
+async function fetchRetry(url,tries){
+  let last=null;
+  for(let a=0;a<tries;a+=1){
+    const r=await fetch(url);last=r;
+    if(r.status!==429)return r;
+    const wait=Math.min(10000,(Number(r.headers.get('Retry-After'))||2)*1000);
+    await new Promise(res=>setTimeout(res,wait));
+  }
+  return last;
+}
+async function load(){
+  hideGap();
+  document.getElementById('meta').textContent='Loading launch feed…';
+  const r=await fetchRetry(FEED,3);if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  const rs=sortLaunches(Array.isArray(j.results)?j.results:[]).filter(x=>x.net);
+  if(!rs.length)throw new Error('feed returned zero results');
+  // list only — detail lazy per tap (R10 fanout retired by the 429: same organ paths, no eager fanout)
+  launches=rs.map(x=>({id:x.id,url:'https://ll.thespacedevs.com/2.2.0/launch/'+x.id+'/',mission:x.mission||x.name||'Unnamed',provider:x.lsp_name||'',vehicle:'',site:[x.pad,x.location].filter(Boolean).join(' · '),net:x.net}));
+  fetchedAt=Date.now();hideGap();
+  document.getElementById('meta').textContent=launches.length+' upcoming launches, soonest first';
+  renderList(document.getElementById('search').value);
+}
+function tick(){
+  document.querySelectorAll('[data-net]').forEach(el=>{el.textContent=fmtCountdown(new Date(el.dataset.net).getTime());});
+  if(!fetchedAt)return;
+  const l=freshLabel(fetchedAt,Date.now(),TTL);
+  document.getElementById('stale').textContent=l.state==='fresh'?'':l.badge;
+  if(l.state==='expired'){document.getElementById('launches').innerHTML='';document.getElementById('hero').hidden=true;showGap(l.badge);}
+}
+document.getElementById('search').addEventListener('input',e=>renderList(e.target.value));
+setInterval(tick,1000);
+setInterval(()=>load().catch(e=>{const l=freshLabel(fetchedAt||0,Date.now(),TTL);document.getElementById('stale').textContent=l.badge;}),TTL);
+load().catch(e=>{document.getElementById('meta').textContent='Feed unreachable.';showGap(String(e.message||e).slice(0,160));});
+</script></body></html>
