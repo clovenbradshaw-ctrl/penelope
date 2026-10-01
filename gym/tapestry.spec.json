@@ -876,7 +876,9 @@
     "a/council-facing.html",
     "a/council-record.json",
     "g/probe-council.mjs",
-    "GL-WV-01"
+    "GL-WV-01",
+    "/api/council/events",
+    "/api/council/events/"
    ]
   }
  ]

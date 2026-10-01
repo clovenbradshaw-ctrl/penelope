@@ -48,10 +48,9 @@ function freshLabel(fetchedAt,now,ttl){const a=now-fetchedAt;if(!(a>=0))return{s
 // Council Watch assembly — every line box-owned. Mouth calls in this artifact: 0.
 // Window + agenda shapes are organs (Window@1, AgendaShape@1); gaps are named,
 // never invented; freshness is fresh/stale/expired (Freshness@1 semantics).
-const N=8,TOP=12,TTL=300000,API='https://webapi.legistar.com/v1/nashville/';
+const N=8,TOP=12,TTL=300000;
 let meetings=[],fetchedAt=0;
-function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-const FEED=()=>API+'Events?$filter=EventDate ge datetime\''+today()+'T00:00:00\'&$orderby=EventDate&$top='+TOP;
+const FEED=()=>'/api/council/events';
 function showGap(m){const g=document.getElementById('gap');g.style.display='block';g.textContent='No council data: '+m+' (named gap — no meetings invented.)';}
 function hideGap(){document.getElementById('gap').style.display='none';}
 async function fetchRetry(url,tries){let last=null;for(let a=0;a<tries;a+=1){const r=await fetch(url);last=r;if(r.status!==429)return r;const wait=Math.min(10000,(Number(r.headers.get('Retry-After'))||2)*1000);await new Promise(res=>setTimeout(res,wait));}return last;}
@@ -132,7 +131,7 @@ async function load(){
   const r=await fetchRetry(FEED(),3);if(!r.ok)throw new Error('HTTP '+r.status);
   const j=await r.json();
   if(!Array.isArray(j)||!j.length)throw new Error('feed returned zero results');
-  meetings=j.map(x=>({id:x.EventId,body:x.EventBodyName||'Unnamed body',date:x.EventDate||'',time:x.EventTime||null,loc:x.EventLocation||'',status:x.EventAgendaStatusName||null,url:x.EventInSiteURL||'',itemsUrl:API+'Events/'+x.EventId+'/EventItems',agenda:[],agendaGap:null}));
+  meetings=j.map(x=>({id:x.EventId,body:x.EventBodyName||'Unnamed body',date:x.EventDate||'',time:x.EventTime||null,loc:x.EventLocation||'',status:x.EventAgendaStatusName||null,url:x.EventInSiteURL||'',itemsUrl:'/api/council/events/'+x.EventId+'/items',agenda:[],agendaGap:null}));
   fetchedAt=Date.now();hideGap();
   document.getElementById('meta').textContent=meetings.length+' upcoming meetings, soonest first — agenda loads per meeting';
   renderList(document.getElementById('search').value);

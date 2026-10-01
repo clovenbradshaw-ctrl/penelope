@@ -36,6 +36,20 @@ const er7model = (m) => (String(m).startsWith("er7:") ? m : `er7:${m}`);
 //   code draws — disclosed, not hidden.
 const OLLAMA = "http://localhost:11434";
 
+// The hunt's fetch, bounded: honor 429 + Retry-After with backoff, then hand
+// back the last status — the door reports what the feed said (GL-RT-03).
+async function fetchRetryLegistar(url, tries) {
+  let last = null;
+  for (let a = 0; a < tries; a += 1) {
+    const r = await fetch(url, { signal: AbortSignal.timeout(20000) });
+    last = r;
+    if (r.status !== 429) return r;
+    const wait = Math.min(10000, (Number(r.headers.get("Retry-After")) || 2) * 1000);
+    await new Promise((res) => setTimeout(res, wait));
+  }
+  return last;
+}
+
 async function drawChat(prompt) {
   const body = JSON.stringify({
     model: "er7:gemma2:2b", stream: false, temperature: 0,
@@ -167,6 +181,27 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && u.pathname === "/api/score") {
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify(score()));
+      return;
+    }
+    // The hunt's own door: legistar's WebAPI sends no CORS headers (measured
+    // 2026-10-01), so a browser cannot fetch it cross-origin — the loom fetches
+    // at home and the browser reads the hunt through the door. Bounded retry on
+    // 429, then the typed status — never a silent stop (GL-RT-03).
+    if (req.method === "GET" && u.pathname === "/api/council/events") {
+      const d = new Date();
+      const today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      const url = `https://webapi.legistar.com/v1/nashville/Events?$filter=EventDate ge datetime'${today}T00:00:00'&$orderby=EventDate&$top=12`;
+      const r = await fetchRetryLegistar(url, 3);
+      res.writeHead(r.status, { "content-type": "application/json" });
+      res.end(await r.text());
+      return;
+    }
+    if (req.method === "GET" && u.pathname.startsWith("/api/council/events/")) {
+      const id = u.pathname.match(/^\/api\/council\/events\/(\d+)\/items$/)?.[1];
+      if (!id) { res.writeHead(404); res.end("nope"); return; }
+      const r = await fetchRetryLegistar(`https://webapi.legistar.com/v1/nashville/Events/${id}/EventItems`, 3);
+      res.writeHead(r.status, { "content-type": "application/json" });
+      res.end(await r.text());
       return;
     }
     if (req.method === "GET" && u.pathname === "/api/asks") {

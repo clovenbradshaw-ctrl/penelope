@@ -104,13 +104,18 @@ export function refProblems(spec, { exists, eotIds, sibling }) {
 // The door thread is load-bearing both ways: a route on the cloth must be a
 // real pathname in gym/server.mjs, and every server route must be named by
 // some thread. A door neither pictures its routes nor keeps them honest.
-const ROUTE_RE = /pathname === "(\/[^"]+)"/g;
+// Pattern routes (pathname.startsWith) are matched as prefixes.
+const ROUTE_EXACT = /pathname === "(\/[^"]+)"/g;
+const ROUTE_PREFIX = /pathname\.startsWith\("(\/[^"]+)"\)/g;
 export function routeProblems(spec, serverText) {
   const out = [];
   const declared = new Set(spec.threads.flatMap((t) => t.refs.filter((r) => r.startsWith("/"))));
-  const routes = new Set([...(serverText ?? "").matchAll(ROUTE_RE)].map((m) => m[1]).filter((r) => r !== "/"));
-  for (const r of declared) if (!routes.has(r)) out.push(`ROUTE: ${r} is on the cloth but not a route in gym/server.mjs`);
-  for (const r of routes) if (!declared.has(r)) out.push(`ROUTE: ${r} is a route in gym/server.mjs but named by no thread`);
+  const exact = new Set([...(serverText ?? "").matchAll(ROUTE_EXACT)].map((m) => m[1]).filter((r) => r !== "/"));
+  const prefixes = [...(serverText ?? "").matchAll(ROUTE_PREFIX)].map((m) => m[1]);
+  const covered = (r) => exact.has(r) || prefixes.some((p) => r.startsWith(p));
+  for (const r of declared) if (!covered(r)) out.push(`ROUTE: ${r} is on the cloth but not a route in gym/server.mjs`);
+  for (const r of exact) if (!declared.has(r)) out.push(`ROUTE: ${r} is a route in gym/server.mjs but named by no thread`);
+  for (const p of prefixes) if (![...declared].some((r) => r.startsWith(p))) out.push(`ROUTE: ${p}* is a route pattern in gym/server.mjs but named by no thread`);
   return out;
 }
 export function coverProblems(spec, files) {

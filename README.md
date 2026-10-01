@@ -303,6 +303,7 @@ append-only, always revisable).
 ║■CCL 2 △◈ ‡ council                                                         ║
 ║     @ a/council.html a/council-control.html a/council-facing.html          ║
 ║     @ a/council-record.json g/probe-council.mjs GL-WV-01                   ║
+║     @ /api/council/events /api/council/events/                             ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ```

@@ -1147,3 +1147,15 @@ The man-fishing animation is a LIBRARY/BOX shape (a scene template in
 layout-priors, rendered mechanically — the remembered layer), not a
 residue for the mouth. The build fished; the catch is a measured wall and
 its named next rung: seed the scene template, render it, mouth last.
+
+### GL-WV-06 — The hunt is read through the loom's own door; the third party is never the browser's business
+- pipeline: routing
+- status: standing
+- supersedes: —
+- evidence: gym/server.mjs (GET /api/council/events + /api/council/events/{id}/items — server-side fetch with bounded 429 backoff; legistar's WebAPI sends NO Access-Control-Allow-Origin header, measured 2026-10-01: GET with Origin returns 200 and zero CORS headers, so the browser's fetch fails with "Failed to fetch" while node/curl succeed); apps/council.html (wiring reads the hunt through the door; the factors are untouched — the shape class stays box-owned, GL-WV-01 stands); the keeper's routeProblems now sees pattern routes (pathname.startsWith) so the door thread stays load-bearing both ways; selftest 18/18
+- falsifying control: an app that fetches a no-CORS third-party feed directly from the browser and shows a named gap contradicts this — the door exists to carry the hunt; a route on the cloth that is not a server route, or a server route pictured by no thread, contradicts GL-WV-04.
+
+The first real browser run caught it: "No council data: Failed to fetch (named gap —
+no meetings invented.)" — the gap discipline worked exactly as designed (a failure
+was named, nothing was invented), and the fix grew the loom: the hunt's door. The
+browser never touches webapi.legistar.com again; the gym fetches at home.
