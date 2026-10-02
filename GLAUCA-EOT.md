@@ -1686,3 +1686,39 @@ so the next weave starts from what this one learned.
 - falsifying control: a quoted span in a generated work that survived the box
   without a clean verbatim match at a byte address, or a dirty quote (header/
   footer embedded) presented as verified, contradicts this.
+
+# Addendum P — the box-fill: the path to a long, grounded work (2026-10-01)
+
+// The chase: a FIVE-PAGE grounded essay with a story in the middle, written by
+// the small mouth. The honest ceiling: gemma2:2b gives either continuous voice
+// (a page) or long chunk-assembly (not an essay). The organs that make the long
+// grounded form possible are now built: the CLEAN SOURCE INDEX (a dirty web
+// extraction grounds nothing — the box refused the PMC footer runs, so the
+// research claims stayed censored) and the GROUNDED COMPOSITION (the box-fill:
+// the VOID declares many claims, each grounded against a clean index or
+// censored, the mouth draws only the residue between). Length scales by count
+// of verified claims, never by one long draw.
+
+## prose — the box fills the VOID
+
+### GL-BD-19 — The box-fill: clean-source index + grounded composition; a long grounded work is many verified claims, not one long draw
+- pipeline: prose + organs
+- status: standing
+- supersedes: —
+- evidence: penelope/organs/source-index.mjs (SourceIndex@1 — a source is
+  split into clean sentences with true byte addresses; header/footer/reference
+  runs — PMC, Copyright, Abstract, doi, PMID — are excluded, so a dirty web
+  extraction grounds nothing and the box never dresses a claim on a footer run;
+  selftest 5/5); penelope/organs/grounded-composition.mjs (GroundedComposition@1
+  — composeGrounded({sections, indices}): each VOID claim is grounded via
+  findClean → the verbatim sentence at its byte address, or CENSORED; the
+  mouth's residue draws between; selftest 2/2); measured 2026-10-01: the
+  memory box-fill — 7 verified claims (Republic waxen tablet @522168, the
+  student @522376, self-education @522725; research persistent activity
+  @29638/@3164), 2 censored (a phrase the clean index didn't hold; an invented
+  claim), none ungrounded survived, the story section honestly marked
+  fictional. The dirty research text that had failed GL-BD-18's cleanliness
+  now grounds cleanly through the index.
+- falsifying control: a composed work with a claim that survived the box
+  without a clean index match at a byte address, or a censored claim silently
+  replaced by the mouth's guess, contradicts this.
