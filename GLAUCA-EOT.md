@@ -1651,4 +1651,38 @@ so the next weave starts from what this one learned.
 - status: standing
 - supersedes: GL-BD-16, in part — its claim ("8/8 re-slice-verified") was true but weak: verification proved the bytes resolve, not that the snips are coherent sentences. The rule it protects — the mouth never writes verbatim, the box snips at the permanent address — stands.
 - evidence: penelope/organs/snip-cite.mjs snipSentence (walks backward to the enclosing sentence's start and forward to its end; a terminal is a boundary only when it is not an abbreviation — Theaet., Dr., … — and is followed by a capital or the buffer end; the "Theaet." fragment, the overlap, and the sentence-tail "working memory." failures are each pinned in the falsification); measured 2026-10-01: the waxen-tablet essay's hand-typed quotes failed to resolve (indexOf −1); the first snip organ produced fragments and overlaps (F1 abbreviation, F2 overlap, F3/F4 tails); after the fix, "The Waxen Tablet" grounds 5/5 load-bearing sentences across the Republic and the web-research door, each a verbatim enclosing sentence, re-slice-verified. The essay's prose is the writer's residue; the load-bearing sentences are the box's snips; the revision is the argument's own (memory-is-storage superseded by memory-is-reconstruction, kept on the trail).
-- falsifying control: a quoted sentence in a generated work that is not the verbatim enclosing sentence at the shown byte address, or a superseded claim silently deleted instead of kept on the revision trail, contradicts this.
+- falsifying control: a quoted sentence in a generated work that is not the
+  verbatim enclosing sentence at the shown byte address, or a superseded claim
+  silently deleted instead of kept on the revision trail, contradicts this.
+
+# Addendum O — the hard grounding rule (2026-10-01)
+
+// The operator's direction, taken as law: "NEVER have the mouth do its own
+// grounding. if it wants to put verbatim, let it, and then mechanically
+// replace, and if you can't replace reliably, censor." The mouth draws freely;
+// the box is the guarantee. This is the mechanical quote (GL-BD-16/17) made
+// airtight: the mouth is never prohibited from quoting (Gary: information, not
+// prohibition), and no ungrounded quote survives the box.
+
+## prose — replace what is verified, censor what is not
+
+### GL-BD-18 — The hard grounding rule: the mouth never grounds itself; the box replaces a verifiable quote verbatim and censors the rest
+- pipeline: prose + organs
+- status: standing
+- supersedes: —
+- evidence: penelope/organs/snip-cite.mjs groundOutput(text, sources) — scans
+  the mouth's free output for quote attempts; a case-insensitive verbatim
+  6-word fragment match in a known source yields the true byte address and the
+  box's clean snip (a snip carrying header/footer markers — PMC, Copyright,
+  Abstract, doi, PMID — is REFUSED as dirty, never presented); a span with no
+  clean match is CENSORED (⟦censored: unverifiable quote⟧), never left
+  ungrounded, never the box guessing; selftest 7/7 pins both arms; measured
+  2026-10-01: the waxen-tablet quote replaced verbatim at republic@522167; the
+  research quote (embedded in a dirty footer run) and an invented quote both
+  censored — the false-censor (case-sensitivity) and the dirty-replace (the
+  copyright footer) failures are each on the record, and the rule they earned
+  is replace-only-on-a-clean-real-match. The mouth's essay draws freely; the
+  box guarantees every surviving quote is a real source's byte at its address.
+- falsifying control: a quoted span in a generated work that survived the box
+  without a clean verbatim match at a byte address, or a dirty quote (header/
+  footer embedded) presented as verified, contradicts this.

@@ -93,6 +93,67 @@ export function replaceCites(draft, { resolve = null } = {}) {
   return { text: out.join(""), snips, refused };
 }
 
+/** groundOutput — the mouth NEVER grounds itself. The mouth draws freely; the
+ *  box scans the output for quote attempts ("…"), and for each:
+ *    - FOUND in a known source  → MECHANICALLY REPLACE with the source's
+ *      verbatim enclosing sentence at its byte address (snipSentence).
+ *    - NOT FOUND reliably       → CENSOR: the span is removed and marked, so an
+ *      ungrounded quote NEVER survives.
+ *  The mouth is never prohibited from quoting (Gary: information, not
+ *  prohibition); the box is the guarantee — replace what it can verify, censor
+ *  what it cannot. Matching is by a normalized distinctive core (the span's
+ *  words, punctuation-collapsed); a paraphrase that matches nothing is censored,
+ *  never guessed. */
+export function groundOutput(text, sources, { minWords = 8 } = {}) {
+  const norm = (s) => s.toLowerCase().replace(/[’'"]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").replace(/\s+/g, " ").trim();
+  const QUOTE = /[“"]([^”"]{8,})[”"]/g;
+  const out = [];
+  let last = 0, m;
+  const replaced = [], censored = [];
+  while ((m = QUOTE.exec(text))) {
+    out.push(text.slice(last, m.index));
+    const span = m[1].trim();
+    const core = norm(span);
+    if (core.split(" ").length < minWords) {
+      // too short to verify reliably — censor, never guess
+      censored.push({ span, why: "too short to verify" });
+      out.push("⟦censored: unverifiable quote⟧");
+      last = m.index + m[0].length;
+      continue;
+    }
+    let hit = null;
+    for (const src of sources) {
+      let file;
+      try { file = fs.readFileSync(src.file, "utf8"); } catch { continue; }
+      // RELIABLE MATCH: a verbatim 6-word fragment of the mouth's span, searched
+      // case-insensitively in the RAW source. Paraphrase never matches →
+      // censored. A match gives a true char index → true byte address → the
+      // box's snip. And the replacement must be CLEAN: a snip that carries
+      // header/footer markers (PMC, Copyright, Abstract, doi, PMID) is a dirty
+      // quote — the box censors rather than presents it (2026-10-01: the first
+      // walk replaced good quotes with the wrong verbatim and grabbed the
+      // copyright footer; replace-only-on-a-clean-real-match is the law).
+      const frag = span.split(/\s+/).slice(0, 6).join(" ");
+      const raw = file;
+      const fragIdx = raw.toLowerCase().indexOf(frag.toLowerCase());
+      if (fragIdx < 0) continue;
+      const abs = new TextEncoder().encode(raw.slice(0, fragIdx)).length;
+      const s = snipSentence(src.file, abs);
+      if (s.ok && !/\b(PMC\b|Copyright|Abstract|doi|PMID|ncbi|article in|journal)\b/i.test(s.quote)) { hit = { ...s, label: src.label }; break; }
+    }
+    if (hit) {
+      replaced.push({ span, quote: hit.quote, abs: hit.abs, len: hit.len, source: hit.label });
+      out.push(`“${hit.quote}” [${hit.label}@${hit.abs}]`);
+    } else {
+      censored.push({ span, why: "not found in any known source" });
+      out.push("⟦censored: unverifiable quote⟧");
+    }
+    last = m.index + m[0].length;
+  }
+  out.push(text.slice(last));
+  return { text: out.join(""), replaced, censored };
+}
+
 export function selftest() {
   const t = (n, c) => { if (!c) { console.error("FAIL", n); process.exitCode = 1; } else console.log("ok", n); };
   const REP = "/Users/mlacy/Documents/3.0/live_priors/01-literature-books/gutenberg/pg55201_The_Republic_by_Plato.txt";
@@ -109,4 +170,14 @@ export function selftest() {
   const rep = replaceCites(draft);
   t("the mouth's citation marker becomes a mechanical snip", /“The waxen tablet/.test(rep.text) && rep.refused.length === 0);
   t("a refused citation stays a named gap, never the mouth's guess", replaceCites("See ⟦/no/file@5⟧ here.").refused.length === 1 && /REFUSED/.test(replaceCites("See ⟦/no/file@5⟧ here.").text));
+  // THE HARD RULE (2026-10-01): the mouth never grounds itself. A quote the box
+  // can verify cleanly is REPLACED with the source's verbatim; a quote it cannot
+  // is CENSORED. Replace-only-on-a-clean-real-match; otherwise censor.
+  const SRC = [
+    { label: "republic", file: REP },
+    { label: "research", file: "/tmp/wm-research.txt" },
+  ];
+  const gd = groundOutput('Plato called it "the waxen tablet of the memory which was once capable of receiving true thoughts and clear impressions becomes hard and crowded". And something "weaves and unweaves like a ghost in the machine".', SRC);
+  t("a verifiable quote is mechanically replaced, verbatim", gd.replaced.length === 1 && /“The waxen tablet/.test(gd.text) && gd.replaced[0].abs > 0);
+  t("an unverifiable quote is censored, never left ungrounded", gd.censored.length === 1 && /censored/.test(gd.text));
 }
