@@ -842,19 +842,19 @@
    ],
    "ctl": "promote(count) ≡ promote(null)"
   },
-  {
-   "id": "NET",
-   "name": "weave",
-   "st": "·",
-   "lvl": 1,
-   "op": "CON",
-   "grain": "Pattern",
-   "typing": "‡",
-   "refs": [
-    "FOLD/network.js"
-   ],
-   "ctl": "arrangement recurs ∧ ¬bound"
-  },
+{
+    "id": "NET",
+    "name": "weave",
+    "st": "·",
+    "lvl": 1,
+    "op": "CON",
+    "grain": "Pattern",
+    "typing": "‡",
+    "refs": [
+     "FOLD/fold-net.js"
+    ],
+    "ctl": "arrangement recurs ∧ ¬bound"
+   },
   {
    "id": "WND",
    "name": "window",
@@ -973,6 +973,102 @@
     "o/voice.mjs",
     "o/voice.e2e.mjs",
     "GL-WV-13"
+   ]
+  },
+  {
+   "id": "SRC",
+   "name": "source",
+   "st": "■",
+   "lvl": 2,
+   "op": "SIG",
+   "grain": "Ground",
+   "typing": "§",
+   "refs": [
+    "o/source-index.mjs",
+    "GL-BD-18"
+   ]
+  },
+  {
+   "id": "GCP",
+   "name": "compose",
+   "st": "■",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/grounded-composition.mjs",
+    "o/source-index.mjs",
+    "GL-BD-18",
+    "GL-BD-19"
+   ]
+  },
+  {
+   "id": "SNC",
+   "name": "quote",
+   "st": "■",
+   "lvl": 2,
+   "op": "SEG",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "o/snip-cite.mjs",
+    "GL-BD-16",
+    "GL-BD-17"
+   ]
+  },
+  {
+   "id": "FAP",
+   "name": "point",
+   "st": "■",
+   "lvl": 2,
+   "op": "DEF",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/fold-at-point.mjs",
+    "GL-BD-20"
+   ]
+  },
+  {
+   "id": "EVO",
+   "name": "void",
+   "st": "■",
+   "lvl": 2,
+   "op": "REC",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/essay-void.mjs",
+    "GL-BD-21"
+   ]
+  },
+  {
+   "id": "STG",
+   "name": "trail",
+   "st": "■",
+   "lvl": 2,
+   "op": "CON",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/stigmergy.mjs",
+    "GL-BD-21"
+   ]
+  },
+  {
+   "id": "WPH",
+   "name": "white-paper",
+   "st": "■",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Figure",
+   "typing": "‡",
+   "refs": [
+    "g/white-paper-run.mjs",
+    "g/white-paper-box.mjs",
+    "GL-WP-01",
+    "GL-WP-02"
    ]
   }
  ]

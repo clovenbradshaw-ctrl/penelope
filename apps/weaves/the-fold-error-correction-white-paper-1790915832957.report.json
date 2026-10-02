@@ -1,0 +1,91 @@
+{
+  "slug": "the-fold-error-correction-white-paper-1790915832957",
+  "gates": [
+    {
+      "id": "claim",
+      "ok": true,
+      "evidence": "# How the Fold Implements Error Correction"
+    },
+    {
+      "id": "descent",
+      "ok": true,
+      "evidence": "byte addresses: 6"
+    },
+    {
+      "id": "standing",
+      "ok": true,
+      "evidence": "standing declared"
+    },
+    {
+      "id": "position",
+      "ok": true,
+      "evidence": "position declared"
+    },
+    {
+      "id": "aperture",
+      "ok": true,
+      "evidence": "contrary rendered"
+    },
+    {
+      "id": "falsify",
+      "ok": true,
+      "evidence": "null/falsification registered"
+    },
+    {
+      "id": "mouth",
+      "ok": true,
+      "evidence": "bare numbers (outside quotes, non-ordinal): 0, sourced: 0"
+    },
+    {
+      "id": "no-meta",
+      "ok": true,
+      "evidence": "no meta-voice outside the registered falsification and the quoted record"
+    }
+  ],
+  "failures": [],
+  "verified": [
+    {
+      "heading": "The operation — a finding is a difference against a ground",
+      "phrase": "a finding is a difference against a ground the workbench rebuilt",
+      "sentence": "A ruling that weakens the encounter is a misreading of this document, even where the letter of an article permits it. **The one operation is the physiology:** a finding is a difference against a ground the workbench rebuilt by re-running the same computation on perturbed input.",
+      "source": "constitution",
+      "abs": 1216
+    },
+    {
+      "heading": "The null arm — the math of the error",
+      "phrase": "The null is produced by re-executing the same pipeline on perturbed input",
+      "sentence": "The result is marked as breaking descent and everything downstream inherits the mark — refused as `measured`, permitted as `shown`. ### II.4 The commensurability test — *is the null this same computation, re-run under a licensed perturbation?* The null is produced by re-executing the same pipeline on perturbed input — not by anyone writing a second procedure — so that it shares the observation's filters, drops, joins, and selection, and differs only in the axis under test. Five named consequences, two of which are the reason this article is longer than the others: - **The null undergoes what the observation underwent.** If the observation drops nulls, the null drops nulls. `reversalNull` shipped at 13.4/9.2/9.8% against a nominal 5% because a hand-built shuffle pool excluded configurations the data could reach. - **Licence.** The statistic must actually move under the perturbation.",
+      "source": "constitution",
+      "abs": 5967
+    },
+    {
+      "heading": "The firewall — evidence never tunes the instrument",
+      "phrase": "Evidence may never tune the instrument that produced it",
+      "sentence": "Expensive methods are never exempt — they are less precise, out loud. ### II.5 The firewall — *did the result tune the instrument?* Evidence may never tune the instrument that produced it.",
+      "source": "constitution",
+      "abs": 7864
+    },
+    {
+      "heading": "The mouth — the precision control",
+      "phrase": "No number, name, date, or quantity is emitted as model tokens",
+      "sentence": "Three named consequences: - **A cursor is named, never defaulted to now.** - **Exclusions are counted where they happen** — rows a filter removed, categories a top-N dropped, records a join lost. - **A view with nothing under it renders as such.** A saved view over zero admitted records is a view over Void and shows it, rather than showing empty axes. ### II.9 The mouth test — *did a model author this value?* No number, name, date, or quantity is emitted as model tokens.",
+      "source": "constitution",
+      "abs": 10695
+    },
+    {
+      "heading": "The aperture — the contrary is rendered",
+      "phrase": "the slice of the same data that most weakens it",
+      "sentence": "So the workbench renders it: alongside a finding, the slice of the same data that most weakens it, computed by the same pipeline.",
+      "source": "constitution",
+      "abs": 17946
+    },
+    {
+      "heading": "The record — the floor under every standing",
+      "phrase": "The record is not a standing; it is the floor under all four",
+      "sentence": "The list is Articles II and III and it is closed; anything not refused is permitted. **I.5 The record is not a standing; it is the floor under all four.** Append-only, holding what was run, against what, with what breadth, what it eliminated, and what the reader predicted before seeing it.",
+      "source": "constitution",
+      "abs": 3321
+    }
+  ],
+  "censored": []
+}

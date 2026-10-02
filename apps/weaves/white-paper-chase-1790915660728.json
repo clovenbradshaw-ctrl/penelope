@@ -1,0 +1,767 @@
+{
+  "schema": "WhitePaperChase@1",
+  "ts": "2026-10-02T04:34:20.728Z",
+  "model": "gemma2:2b",
+  "unitBudget": 6,
+  "definition": {
+    "text": "The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection ",
+    "gates": [
+      {
+        "id": "claim",
+        "article": "II.6",
+        "ok": true,
+        "evidence": "The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding envi"
+      },
+      {
+        "id": "descent",
+        "article": "II.3",
+        "ok": false,
+        "evidence": "markers: 0 ()"
+      },
+      {
+        "id": "standing",
+        "article": "I.1"
+      },
+      {
+        "id": "position",
+        "article": "II.8"
+      },
+      {
+        "id": "aperture",
+        "article": "III.4"
+      },
+      {
+        "id": "falsify",
+        "article": "II.5"
+      },
+      {
+        "id": "mouth",
+        "article": "II.9",
+        "ok": false,
+        "evidence": "numbers: 5, sourced: 0"
+      },
+      {
+        "id": "no-meta",
+        "article": "II.9"
+      }
+    ],
+    "gaps": [
+      "descent",
+      "standing",
+      "position",
+      "aperture",
+      "falsify",
+      "mouth",
+      "no-meta"
+    ]
+  },
+  "draft": {
+    "artifact": "arrangement-1790915584326",
+    "verdict": {
+      "ok": false,
+      "reason": "folded-with-dissent",
+      "detail": "beats:5 gaps:The beginnings,The evidence,The tension,The return refused:22 residual:11",
+      "folded": {
+        "schema": "EOEssayFold@1",
+        "beats": [
+          {
+            "title": "The subject",
+            "sentences": [
+              "The workbench is the designated area where the writer spends time drafting, editing, and refining their essay.",
+              "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet."
+            ],
+            "text": "The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.",
+            "gap": false,
+            "claimCount": 2
+          },
+          {
+            "title": "The beginnings",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The evidence",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The tension",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The return",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          }
+        ],
+        "assignments": {
+          "0": [
+            "The workbench is the designated area where the writer spends time drafting, editing, and refining their essay.",
+            "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet."
+          ]
+        },
+        "refused": [
+          {
+            "sentence": "Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.",
+            "core": "presence workbench would impossible create maintain",
+            "referents": [
+              "without the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_invented_referent",
+            "names": [
+              "without the"
+            ]
+          },
+          {
+            "sentence": "Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.",
+            "core": "presence workbench would impossible create maintain",
+            "referents": [
+              "without the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_invented_referent",
+            "names": [
+              "without the"
+            ]
+          },
+          {
+            "sentence": "Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.",
+            "core": "presence workbench would impossible create maintain",
+            "referents": [
+              "without the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_invented_referent",
+            "names": [
+              "without the"
+            ]
+          },
+          {
+            "sentence": "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.",
+            "core": "essay must cover range feet length",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The absence of a specific tool or piece of equipment is crucial for the existence of a workbench.",
+            "core": "absence specific tool piece equipment existence",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art.",
+            "core": "essay meticulous analysis synthesis portrait thesis",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The portrait, a testament to the artist's skill and dedication, is born here that did not exist before.",
+            "core": "portrait testament artist's skill dedication born",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before.",
+            "core": "thesis reflection artist's intellectual challenges they",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before.",
+            "core": "workbench serves catalyst artist's imagination creativity",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.",
+            "core": "portrait thesis born did exist workbench",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay.",
+            "core": "workbench rectangular piece wood metal primary",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "It is distinct from the surrounding environment, which includes the desk, chair, and other furniture.",
+            "core": "distinct surrounding environment includes desk chair",
+            "referents": [],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The workbench is the designated area where the writer spends time drafting, editing, and refining their essay.",
+            "core": "workbench designated area where writer spends",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.",
+            "core": "room space adjacent everything else rather",
+            "referents": [],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The workbench itself is this — the names and the referent, so one being is meant, not a byte string.",
+            "core": "workbench itself names referent being meant",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.",
+            "core": "essay must cover range feet length",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The absence of a specific tool or piece of equipment is crucial for the existence of a workbench.",
+            "core": "absence specific tool piece equipment existence",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art.",
+            "core": "essay meticulous analysis synthesis portrait thesis",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The portrait, a testament to the artist's skill and dedication, is born here that did not exist before.",
+            "core": "portrait testament artist's skill dedication born",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before.",
+            "core": "thesis reflection artist's intellectual challenges they",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before.",
+            "core": "workbench serves catalyst artist's imagination creativity",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          },
+          {
+            "sentence": "The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.",
+            "core": "portrait thesis born did exist workbench",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          }
+        ],
+        "residual": [
+          {
+            "sentence": "The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay.",
+            "core": "workbench rectangular piece wood metal primary",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "It is distinct from the surrounding environment, which includes the desk, chair, and other furniture.",
+            "core": "distinct surrounding environment includes desk chair",
+            "referents": [],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.",
+            "core": "room space adjacent everything else rather",
+            "referents": [],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The workbench itself is this — the names and the referent, so one being is meant, not a byte string.",
+            "core": "workbench itself names referent being meant",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The absence of a specific tool or piece of equipment is crucial for the existence of a workbench.",
+            "core": "absence specific tool piece equipment existence",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art.",
+            "core": "essay meticulous analysis synthesis portrait thesis",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The portrait, a testament to the artist's skill and dedication, is born here that did not exist before.",
+            "core": "portrait testament artist's skill dedication born",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before.",
+            "core": "thesis reflection artist's intellectual challenges they",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before.",
+            "core": "workbench serves catalyst artist's imagination creativity",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.",
+            "core": "portrait thesis born did exist workbench",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The essay on the workbench itself establishes a narrative account of the creation of the portrait and thesis.",
+            "core": "essay workbench itself establishes narrative account",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          }
+        ],
+        "register": {},
+        "basis": "13 distinct claim(s) folded into 5 beat(s); 22 repeated/thin lost with giver kept; 11 placed in no beat (named, never hidden)"
+      }
+    },
+    "gates": [
+      {
+        "id": "claim",
+        "article": "II.6",
+        "ok": true,
+        "evidence": "The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding envi"
+      },
+      {
+        "id": "descent",
+        "article": "II.3",
+        "ok": false,
+        "evidence": "markers: 0 ()"
+      },
+      {
+        "id": "standing",
+        "article": "I.1"
+      },
+      {
+        "id": "position",
+        "article": "II.8"
+      },
+      {
+        "id": "aperture",
+        "article": "III.4"
+      },
+      {
+        "id": "falsify",
+        "article": "II.5"
+      },
+      {
+        "id": "mouth",
+        "article": "II.9",
+        "ok": false,
+        "evidence": "numbers: 15, sourced: 0"
+      },
+      {
+        "id": "no-meta",
+        "article": "II.9"
+      }
+    ],
+    "failures": [
+      "descent",
+      "standing",
+      "position",
+      "aperture",
+      "falsify",
+      "mouth",
+      "no-meta"
+    ],
+    "scars": [
+      {
+        "unit": "SIG·Ground",
+        "attempt": 1,
+        "why": "cell's question not answered: absent, found, essay, about, currently (coverage 27%)",
+        "atom": "What is absent and must be found for the essay about the workbench to exist — what presence is currently missing? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "SIG·Ground",
+        "attempt": 2,
+        "why": "cell's question not answered: absent, found, essay, about, currently (coverage 27%)",
+        "atom": "What is absent and must be found for the essay about the workbench to exist — what presence is currently missing? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "SIG·Ground",
+        "attempt": 3,
+        "why": "cell's question not answered: absent, found, essay, about, currently (coverage 27%)",
+        "atom": "What is absent and must be found for the essay about the workbench to exist — what presence is currently missing? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "SIG·Ground",
+        "attempt": 4,
+        "why": "cell's question not answered: absent, found, essay, about, currently (coverage 27%)",
+        "atom": "What is absent and must be found for the essay about the workbench to exist — what presence is currently missing? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "INS·Pattern",
+        "attempt": 1,
+        "why": "cell's question not answered: established, instantiate, technical, biography, whichever (coverage 17%)",
+        "atom": "What established kind of account does the essay on the workbench instantiate — a technical account, a biography, a narrative — whichever the material supports? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "INS·Pattern",
+        "attempt": 2,
+        "why": "cell's question not answered: established, instantiate, technical, biography, whichever (coverage 17%)",
+        "atom": "What established kind of account does the essay on the workbench instantiate — a technical account, a biography, a narrative — whichever the material supports? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "INS·Pattern",
+        "attempt": 3,
+        "why": "cell's question not answered: established, instantiate, technical, biography, whichever (coverage 17%)",
+        "atom": "What established kind of account does the essay on the workbench instantiate — a technical account, a biography, a narrative — whichever the material supports? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      },
+      {
+        "unit": "INS·Pattern",
+        "attempt": 4,
+        "why": "cell's question not answered: established, instantiate, technical, biography, whichever (coverage 17%)",
+        "atom": "What established kind of account does the essay on the workbench instantiate — a technical account, a biography, a narrative — whichever the material supports? The white paper, as defined here: The workbench, a rectangular piece of wood or metal, is the primary space designated for the essay. It is distinct from the surrounding environment, which includes the desk, chair, and other furniture. The workbench is the designated area where the writer spends time drafting, editing, and refining their essay. It is not a room or a space that is adjacent to everything else, but rather a designated area within the writer's workspace.\n\nThe workbench itself is this — the names and the referent, so one being is meant, not a byte string.\n\nThe essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.\n\nThe absence of a specific tool or piece of equipment is crucial for the existence of a workbench. Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.\n\nThe essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art. The portrait, a testament to the artist's skill and dedication, is born here that did not exist before. The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before. The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before. The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.\n\nThe essay on the workbench itself establishes a narrative account. — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name."
+      }
+    ]
+  },
+  "lessons": [
+    "grounded: every load-bearing sentence carries a source marker (⟦address⟧ or [S#]), or the draft is a draft, never the shroud.",
+    "standing: the artifact declares its standing out loud (measured / received / shown / refused) — an undeclared claim wears the record's floor.",
+    "position: the draft names its for-whom and its altitude; a reading without a declared lens is refused, not shown.",
+    "aperture: the strongest contrary slice is rendered, never offered — name what could refute the claim and show it.",
+    "falsify: register the prediction or null arm before the claim ships — a claim with no registered bar is shown, never measured.",
+    "mouth: no number, name, or date is emitted as model tokens — every value is a reference to a computed cell, resolved at render time.",
+    "voice: write in the paper, not about it — no 'this paper' framing; the subject is the subject.",
+    "define: the definition itself missed [descent, standing, position, aperture, falsify, mouth, no-meta] — a definition that fails its own gates is received, not measured."
+  ],
+  "corrected": {
+    "artifact": "arrangement-1790915660724",
+    "verdict": {
+      "ok": false,
+      "reason": "folded-with-dissent",
+      "detail": "beats:5 gaps:The beginnings,The evidence,The tension,The return refused:4 residual:7",
+      "folded": {
+        "schema": "EOEssayFold@1",
+        "beats": [
+          {
+            "title": "The subject",
+            "sentences": [
+              "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet."
+            ],
+            "text": "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet.",
+            "gap": false,
+            "claimCount": 1
+          },
+          {
+            "title": "The beginnings",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The evidence",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The tension",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          },
+          {
+            "title": "The return",
+            "sentences": [],
+            "text": "",
+            "gap": true,
+            "claimCount": 0
+          }
+        ],
+        "assignments": {
+          "0": [
+            "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet."
+          ]
+        },
+        "refused": [
+          {
+            "sentence": "Without the presence of a workbench, it would be impossible to create or maintain the tools and materials necessary for the workbench itself.",
+            "core": "presence workbench would impossible create maintain",
+            "referents": [
+              "without the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_invented_referent",
+            "names": [
+              "without the"
+            ]
+          },
+          {
+            "sentence": "The lessons from the prior draft, which this draft MUST honor: grounded: every load-bearing sentence carries a source marker (⟦address⟧ or [S#]), or the draft is a draft, never the shroud. standing: the artifact declares its standing out loud (measured / received / shown / refused) — an undeclared claim wears the record's floor. position: the draft names its for-whom and its altitude; a reading without a declared lens is refused, not shown. aperture: the strongest contrary slice is rendered, never offered — name what could refute the claim and show it. falsify: register the prediction or null arm before the claim ships — a claim with no registered bar is shown, never measured. mouth: no number, name, or date is emitted as model tokens — every value is a reference to a computed cell, resolved at render time. voice: write in the paper, not about it — no 'this paper' framing; the subject is the subject. define: the definition itself missed [descent, standing, position, aperture, falsify, mouth, no-meta] — a definition that fails its own gates is received, not measured.",
+            "core": "carries source marker address",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_meta"
+          },
+          {
+            "sentence": "The lessons from the prior draft, which this draft MUST honor: grounded: every load-bearing sentence carries a source marker (⟦address⟧ or [S#]), or the draft is a draft, never the shroud. standing: the artifact declares its standing out loud (measured / received / shown / refused) — an undeclared claim wears the record's floor. position: the draft names its for-whom and its altitude; a reading without a declared lens is refused, not shown. aperture: the strongest contrary slice is rendered, never offered — name what could refute the claim and show it. falsify: register the prediction or null arm before the claim ships — a claim with no registered bar is shown, never measured. mouth: no number, name, or date is emitted as model tokens — every value is a reference to a computed cell, resolved at render time. voice: write in the paper, not about it — no 'this paper' framing; the subject is the subject. define: the definition itself missed [descent, standing, position, aperture, falsify, mouth, no-meta] — a definition that fails its own gates is received, not measured.",
+            "core": "carries source marker address",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "fold_meta"
+          },
+          {
+            "sentence": "The essay on the workbench establishes a narrative account.",
+            "core": "essay workbench establishes narrative account",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model",
+            "reason": "repeated_claim"
+          }
+        ],
+        "residual": [
+          {
+            "sentence": "The absence of a specific tool or piece of equipment is crucial for the existence of a workbench.",
+            "core": "absence specific tool piece equipment existence",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The essay, through its meticulous analysis and synthesis of the portrait and thesis, reveals that the workbench itself is a vessel for the creation of a unique and profound work of art.",
+            "core": "essay meticulous analysis synthesis portrait thesis",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The portrait, a testament to the artist's skill and dedication, is born here that did not exist before.",
+            "core": "portrait testament artist's skill dedication born",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The thesis, a reflection of the artist's intellectual journey and the challenges they faced, is also born here that did not exist before.",
+            "core": "thesis reflection artist's intellectual challenges they",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The workbench serves as a catalyst for the artist's imagination and creativity, allowing them to explore new ideas and techniques that they may not have considered before.",
+            "core": "workbench serves catalyst artist's imagination creativity",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The portrait and thesis are born here that did not exist before, and the workbench is the medium through which they are born.",
+            "core": "portrait thesis born did exist workbench",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          },
+          {
+            "sentence": "The essay on the workbench establishes a narrative account.",
+            "core": "essay workbench establishes narrative account",
+            "referents": [
+              "the"
+            ],
+            "partIndex": 0,
+            "giver": "model"
+          }
+        ],
+        "register": {},
+        "basis": "8 distinct claim(s) folded into 5 beat(s); 4 repeated/thin lost with giver kept; 7 placed in no beat (named, never hidden)"
+      }
+    },
+    "gates": [
+      {
+        "id": "claim",
+        "article": "II.6",
+        "ok": true,
+        "evidence": "The essay must cover a range of 10 feet in length, with a scale of 1:100,000, and a span of 100 feet. The absence of a specific tool or piec"
+      },
+      {
+        "id": "descent",
+        "article": "II.3",
+        "ok": false,
+        "evidence": "markers: 1 (⟦)"
+      },
+      {
+        "id": "standing",
+        "article": "I.1"
+      },
+      {
+        "id": "position",
+        "article": "II.8"
+      },
+      {
+        "id": "aperture",
+        "article": "III.4"
+      },
+      {
+        "id": "falsify",
+        "article": "II.5"
+      },
+      {
+        "id": "mouth",
+        "article": "II.9",
+        "ok": false,
+        "evidence": "numbers: 5, sourced: 0"
+      },
+      {
+        "id": "no-meta",
+        "article": "II.9"
+      }
+    ],
+    "remaining": [
+      "descent",
+      "standing",
+      "position",
+      "aperture",
+      "falsify",
+      "mouth",
+      "no-meta"
+    ]
+  },
+  "falsifyingControl": "a white paper that passes every gate but cannot be drilled to the rows beneath it (descent is a marker, not a resolution) contradicts this chase."
+}

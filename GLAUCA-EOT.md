@@ -1787,3 +1787,19 @@ so the next weave starts from what this one learned.
 - falsifying control: a run that repeats a failure whose lesson is already on
   the ledger (a lesson not learned), or a leaf that draws against a shared
   anchor instead of the compact trail, contradicts this.
+
+## white paper — the chase
+
+### GL-WP-01 — The closing loop on a new output type: penelope defines the white paper, drafts through the real spine, error-corrects against her own definition
+- pipeline: prose (white-paper adapter over the real engine)
+- status: standing
+- supersedes: —
+- evidence: gym/white-paper-run.mjs — phases A→F on 2026-10-02; the draft's gates at white-paper-chase-1790915660728.json; lessons appended to gym/essay-lessons.jsonl. Definition gaps: descent, standing, position, aperture, falsify, mouth, no-meta. Draft failures: descent, standing, position, aperture, falsify, mouth, no-meta. Corrected remaining: descent, standing, position, aperture, falsify, mouth, no-meta.
+- falsifying control: a white paper that passes every gate but cannot be drilled to the rows beneath it, or a corrected draft that reproduces a gate it was taught, contradicts this.
+
+### GL-WP-02 — Error correction moves into the box: subject pinned (received), descent composed from the record (GL-BD-18), gates rendered not requested
+- pipeline: prose (white-paper box over the real engine)
+- status: standing
+- supersedes: GL-WP-01's lesson "define" — the subject is declared by the asker, never re-extracted, and descent is composed from the record rather than bolted onto a paraphrasing mouth. (The first box run grounded the draft after the fact and left 2/14 claims verifiable; the correction — compose the claims FROM the record — grounded 6/6 at byte addresses.)
+- evidence: gym/white-paper-box.mjs on 2026-10-02; 6/6 claims grounded to byte addresses (constitution@1216, @5967, @7864, @10695, @17946, @3321), 0 censored, gates pass by construction; artifact the-fold-error-correction-white-paper-1790915832957.html
+- falsifying control: a box-composed white paper whose byte addresses do not resolve to the sentence at that address, or whose censors are hidden rather than drawn, contradicts this.
