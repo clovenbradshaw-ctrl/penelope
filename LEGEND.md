@@ -1,6 +1,6 @@
-# legend
+# ◇ legend
 
-Every non-ASCII symbol the tapestry prints is defined here, and every symbol defined here is printed there (gym/check-tapestry.mjs, both directions). PROFILE: the canon symbols below are EO's own; the cloth prints their SAFE counterparts (the top-level `safe` map), chosen only from the glyphs that Menlo, Courier New, Andale Mono, SF Mono and DejaVu Sans Mono ALL carry natively (fontconfig charset query, 2026-10-01; gym/glyph-ink.json) — a native glyph of a monospace font is exactly one cell, and no fallback font means no tofu and no shifted column. Measured in the same query: ⊨ is in none of seven monospace fonts, and ∅ ∃ ∀ ⇒ ↻ ↺ ↬ △ ◈ ◇ ⊞ ≣ ∈ ∉ ⟨ ⟩ are missing from five. unweave maps the safe profile back to the canon.
+Every non-ASCII symbol the tapestry prints is defined here, and every symbol defined here is printed there (gym/check-tapestry.mjs, both directions). The tapestry carries symbols; this file carries the words. One cell each: measured 2026-10-01 in the GitHub code font (gym/glyph-ink.json). Operator glyphs follow organs/cube.mjs: the canon is ∅ ○ ● ｜ ⋈ △ ⊢ ⊨ ↬; ｜ ⋈ ⊢ measure 1.66 / 1.28 / 1.25 cells and would break a framed column, so they print as | → = (the EOT surface marks for cut, bond, define).
 
 The tapestry carries symbols; this file carries the words. Generated from [`gym/tapestry.legend.json`](gym/tapestry.legend.json) by `gym/weave.mjs`.
 
@@ -8,47 +8,47 @@ The tapestry carries symbols; this file carries the words. Generated from [`gym/
 
 | symbol | is | means |
 |---|---|---|
-| `∅` → printed `Ø` | NUL | hold the void: declare absence, draw the null, name the gap |
+| `∅` | NUL | hold the void: declare absence, draw the null, name the gap |
 | `○` | SIG | attend: register a difference, sign an origin |
 | `●` | INS | birth: make an enduring instance |
 | `|` | SEG (EO canon `｜`) | cut: draw or dissolve a boundary |
 | `→` | CON (EO canon `⋈`) | bond: join across a boundary |
-| `△` → printed `◊` | SYN | compose: an emergent whole from parts |
+| `△` | SYN | compose: an emergent whole from parts |
 | `=` | DEF (EO canon `⊢`) | define: what holds within a frame |
-| `⊨` → printed `±` | EVA | judge: test against the definition |
-| `↬` → printed `↔` | REC | restructure the frame when judgment breaks it |
+| `⊨` | EVA | judge: test against the definition |
+| `↬` | REC | restructure the frame when judgment breaks it |
 
 ## grain
 
 | symbol | is | means |
 |---|---|---|
-| `∘` → printed `◦` | Ground | Void · the hub · 0 · the ambient a figure is read against |
-| `◆` → printed `•` | Figure | Beings · the spokes · n · one difference from its ground |
-| `◈` → printed `Ω` | Pattern | Fold · the rim · 1 · the difference a figure made to the next ground |
+| `∘` | Ground | Void · the hub · 0 · the ambient a figure is read against |
+| `◆` | Figure | Beings · the spokes · n · one difference from its ground |
+| `◈` | Pattern | Fold · the rim · 1 · the difference a figure made to the next ground |
 
 ## mode
 
 | symbol | is | means |
 |---|---|---|
-| `∩` → printed `÷` | Differentiate | cut something apart from something |
+| `∩` | Differentiate | cut something apart from something |
 | `≈` | Relate | put something beside something |
-| `∪` → printed `×` | Generate | bring something into being |
+| `∪` | Generate | bring something into being |
 
 ## domain
 
 | symbol | is | means |
 |---|---|---|
-| `∃` → printed `ε` | Existence | what exists: NUL SIG INS |
-| `⊞` → printed `σ` | Structure | how things hang together: SEG CON SYN |
-| `∀` → printed `ι` | Interpretation | what the reader holds: DEF EVA REC |
+| `∃` | Existence | what exists: NUL SIG INS |
+| `⊞` | Structure | how things hang together: SEG CON SYN |
+| `∀` | Interpretation | what the reader holds: DEF EVA REC |
 
 ## face
 
 | symbol | is | means |
 |---|---|---|
-| `◀` → printed `←` | ACT | WHAT is done: mode × domain = the operator |
+| `◀` | ACT | WHAT is done: mode × domain = the operator |
 | `▲` | SITE | WHERE it lands: domain × grain = the terrain |
-| `▶` → printed `↕` | STANCE | HOW it is done: mode × grain = the stance |
+| `▶` | STANCE | HOW it is done: mode × grain = the stance |
 
 ## status
 
@@ -70,8 +70,8 @@ The tapestry carries symbols; this file carries the words. Generated from [`gym/
 | symbol | is | means |
 |---|---|---|
 | `›` | then | next in the pipeline |
-| `∨` → printed `√` | or | alternatives; in the pipeline, in order, the first that answers wins |
-| `↺` → printed `∫` | spiral | name why, sharpen, re-draw; bounded by a budget |
+| `∨` | or | alternatives; in the pipeline, in order, the first that answers wins |
+| `↺` | spiral | name why, sharpen, re-draw; bounded by a budget |
 | `↑` | possibility | LOW gate: the level below sets what the level above may be |
 | `↓` | probability | HIGH gate: the level above sets how likely the level below is |
 
@@ -79,25 +79,25 @@ The tapestry carries symbols; this file carries the words. Generated from [`gym/
 
 | symbol | is | means |
 |---|---|---|
-| `≡` → printed `∏` | field | matched in the corpus, by frame, snipped with an address |
-| `↻` → printed `Γ` | hunt | fetched, extracted, frame-checked, cited |
-| `✗` → printed `†` | refused | typed refusal, shipped as dissent |
+| `≡` | field | matched in the corpus, by frame, snipped with an address |
+| `↻` | hunt | fetched, extracted, frame-checked, cited |
+| `✗` | refused | typed refusal, shipped as dissent |
 
 ## logic
 
 | symbol | is | means |
 |---|---|---|
-| `⇒✗` → printed `∂†` | falsified-if | the condition written before it, once observed, kills the thread |
-| `∧` → printed `Λ` | and | both |
+| `⇒✗` | falsified-if | the condition written before it, once observed, kills the thread |
+| `∧` | and | both |
 | `¬` | not | absent |
 | `≠` | differs | not equal |
 | `≥` | at-least | greater or equal |
 | `≤` | at-most | less or equal |
-| `∈` → printed `¤` | in | member of |
-| `∉` → printed `¢` | not-in | not a member of |
+| `∈` | in | member of |
+| `∉` | not-in | not a member of |
 | `Δ` | change | difference between two runs |
 | `∞` | unbounded | no budget |
-| `⇒` → printed `∂` | implies | if then |
+| `⇒` | implies | if then |
 | `∑` | count | how many |
 
 ## frame
@@ -123,56 +123,23 @@ The tapestry carries symbols; this file carries the words. Generated from [`gym/
 | `─` | panel | rule |
 | `│` | panel | rule |
 | `┼` | panel | cross |
-| `░` | thread | a woven thread, light: also the selvedge and the braid's strand |
-| `▒` | thread | a woven thread, mid: also the selvedge and the braid's crossing |
-| `▓` | thread | a woven thread, dense: also the selvedge and the braid's strand |
-| `◇` → printed `Φ` | gem | the hub jewel; Indra's net: every thread is mirrored on the faces, the holons, the helix and the ring |
-| `▫` → printed `°` | void | an empty cell: declared, not yet filled |
-| `⟨` → printed `«` | key | opens the key panel |
-| `⟩` → printed `»` | key | closes the key panel |
-| `◦` → printed `∙` | ring | the path of one turn of the wheel: Ground (hub), Figure (spokes), Pattern (rim) |
+| `░` | selvedge | the woven edge: light |
+| `▒` | selvedge | the woven edge: mid |
+| `▓` | selvedge | the woven edge: dense |
+| `╱` | braid | strand |
+| `╲` | braid | strand |
+| `╳` | braid | crossing: the operator sits here |
+| `◇` | gem | the hub jewel; Indra's net: every thread is mirrored on the faces, the holons, the helix and the ring |
+| `▫` | void | an empty cell: declared, not yet filled |
+| `⟨` | key | opens the key panel |
+| `⟩` | key | closes the key panel |
+| `◦` | ring | the path of one turn of the wheel: Ground (hub), Figure (spokes), Pattern (rim) |
 
 ## measure
 
 | symbol | is | means |
 |---|---|---|
-| `≣` → printed `¶` | order test | the spine's Kendall t against the helix; p over n seeded shuffles of the same stages (a budget, disclosed) |
-
-## profile
-
-The cloth prints in the **safe** profile: the canon symbol on the left of each table above is replaced by its counterpart. `gym/unweave.mjs` maps it back.
-
-| canon | printed |
-|---|---|
-| `∅` | `Ø` |
-| `△` | `◊` |
-| `⊨` | `±` |
-| `↬` | `↔` |
-| `∘` | `◦` |
-| `◆` | `•` |
-| `◈` | `Ω` |
-| `∩` | `÷` |
-| `∪` | `×` |
-| `∃` | `ε` |
-| `⊞` | `σ` |
-| `∀` | `ι` |
-| `◀` | `←` |
-| `▶` | `↕` |
-| `∨` | `√` |
-| `↺` | `∫` |
-| `≡` | `∏` |
-| `↻` | `Γ` |
-| `✗` | `†` |
-| `⇒` | `∂` |
-| `∈` | `¤` |
-| `∉` | `¢` |
-| `∧` | `Λ` |
-| `◦` | `∙` |
-| `◇` | `Φ` |
-| `▫` | `°` |
-| `≣` | `¶` |
-| `⟨` | `«` |
-| `⟩` | `»` |
+| `≣` | order test | the spine's Kendall t against the helix; p over n seeded shuffles of the same stages (a budget, disclosed) |
 
 ## terms
 

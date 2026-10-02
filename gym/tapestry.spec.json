@@ -1,6 +1,6 @@
 {
  "schema": "TapestrySpec@1",
- "woven": "2026-10-01",
+ "woven": "2026-10-02",
  "title": "PENELOPE",
  "prefixes": {
   "o/": "organs/",
@@ -339,7 +339,17 @@
     "g/weave-build.mjs",
     "/api/weave",
     "GL-WV-07",
-    "GL-WV-12"
+    "GL-WV-12",
+    "o/generation/api.mjs",
+    "o/generation/provenance.mjs",
+    "g/weave-nomodel.mjs",
+    "g/nomodel-prose.mjs",
+    "g/nomodel-summary.mjs",
+    "l/NOMODEL-BOUNDARY.md",
+    "l/nomodel-borodino.json",
+    "GL-WV-15",
+    "GL-WV-16",
+    "GL-WV-17"
    ]
   },
   {
@@ -673,8 +683,8 @@
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "E7/organs/territory.js",
-    "GL-PS-09"
+    "GL-PS-09",
+    "GL-OV-02"
    ],
    "ctl": "¬gain>0 ∧ homogeneous ¬split"
   },
@@ -897,11 +907,10 @@
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "o/steersman.mjs",
-    "o/steersman.test.mjs",
     "LP/derived-priors/concern-priors/concern-fields",
     "GL-WV-11",
-    "GL-WV-13"
+    "GL-WV-13",
+    "GL-OV-02"
    ],
    "ctl": "aporia ∅ ∧ shadow-topics ¬activate ⇒✗"
   },
@@ -936,29 +945,44 @@
   {
    "id": "STR",
    "name": "steersman",
-   "st": "■",
+   "st": "·",
    "lvl": 2,
    "op": "DEF",
    "grain": "Pattern",
    "typing": "§",
    "refs": [
-    "o/steersman.mjs",
-    "o/steersman.test.mjs",
-    "GL-WV-13"
-   ]
+    "GL-WV-13",
+    "GL-OV-02"
+   ],
+   "ctl": "Restored organ fails its recorded controls."
   },
   {
    "id": "VOC",
    "name": "voice",
-   "st": "■",
+   "st": "·",
    "lvl": 2,
    "op": "INS",
    "grain": "Figure",
    "typing": "‡",
    "refs": [
-    "o/voice.mjs",
-    "o/voice.e2e.mjs",
-    "GL-WV-13"
+    "GL-WV-13",
+    "GL-OV-02"
+   ],
+   "ctl": "Restored organ fails its recorded controls."
+  },
+  {
+   "id": "OVW",
+   "name": "overview",
+   "st": "■",
+   "lvl": 2,
+   "op": "SYN",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "o/generation/overview.mjs",
+    "o/generation/adapters/overview.mjs",
+    "g/overview.test.mjs",
+    "GL-OV-01"
    ]
   }
  ]

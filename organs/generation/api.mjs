@@ -33,6 +33,20 @@ export function generationKinds() {
 }
 
 async function loadBuiltins() {
+  // Load the sibling reader only when this medium is requested. Code generation
+  // must remain usable in a standalone Penelope checkout.
+  if (!adapters.has("overview")) registerGenerationAdapter("overview", {
+    kind: "overview", ext: "json",
+    async readUnits(task, ctx) {
+      ctx.overviewAdapter = (await import("./adapters/overview.mjs")).default;
+      return ctx.overviewAdapter.readUnits(task, ctx);
+    },
+    autofill: (u, ctx) => ctx.overviewAdapter.autofill(u, ctx),
+    snip: (v, name, ctx) => ctx.overviewAdapter.snip(v, name, ctx),
+    probeUnit: (v, u, ctx) => ctx.overviewAdapter.probeUnit(v, u, ctx),
+    testUnits: (v, units, ctx) => ctx.overviewAdapter.testUnits(v, units, ctx),
+    toDocument: (v, ctx) => ctx.overviewAdapter.toDocument(v, ctx),
+  });
   if (!adapters.has("code")) registerGenerationAdapter("code", (await import("./adapters/code.mjs")).default);
   if (!adapters.has("text")) registerGenerationAdapter("text", (await import("./adapters/prose.mjs")).default);
   // "prose" remains an internal compatibility alias; the public artifact kind is text.
