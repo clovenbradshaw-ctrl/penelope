@@ -1534,3 +1534,33 @@ so the next weave starts from what this one learned.
   the assembly + stages-named basis (S1/P2), or a generation weave that
   regresses (a category drawn from the mouth, a gate not run) after the
   reading door lands, contradicts this.
+
+# Addendum K — the birth certificate (2026-10-01)
+
+// The swarm's seven framings against the seed: five landed. The one that stung
+// is recorded here — the axes are corpus artifacts, and the khora must never
+// dress them as a priori. "The word a priori did not survive at all." The khora
+// is a provisional commitment machinery: the forms of operation fixed, the
+// world-model (the 27, the axes, the coordinates) maintained, its birth
+// certificate written beside its falsifier.
+
+## khora — the axes, held with their birth certificate
+
+### GL-BD-14 — The 27 are a maintained, corpus-recovered model, never a priori; reSeed is named, not silent
+- pipeline: khora + door
+- status: standing
+- supersedes: —
+- evidence: eoreader7/khora/H/H.mjs (PROVENANCE: recovered from human verb
+  embeddings, a posteriori; orthogonality measured Rand ≈ 0.05; 27 cells fit
+  at 8.8× chance; escapeHatch disclosed as wired:false — reSeed is
+  constitutional, not operational; selftest pins the birth certificate and
+  the unwired hatch, 9/9); eoreader7/KHORA.md (discipline clause 3: "the word
+  'a priori' does not survive"); eoreader7/khora/migrate/ledger.json
+  (named-gaps: closure-at-3-unwired, axes-corpus-provenance, each with a
+  falsifier). The running resolver/cube still closes at 27 — a named gap,
+  never a silent escape hatch. The desert is a finding about languages, never
+  about the machine, which can verb anything in notation.
+- falsifying control: a claim that calls the 27 "a priori", a run that
+  under-attends where the prior is poor and reports the poverty as the
+  machine's, or a reSeed that fires without an external witness, contradicts
+  this.
