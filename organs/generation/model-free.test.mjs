@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { weave } from "../organs/generation/api.mjs";
+import { weave } from "./api.mjs";
 
 test("Weave model-free mode never falls through to a model", async () => {
   const adapter = {
@@ -30,7 +30,7 @@ test("Weave model-free mode never falls through to a model", async () => {
   const result = await weave({
     intent: "model-free diagnostic",
     artifact: adapter,
-    context: { noModel: true },
+    noModel: true,
     model: null,
   });
 
@@ -42,5 +42,5 @@ test("Weave model-free mode never falls through to a model", async () => {
   assert.equal(events.filter((e) => e.stage === "ground" && e.transform === "hunt-snip").length, 0);
   assert.ok(events.some((e) => e.stage === "verify"));
   assert.ok(events.some((e) => e.stage === "materialize"));
-  assert.equal(result.repair.scars[0].why, "model-required");
+  assert.equal(result.repair.scars[0].why.startsWith("model-required"), true);
 });

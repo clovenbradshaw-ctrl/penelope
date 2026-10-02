@@ -6,7 +6,7 @@
 // Optional:
 //   PENELOPE_SHADOW_FILE=/path/to/shadow.json
 // where shadow.json is {"url":"retained field text", ...}.
-//   PENELOPE_EOREADER7_ROOT=/path/to/eoreader7
+//   ER7_HOME=/path/to/eoreader7
 //   PENELOPE_SEARCH_URL=...
 //
 // The harness is intentionally artifact-neutral at the engine boundary; the
@@ -79,7 +79,7 @@ for (const target of targets) {
     intent: `${topic}, approximately ${target} words`,
     artifact: "text",
     constraints: { targetWords: target, diagnostic: "model-free-boundary" },
-    context: { shadow, noModel: true },
+    noModel: true, context: { shadow },
     verification: { grounding: true, inventedReferents: true, fold: true, provenance: "Provenance@2" },
     model: null,
   });

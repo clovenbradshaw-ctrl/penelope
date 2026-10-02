@@ -7,6 +7,9 @@
 //
 // The result separates artifact, materialization, verification, evidence, and
 // repair. Adding a medium means registering an adapter, not another engine.
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { arrange } from "./engine.mjs";
 
 const adapters = new Map();
@@ -30,6 +33,20 @@ export function generationKinds() {
 }
 
 async function loadBuiltins() {
+  // Load the sibling reader only when this medium is requested. Code generation
+  // must remain usable in a standalone Penelope checkout.
+  if (!adapters.has("overview")) registerGenerationAdapter("overview", {
+    kind: "overview", ext: "json",
+    async readUnits(task, ctx) {
+      ctx.overviewAdapter = (await import("./adapters/overview.mjs")).default;
+      return ctx.overviewAdapter.readUnits(task, ctx);
+    },
+    autofill: (u, ctx) => ctx.overviewAdapter.autofill(u, ctx),
+    snip: (v, name, ctx) => ctx.overviewAdapter.snip(v, name, ctx),
+    probeUnit: (v, u, ctx) => ctx.overviewAdapter.probeUnit(v, u, ctx),
+    testUnits: (v, units, ctx) => ctx.overviewAdapter.testUnits(v, units, ctx),
+    toDocument: (v, ctx) => ctx.overviewAdapter.toDocument(v, ctx),
+  });
   if (!adapters.has("code")) registerGenerationAdapter("code", (await import("./adapters/code.mjs")).default);
   if (!adapters.has("text")) registerGenerationAdapter("text", (await import("./adapters/prose.mjs")).default);
   // "prose" remains an internal compatibility alias; the public artifact kind is text.
@@ -57,6 +74,7 @@ export async function weave({
   context = {},
   verification = {},
   model = null,
+  noModel = false,
   output = null,
 } = {}) {
   const task = String(intent ?? "").trim();
@@ -77,7 +95,10 @@ export async function weave({
     };
   }
 
-  const ctx = { ...context, constraints, verification, model, artifact: kind ?? adapter.kind };
+  // noModel:true is the explicit model-free mode: field and hunt run as usual,
+  // and any unit that reaches the mouth stage is recorded as model-required and
+  // left unresolved. No draw is ever made, and no substitute model is used.
+  const ctx = { ...context, constraints, verification, model: noModel ? null : model, noModel: noModel === true, artifact: kind ?? adapter.kind };
   const args = { out: output ?? undefined };
   if (context?.example !== undefined) args.example = JSON.stringify(context.example);
 
@@ -119,23 +140,24 @@ export async function weave({
     },
     evidence: {
       provenance: result.provenance ?? {
-        schema: "Provenance@1",
+        schema: "Provenance@2",
         sources: [],
-        refs: [],
+        events: [],
         addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: "utf8" },
       },
       eot: result.eot ?? null,
+      // Flat per-unit disposition: field | hunt | mouth | model-required | unsatisfied.
+      outcomes: result.outcomes ?? [],
+      units: (result.units ?? []).map((u) => ({ name: u.name, spec: u.spec })),
     },
     repair: {
       scars: result.scars ?? [],
       converged: (result.scars ?? []).length === 0 && verified,
     },
-    model: context.noModel === true ? null : (model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b"),
+    model: noModel ? null : (model ?? process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b"),
+    noModel: noModel === true,
   };
 }
-
-// Compatibility for internal callers during the migration. The public operation is weave().
-export const generate = weave;
 
 export async function selftest() {
   await loadBuiltins();
@@ -146,9 +168,31 @@ export async function selftest() {
   adapters.delete("selftest");
   const empty = await weave({ intent: "   ", artifact: "code" });
   const textReady = generationAdapter("text") === generationAdapter("prose");
-  const ok = registered && textReady && empty.ok === false && empty.status === "gap" && generationKinds().join("|") === before.join("|");
-  if (!ok) throw new Error("unified generation API selftest failed");
-  return { ok: true, checks: 4 };
+  // noModel: a unit field and hunt cannot satisfy stops at the mouth stage as
+  // `model-required`; the mouth (and so any model door) is never reached.
+  const mouth = { calls: 0 };
+  const noModelAdapter = {
+    kind: "selftest-nomodel",
+    readUnits: () => [{ name: "a", spec: "field-held" }, { name: "b", spec: "hunt-held" }, { name: "c", spec: "nobody-holds" }],
+    autofill: (u) => (u.name === "a" ? { code: "alpha from the field", address: "field:a" } : null),
+    hunt: async (u) => (u.name === "b" ? { code: "beta from the hunt", url: "hunt:b" } : null),
+    mouthFragment: () => { mouth.calls += 1; return "never asked"; },
+    snip: (v) => v,
+    probeUnit: () => ({ ok: true, detail: "" }),
+    testUnits: () => ({ ok: true, reason: "ok" }),
+    toDocument: () => "<html></html>",
+  };
+  const quiet = console.log;
+  console.log = () => {};
+  let nm;
+  try {
+    nm = await weave({ intent: "no-model selftest", artifact: noModelAdapter, noModel: true, output: fs.mkdtempSync(path.join(os.tmpdir(), "weave-nomodel-")) });
+  } finally { console.log = quiet; }
+  const stages = (nm.evidence?.outcomes ?? []).map((o) => o.stage).join(",");
+  const noModelOk = mouth.calls === 0 && nm.noModel === true && nm.model === null && stages === "field,hunt,model-required" && (nm.repair?.scars ?? []).some((x) => x.stage === "mouth");
+  const ok = registered && textReady && empty.ok === false && empty.status === "gap" && generationKinds().join("|") === before.join("|") && noModelOk;
+  if (!ok) throw new Error("unified generation API selftest failed" + (noModelOk ? "" : " (noModel: mouth calls=" + mouth.calls + ", stages=" + stages + ")"));
+  return { ok: true, checks: 5 };
 }
 
-export default { weave, generate, registerGenerationAdapter, generationAdapter, generationKinds };
+export default { weave, registerGenerationAdapter, generationAdapter, generationKinds };

@@ -23,7 +23,8 @@ import { createRequire } from "node:module";
 import { draw, SEARCH_URL } from "../engine.mjs";
 
 const require = createRequire(import.meta.url);
-const ER7 = process.env.PENELOPE_EOREADER7_ROOT ?? "/Users/mlacy/Documents/3.0/eoreader7";
+// eoreader7 is a sibling checkout (../eoreader7); ER7_HOME overrides it.
+const ER7 = process.env.ER7_HOME ?? decodeURIComponent(new URL("../../../../eoreader7", import.meta.url).pathname);
 let organs = null;
 try {
   const ledger = await import(`${ER7}/native/the-fold/document-ledger.js`);
