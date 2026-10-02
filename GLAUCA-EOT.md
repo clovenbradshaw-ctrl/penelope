@@ -1631,3 +1631,24 @@ so the next weave starts from what this one learned.
 - falsifying control: a quoted sentence in a generated essay that is not a
   mechanical snip of its source at the shown byte address, or a refused
   citation silently replaced by the mouth's guess, contradicts this.
+
+# Addendum N — the mechanical quote, falsified and fixed; the essay as revision (2026-10-01)
+
+// GL-BD-16 was falsified the same day it landed: the snips were byte-verified
+// but coherence-broken — the first snipSentence stopped at the abbreviation
+// "Theaet." (a fragment), overlapped across sentences, and pointed at
+// sentence-tails ("working memory.", "maintenance per se ."). The fix walks
+// BACKWARD and FORWARD to the enclosing sentence, abbreviation-aware, so any
+// address inside a sentence yields the whole clean claim. And the wider chase:
+// the essay is a REVISION — the VOID is revisable; the argument discovers its
+// own error and supersedes it on the record (memory-is-storage falsified by
+// the argument itself → memory-is-reconstruction).
+
+## prose — the enclosing sentence
+
+### GL-BD-17 — The mechanical quote snips the ENCLOSING sentence, abbreviation-aware; a mid-sentence address yields the whole claim
+- pipeline: prose + organs
+- status: standing
+- supersedes: GL-BD-16, in part — its claim ("8/8 re-slice-verified") was true but weak: verification proved the bytes resolve, not that the snips are coherent sentences. The rule it protects — the mouth never writes verbatim, the box snips at the permanent address — stands.
+- evidence: penelope/organs/snip-cite.mjs snipSentence (walks backward to the enclosing sentence's start and forward to its end; a terminal is a boundary only when it is not an abbreviation — Theaet., Dr., … — and is followed by a capital or the buffer end; the "Theaet." fragment, the overlap, and the sentence-tail "working memory." failures are each pinned in the falsification); measured 2026-10-01: the waxen-tablet essay's hand-typed quotes failed to resolve (indexOf −1); the first snip organ produced fragments and overlaps (F1 abbreviation, F2 overlap, F3/F4 tails); after the fix, "The Waxen Tablet" grounds 5/5 load-bearing sentences across the Republic and the web-research door, each a verbatim enclosing sentence, re-slice-verified. The essay's prose is the writer's residue; the load-bearing sentences are the box's snips; the revision is the argument's own (memory-is-storage superseded by memory-is-reconstruction, kept on the trail).
+- falsifying control: a quoted sentence in a generated work that is not the verbatim enclosing sentence at the shown byte address, or a superseded claim silently deleted instead of kept on the revision trail, contradicts this.

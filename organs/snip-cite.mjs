@@ -21,28 +21,54 @@ import fs from "node:fs";
 
 export const SNIP_SCHEMA = "SnipCite@1";
 
-/** Snip the verbatim sentence at a permanent byte address in a source file.
- *  The sentence is the run from `abs` to its first terminal (. ! ?) followed by
- *  whitespace, allowing hard-wrapped line breaks (the fold's sentence join).
- *  A drifted address (out of range, or bytes that do not form a sentence) is a
- *  typed refusal, never a re-found guess. */
-export function snipSentence(sourcePath, abs, { maxLen = 320 } = {}) {
+/** Snip the VERBATIM ENCLOSING SENTENCE at a permanent byte address in a
+ *  source file. The address may land anywhere inside the sentence: the box
+ *  walks BACKWARD to the sentence's start and FORWARD to its end, so a marker
+ *  that lands mid-sentence still yields the whole clean claim. A terminal is a
+ *  sentence boundary only when it is not an abbreviation (Theaet., Dr., …) and
+ *  is followed by a capital or the buffer end — the fragment failure of
+ *  2026-10-01 (the snip stopped at "Theaet." and at sentence-tails). A drifted
+ *  address is a typed refusal, never a re-found guess. */
+export function snipSentence(sourcePath, abs, { window = 600, maxLen = 520 } = {}) {
   let src;
   try { src = fs.readFileSync(sourcePath, "utf8"); } catch (e) { return { ok: false, gap: { kind: "source_unreadable", error: e.message } }; }
   const bytes = new TextEncoder().encode(src);
   if (!Number.isInteger(abs) || abs < 0 || abs >= bytes.length) return { ok: false, gap: { kind: "address_out_of_range", abs } };
-  const tail = new TextDecoder().decode(bytes.slice(abs, Math.min(abs + maxLen, bytes.length)));
-  let i = 0;
-  while (i < tail.length) {
-    const ch = tail[i];
-    if ((ch === "." || ch === "!" || ch === "?") && (i + 1 >= tail.length || /\s/.test(tail[i + 1]))) break;
-    i += 1;
+  const dec = new TextDecoder();
+  // the window AROUND the address (backward for the start, forward for the end)
+  const startByte = Math.max(0, abs - window);
+  const fwdByte = Math.min(bytes.length, abs + maxLen);
+  const around = dec.decode(bytes.slice(startByte, fwdByte));
+  const rel = abs - startByte; // the address's position within `around`
+  const ABBR = /(?:Theaet|Theaetetus|Dr|Mr|Mrs|Ms|St|Vol|vol|Fig|fig|e\.g|i\.e|etc|vs|No|approx)\.$/i;
+  const isEnd = (s, k) => {
+    if (k >= s.length) return false;
+    const ch = s[k];
+    if (ch !== "." && ch !== "!" && ch !== "?") return false;
+    if (/\.$/.test(s.slice(Math.max(0, k - 12), k + 1)) && ABBR.test(s.slice(Math.max(0, k - 12), k + 1))) return false;
+    let j = k + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (j >= s.length) return true;
+    return /[A-Z"']/.test(s[j]) || s[j] === "\n";
+  };
+  // walk BACKWARD to the enclosing sentence start (past the previous boundary)
+  let start = rel;
+  while (start > 0) {
+    if (isEnd(around, start - 1)) break;
+    start -= 1;
   }
-  const end = Math.min(i + 1, tail.length);
-  const quote = tail.slice(0, end).replace(/\s+/g, " ").trim();
+  // walk FORWARD to the sentence end
+  let end = rel;
+  while (end < around.length) {
+    if (isEnd(around, end)) break;
+    end += 1;
+  }
+  if (end >= around.length) end = around.length - 1;
+  const quote = around.slice(start, end + 1).replace(/\s+/g, " ").trim();
   if (!quote) return { ok: false, gap: { kind: "empty_snip", abs } };
-  const len = new TextEncoder().encode(tail.slice(0, end)).length;
-  return { ok: true, quote, abs, len, source: sourcePath, verified: true };
+  const len = new TextEncoder().encode(around.slice(start, end + 1)).length;
+  const outAbs = startByte + start;
+  return { ok: true, quote, abs: outAbs, len, source: sourcePath, verified: true };
 }
 
 /** Replace every ⟦source@abs⟧ marker in the mouth's draft with the box's snip.
