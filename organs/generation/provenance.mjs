@@ -15,7 +15,8 @@ export function stableProvenanceId(value, prefix = "src") {
 }
 
 export class ProvenanceLedger {
-  constructor({ artifact = "unknown", encoding = "utf8" } = {}) {
+  constructor({ artifact = "unknown", encoding = "utf8", position = null } = {}) {
+    this.position = position == null ? null : structuredClone(position);
     this.artifact = artifact;
     this.encoding = encoding;
     this.sources = new Map();
@@ -35,15 +36,16 @@ export class ProvenanceLedger {
     return source_id;
   }
 
-  event({ stage, source_id = null, parent = null, unit = null, range = null, transform = null, detail = null, ibid = null }) {
-    const key = JSON.stringify({ stage, source_id, parent, unit, range, transform, ibid });
+  event({ stage, source_id = null, parent = null, unit = null, range = null, transform = null, detail = null, ibid = null, position = this.position }) {
+    const key = JSON.stringify({ stage, source_id, parent, unit, range, transform, ibid, detail, position });
     const existing = this.byKey.get(key);
     if (existing) return existing;
 
-    const id = stableProvenanceId({ n: this.events.length, stage, source_id, parent, unit, range }, "evt");
+    const id = stableProvenanceId({ n: this.events.length, stage, source_id, parent, unit, range, transform, ibid, detail, position }, "evt");
     const row = {
       event_id: id,
       stage,
+      position: position == null ? null : structuredClone(position),
       ...(source_id ? { source_id } : {}),
       ...(parent ? { parent } : {}),
       ...(unit ? { unit } : {}),
@@ -65,20 +67,21 @@ export class ProvenanceLedger {
     return {
       schema: "Provenance@2",
       artifact,
+      position: this.position == null ? null : structuredClone(this.position),
       addressSpace: { artifact: "folded-bytes", unit: "byte", encoding: this.encoding },
-      sources: [...this.sources.values()],
-      events: this.events,
+      sources: structuredClone([...this.sources.values()]),
+      events: structuredClone(this.events),
       ...(root ? { root } : {}),
     };
   }
 }
 
-export function foldProvenance(parent, { transform = "re-admit", detail = null } = {}) {
-  const ledger = new ProvenanceLedger({ artifact: parent.artifact, encoding: parent.addressSpace?.encoding ?? "utf8" });
-  for (const source of parent.sources ?? []) ledger.sources.set(source.source_id, source);
+export function foldProvenance(parent, { transform = "re-admit", detail = null, position = parent.position ?? null } = {}) {
+  const ledger = new ProvenanceLedger({ artifact: parent.artifact, encoding: parent.addressSpace?.encoding ?? "utf8", position });
+  for (const source of parent.sources ?? []) ledger.sources.set(source.source_id, structuredClone(source));
   for (const event of parent.events ?? []) {
-    ledger.events.push({ ...event });
-    ledger.byKey.set(JSON.stringify({ stage: event.stage, source_id: event.source_id, parent: event.parent, unit: event.unit, range: event.range, transform: event.transform, ibid: event.ibid }), event.event_id);
+    ledger.events.push(structuredClone(event));
+    ledger.byKey.set(JSON.stringify({ stage: event.stage, source_id: event.source_id ?? null, parent: event.parent ?? null, unit: event.unit ?? null, range: event.range ?? null, transform: event.transform ?? null, ibid: event.ibid ?? null, detail: event.detail ?? null, position: event.position ?? null }), event.event_id);
   }
   const parentRoot = parent.root ?? (parent.events?.length ? parent.events[parent.events.length - 1].event_id : null);
   if (parentRoot) ledger.ibid(parentRoot, { transform, ...(detail ? { detail } : {}) });

@@ -93,7 +93,7 @@ async function fillUnits(units, adapter, ctx = {}) {
   // or why it was not (model-required | unsatisfied). The provenance events
   // carry the same fact; this is the flat, countable form of it.
   const outcomes = [];
-  const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind });
+  const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind, position: ctx.position ?? null });
   const addSource = (spec) => ledger.source(spec);
   const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
     const text = String(code ?? "");
@@ -183,7 +183,7 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
 === THE FIELD READS THE PROMPT ===`);
   console.log(`  "${task}"
 `);
-  const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind });
+  const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind, position: context.position ?? null });
   const taskSource = ledger.source({ kind: "intent", locator: { task, artifact: context.artifact ?? adapter.kind } });
   ledger.event({ stage: "intent", source_id: taskSource, transform: "request→task" });
   const priorSource = ledger.source({ kind: "prior", locator: { adapter: adapter.kind, constraints: context.constraints ?? {}, verification: context.verification ?? {} } });
