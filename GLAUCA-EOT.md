@@ -1598,3 +1598,36 @@ so the next weave starts from what this one learned.
 - falsifying control: a build intent (write/make/create + a code-file target)
   answered with a prose turn, or prose mentioning "functions" refused with a
   build gap, contradicts this.
+
+# Addendum M — the mechanical quote (2026-10-01)
+
+// The waxen-tablet essay's hand-typed "verbatim" quotes did NOT resolve in the
+// source (indexOf −1; line breaks and footnote markers the author did not
+// copy). The lesson: a model never writes a verbatim quote. The mouth names the
+// citation; the box SNIPS it at its permanent byte address (kleeneup's law) and
+// substitutes the source's own bytes. And the hunt — the web research door — is
+// now in the essay's ground, not just the archons.
+
+## prose — the box snips, the mouth never quotes verbatim
+
+### GL-BD-16 — The mechanical quote: the mouth names the address; the box snips the verbatim bytes
+- pipeline: prose + organs
+- status: standing
+- supersedes: —
+- evidence: penelope/organs/snip-cite.mjs (SnipCite@1 — snipSentence(source,
+  abs): re-slices the source bytes at the permanent address to the sentence
+  end (hard-wrapped lines joined), refuses a drifted address and an unreadable
+  source, never re-finds by pattern; replaceCites(draft, resolve): the mouth's
+  ⟦source@abs⟧ markers become the box's verbatim snips in curly quotes, a
+  refused marker stays a named gap; selftest 5/5); measured 2026-10-01: the
+  waxen-tablet essay's hand-typed quotes failed to resolve (indexOf −1); after
+  the fix, "Two Faces of Memory" grounds 8/8 propositions across TWO grounds —
+  the Republic (waxen tablet, byte-address 522168…) and the WEB RESEARCH door
+  (the hunt: POST /api/web/search on 8812 fetched the PMC working-memory
+  mini-review; khora read it — beings PFC · Prefrontal Cortex · D'Esposito ·
+  Miller · Wallis · Lara; the mouth named the addresses; the box snipped) —
+  8/8 re-slice-verified, 0 refused, the essay a weave of mechanical quotes and
+  the mouth's disclosed residue, the pathos panel's verified voices beside it.
+- falsifying control: a quoted sentence in a generated essay that is not a
+  mechanical snip of its source at the shown byte address, or a refused
+  citation silently replaced by the mouth's guess, contradicts this.
