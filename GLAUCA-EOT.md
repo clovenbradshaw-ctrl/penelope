@@ -1564,3 +1564,37 @@ so the next weave starts from what this one learned.
   under-attends where the prior is poor and reports the poverty as the
   machine's, or a reSeed that fires without an external witness, contradicts
   this.
+
+# Addendum L — the falsification that landed (2026-10-01)
+
+// Asked to falsify "actual reading and generation through." Reading landed
+// (real ground, honest caseless-script gap), generation landed (a real module
+// gate-verified against the read document's own dates). The falsification
+// ATTEMPT landed too: "write a module with a function" — a build intent with
+// no named unit — was silently swallowed by the tightened detector into a
+// prose turn, the exact GL-BD-09 swallow, one boundary out. Fixed: a
+// code-target build intent is a typed refusal or a build, never a turn.
+
+## build — the boundary the falsification found
+
+### GL-BD-15 — A code-target build intent with no named unit is a typed refusal, never a turn
+- pipeline: build
+- status: standing
+- supersedes: GL-BD-09, in part — its rule stands ("a build-shaped ask is a
+  typed refusal or a build, never a silent turn"); GL-BD-09's tightened
+  `listed` left a one-boundary-out hole: "write a module with a function"
+  named no unit, failed the named-list gate, and fell to prose. This entry
+  closes the hole without reopening the prose false-positive.
+- evidence: eoreader7/native/organs/code-build.js detectCodeBuildIntent (a
+  code-file target — file|module|script|library|utility|helper|class — is a
+  build intent even with no unit named; prose that merely mentions
+  "functions" has no code target and stays a turn); eoreader7/proxy.mjs
+  (the /v1/ask build branch now gates on detectCodeBuildIntent); measured
+  2026-10-01: "write a module with a function" → HTTP 400,
+  kind mechanical-code-build-refused, error "a build ask must name its
+  functions", no turn drawn; "a short essay about the functions of memory"
+  → not refused (left a turn); the toCamelCase/toSnakeCase weave still
+  ok:true, draws:0, verified:true — zero regression.
+- falsifying control: a build intent (write/make/create + a code-file target)
+  answered with a prose turn, or prose mentioning "functions" refused with a
+  build gap, contradicts this.
