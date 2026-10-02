@@ -1,0 +1,483 @@
+{
+  "slug": "what-a-white-paper-is-1790916908984",
+  "gates": [
+    {
+      "id": "hunted",
+      "ok": true,
+      "evidence": "claims cite the world's own sources"
+    },
+    {
+      "id": "discovered",
+      "ok": true,
+      "evidence": "states what was found, not what was planted"
+    },
+    {
+      "id": "gate-math",
+      "ok": true,
+      "evidence": "the null is the Fold's own gate"
+    },
+    {
+      "id": "grounded",
+      "ok": true,
+      "evidence": "the ground is named"
+    },
+    {
+      "id": "standing",
+      "ok": true,
+      "evidence": "standing declared"
+    },
+    {
+      "id": "aperture",
+      "ok": true,
+      "evidence": "contrary rendered"
+    },
+    {
+      "id": "falsify",
+      "ok": true,
+      "evidence": "falsification registered"
+    },
+    {
+      "id": "no-meta",
+      "ok": true,
+      "evidence": "no meta-voice outside the falsification"
+    }
+  ],
+  "failures": [],
+  "wpModes": [
+    {
+      "feature": "exec-summary",
+      "label": "executive summary / abstract",
+      "present": 5,
+      "total": 11,
+      "share": 0.45454545454545453,
+      "verdict": "MORE",
+      "mode": "¬exec-summary",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.55 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "problem-stmt",
+      "label": "problem statement",
+      "present": 4,
+      "total": 11,
+      "share": 0.36363636363636365,
+      "verdict": "MORE",
+      "mode": "¬problem-stmt",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.64 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "solution",
+      "label": "solution / proposed solution",
+      "present": 6,
+      "total": 11,
+      "share": 0.5454545454545454,
+      "verdict": "MORE",
+      "mode": "solution",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.55 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "conclusion",
+      "label": "conclusion section",
+      "present": 4,
+      "total": 11,
+      "share": 0.36363636363636365,
+      "verdict": "MORE",
+      "mode": "¬conclusion",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.64 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "references",
+      "label": "references / citations / footnotes",
+      "present": 3,
+      "total": 11,
+      "share": 0.2727272727272727,
+      "verdict": "MORE",
+      "mode": "¬references",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.73 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "toc",
+      "label": "table of contents",
+      "present": 4,
+      "total": 11,
+      "share": 0.36363636363636365,
+      "verdict": "MORE",
+      "mode": "¬toc",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.64 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "numbered-sections",
+      "label": "numbered sections (1.0, 2.0)",
+      "present": 1,
+      "total": 11,
+      "share": 0.09090909090909091,
+      "verdict": "CALLABLE",
+      "mode": "¬numbered-sections",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.91 clears bound 0.77 at alpha 0.2, mode still present late",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "call-to-action",
+      "label": "call to action",
+      "present": 1,
+      "total": 11,
+      "share": 0.09090909090909091,
+      "verdict": "CALLABLE",
+      "mode": "¬call-to-action",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.91 clears bound 0.77 at alpha 0.2, mode still present late",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "author-named",
+      "label": "named author",
+      "present": 3,
+      "total": 11,
+      "share": 0.2727272727272727,
+      "verdict": "MORE",
+      "mode": "¬author-named",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.73 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "authoritative",
+      "label": "authoritative / objective tone",
+      "present": 5,
+      "total": 11,
+      "share": 0.45454545454545453,
+      "verdict": "MORE",
+      "mode": "¬authoritative",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.55 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "audience",
+      "label": "audience named",
+      "present": 3,
+      "total": 11,
+      "share": 0.2727272727272727,
+      "verdict": "MORE",
+      "mode": "¬audience",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.73 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "decision",
+      "label": "decision / problem-solving purpose",
+      "present": 3,
+      "total": 11,
+      "share": 0.2727272727272727,
+      "verdict": "MORE",
+      "mode": "¬decision",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.73 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "data-visual",
+      "label": "data / figures / case studies",
+      "present": 3,
+      "total": 11,
+      "share": 0.2727272727272727,
+      "verdict": "MORE",
+      "mode": "¬data-visual",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.73 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "research-based",
+      "label": "research-based / cited facts",
+      "present": 4,
+      "total": 11,
+      "share": 0.36363636363636365,
+      "verdict": "MORE",
+      "mode": "¬research-based",
+      "bound": 0.7704741554141625,
+      "reason": "share 0.64 below bound 0.77",
+      "callable": false,
+      "callableAs": null
+    }
+  ],
+  "grModes": [
+    {
+      "feature": "exec-summary",
+      "label": "executive summary / abstract",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬exec-summary",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "problem-stmt",
+      "label": "problem statement",
+      "present": 1,
+      "total": 4,
+      "share": 0.25,
+      "verdict": "MORE",
+      "mode": "¬problem-stmt",
+      "bound": 0.9485306444985253,
+      "reason": "share 0.75 below bound 0.95",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "solution",
+      "label": "solution / proposed solution",
+      "present": 1,
+      "total": 4,
+      "share": 0.25,
+      "verdict": "MORE",
+      "mode": "¬solution",
+      "bound": 0.9485306444985253,
+      "reason": "share 0.75 below bound 0.95",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "conclusion",
+      "label": "conclusion section",
+      "present": 2,
+      "total": 4,
+      "share": 0.5,
+      "verdict": "DISSOLVED",
+      "mode": "¬conclusion",
+      "bound": 0.9485306444985253,
+      "reason": "leading mode appeared repeatedly then vanished as harvest widened — do not guess it",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "references",
+      "label": "references / citations / footnotes",
+      "present": 1,
+      "total": 4,
+      "share": 0.25,
+      "verdict": "MORE",
+      "mode": "¬references",
+      "bound": 0.9485306444985253,
+      "reason": "share 0.75 below bound 0.95",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "toc",
+      "label": "table of contents",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬toc",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "numbered-sections",
+      "label": "numbered sections (1.0, 2.0)",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬numbered-sections",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "call-to-action",
+      "label": "call to action",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬call-to-action",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "author-named",
+      "label": "named author",
+      "present": 4,
+      "total": 4,
+      "share": 1,
+      "verdict": "CALLABLE",
+      "mode": "author-named",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "present"
+    },
+    {
+      "feature": "authoritative",
+      "label": "authoritative / objective tone",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬authoritative",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "audience",
+      "label": "audience named",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬audience",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "decision",
+      "label": "decision / problem-solving purpose",
+      "present": 1,
+      "total": 4,
+      "share": 0.25,
+      "verdict": "MORE",
+      "mode": "¬decision",
+      "bound": 0.9485306444985253,
+      "reason": "share 0.75 below bound 0.95",
+      "callable": false,
+      "callableAs": null
+    },
+    {
+      "feature": "data-visual",
+      "label": "data / figures / case studies",
+      "present": 0,
+      "total": 4,
+      "share": 0,
+      "verdict": "CALLABLE",
+      "mode": "¬data-visual",
+      "bound": 1,
+      "reason": "unanimous across 4 witnesses, no rival mode — standing: copycat-template risk disclosed, not checked",
+      "callable": true,
+      "callableAs": "absent"
+    },
+    {
+      "feature": "research-based",
+      "label": "research-based / cited facts",
+      "present": 2,
+      "total": 4,
+      "share": 0.5,
+      "verdict": "DISSOLVED",
+      "mode": "¬research-based",
+      "bound": 0.9485306444985253,
+      "reason": "leading mode appeared repeatedly then vanished as harvest widened — do not guess it",
+      "callable": false,
+      "callableAs": null
+    }
+  ],
+  "discovered": [],
+  "essayModes": [],
+  "both": [],
+  "corpus": {
+    "wp": [
+      {
+        "id": "gmu",
+        "url": "https://writingcenter.gmu.edu/writing-resources/different-genres/white-papers"
+      },
+      {
+        "id": "purdue",
+        "url": "https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing/white_papers/documents/20140614123215_546_subject_specific_writing-professional_technical_writing_white_papers_white_paper_ppt.pdf"
+      },
+      {
+        "id": "wikipedia",
+        "url": "https://en.wikipedia.org/wiki/White_paper"
+      },
+      {
+        "id": "stanford",
+        "url": "https://law.stanford.edu/wp-content/uploads/2015/04/Definitions-of-White-Papers-Briefing-Books-Memos-2.pdf"
+      },
+      {
+        "id": "techtarget",
+        "url": "https://www.techtarget.com/whatis/definition/white-paper"
+      },
+      {
+        "id": "iit",
+        "url": "https://guides.library.iit.edu/c.php?g=1466605&p=10911504"
+      },
+      {
+        "id": "britannica",
+        "url": "https://www.britannica.com/money/white-paper"
+      },
+      {
+        "id": "enlightened",
+        "url": "https://www.enlightened.com/wp-content/uploads/2017/10/ENL-Build-vs-Buy-White-Paper.pdf"
+      },
+      {
+        "id": "opentext",
+        "url": "https://www.opentext.com/assets/documents/en-US/pdf/opentext-ceo-wp-cloud-the-destination-for-innovation-en.pdf"
+      },
+      {
+        "id": "f5",
+        "url": "https://cdn.studio.f5.com/files/k6fem79d/production/c802ae350e161c48d3243325a9f2cd0065fa15cc.pdf"
+      },
+      {
+        "id": "dell",
+        "url": "https://i.dell.com/sites/content/business/solutions/whitepapers/en/Documents/bmc_manage_it.pdf"
+      }
+    ],
+    "ground": [
+      {
+        "id": "essay-unraveling",
+        "url": "organs/../apps/weaves/the-unraveling-system-essay.html"
+      },
+      {
+        "id": "essay-waxen",
+        "url": "organs/../apps/weaves/the-waxen-tablet-essay.html"
+      },
+      {
+        "id": "essay-discovers",
+        "url": "organs/../apps/weaves/the-essay-that-discovers-itself.html"
+      },
+      {
+        "id": "essay-ravel",
+        "url": "organs/../apps/weaves/the-ravel-white-paper.html"
+      }
+    ]
+  }
+}
