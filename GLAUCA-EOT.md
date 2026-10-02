@@ -1722,3 +1722,37 @@ so the next weave starts from what this one learned.
 - falsifying control: a composed work with a claim that survived the box
   without a clean index match at a byte address, or a censored claim silently
   replaced by the mouth's guess, contradicts this.
+
+# Addendum Q — the fold at the point (2026-10-01)
+
+// Identity is the universe folded at a point, bounded by differences that make
+// a difference, for a particular for-whom. An essay IS such a fold — and its
+// ethos is the point at which the universe is folded. The organ that makes it
+// so: the box folds the sources at the for-whom, selecting the claims whose
+// differences make a difference TO that point; the mouth weaves the voice from
+// that seat, for that hand. Two for-whoms fold the same universe into two
+// essays with two identities, by consequence.
+
+## prose — ethos is the point of the fold
+
+### GL-BD-20 — The fold at the point: the essay's ethos is the for-whom at which the universe is folded, bounding the differences that make a difference
+- pipeline: prose + organs
+- status: standing
+- supersedes: —
+- evidence: penelope/organs/fold-at-point.mjs (FoldAtPoint@1 — foldAtPoint({
+  forWhom, indices, sections, per }): the for-whom's stake (its significant
+  words) plus each section's aspect bound the selection — a clean sentence
+  sharing the stake is a load-bearing difference, selected at its byte address;
+  the rest of the universe stays outside the fold; selftest 3/3 pins identity
+  by consequence — different for-whoms fold different claims); measured
+  2026-10-01: the memory universe (Republic + working-memory research) folded
+  at "the one who keeps a memory in a box and must learn to let it go" selected
+  the waxen-tablet, impressionability, maintenance (Lebedev) and divided-
+  existence claims, and the mouth's voice folded to that point — "This one,
+  who holds the box, must learn to let go"; folded at "the student learning how
+  memory works" the same universe selected the exchange-of-knowledge, self-
+  education, and PFC-encoding claims instead. The same ground, two folds, two
+  identities. The fold is the ethos; the identity is the consequence there.
+- falsifying control: a fold that makes the same difference to two different
+  for-whoms (no identity by consequence), or a selected claim that is not a
+  clean sentence at a byte address, contradicts this.
