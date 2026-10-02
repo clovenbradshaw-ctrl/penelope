@@ -1803,3 +1803,10 @@ so the next weave starts from what this one learned.
 - supersedes: GL-WP-01's lesson "define" — the subject is declared by the asker, never re-extracted, and descent is composed from the record rather than bolted onto a paraphrasing mouth. (The first box run grounded the draft after the fact and left 2/14 claims verifiable; the correction — compose the claims FROM the record — grounded 6/6 at byte addresses.)
 - evidence: gym/white-paper-box.mjs on 2026-10-02; 6/6 claims grounded to byte addresses (constitution@1216, @5967, @7864, @10695, @17946, @3321), 0 censored, gates pass by construction; artifact the-fold-error-correction-white-paper-1790915832957.html
 - falsifying control: a box-composed white paper whose byte addresses do not resolve to the sentence at that address, or whose censors are hidden rather than drawn, contradicts this.
+
+### GL-WP-03 — The white paper as a hunt: received definition (a white paper hunts and discovers), evidence the code, never the law
+- pipeline: prose (white-paper hunt, no mouth draws — the hunt is mechanical)
+- status: standing
+- supersedes: GL-WP-02's grounding axis — the definition is received (giver: the asker, 2026-10-02), and every claim drills to code or measured record, not the constitution. (The hunt's own gate error-corrected over the run: the mouth gate first over-fired on list ordinals, formula digits, article citations, and already-established constants — each sharpened on the record before the final run passed all eight.)
+- evidence: gym/white-paper-hunt.mjs on 2026-10-02; P1: no "perturb" in the prose engine (engine.mjs / prose.mjs); P2: testUnits folds (prose.mjs:113, 116); P3: ration 40/15min + 429 (mouth.mjs:31, 91), 5 refused draws measured in gym/swatch.jsonl; P4: Hoeffding bound (consensus-gate.mjs:40, 64); gates pass; artifact the-fold-error-correction-white-paper-hunt-1790916479959.html
+- falsifying control: a perturbation re-run found under another name in the prose test path, the consensus gate wired into a prose verdict, or a session where the ration never throttles, contradicts this.

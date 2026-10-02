@@ -1067,8 +1067,10 @@
    "refs": [
     "g/white-paper-run.mjs",
     "g/white-paper-box.mjs",
+    "g/white-paper-hunt.mjs",
     "GL-WP-01",
-    "GL-WP-02"
+    "GL-WP-02",
+    "GL-WP-03"
    ]
   }
  ]

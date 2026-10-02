@@ -1,0 +1,58 @@
+{
+  "slug": "the-fold-error-correction-white-paper-hunt-1790916508014",
+  "gates": [
+    {
+      "id": "hunted",
+      "ok": true,
+      "evidence": "claims carry code or measured addresses"
+    },
+    {
+      "id": "discovered",
+      "ok": true,
+      "evidence": "states what the machine does, not what it says"
+    },
+    {
+      "id": "descent",
+      "ok": true,
+      "evidence": "code addresses: 6"
+    },
+    {
+      "id": "standing",
+      "ok": true,
+      "evidence": "standing declared"
+    },
+    {
+      "id": "aperture",
+      "ok": true,
+      "evidence": "contrary rendered"
+    },
+    {
+      "id": "falsify",
+      "ok": true,
+      "evidence": "falsification registered"
+    },
+    {
+      "id": "mouth",
+      "ok": true,
+      "evidence": "numbers originated without an address: 0"
+    },
+    {
+      "id": "no-meta",
+      "ok": true,
+      "evidence": "no meta-voice"
+    }
+  ],
+  "failures": [],
+  "p1": {
+    "perturb": false,
+    "prosePerturb": false,
+    "hasTestUnits": true
+  },
+  "refused": 5,
+  "testLine": 113,
+  "foldLine": 116,
+  "rationLine": 31,
+  "admitLine": 91,
+  "boundLine": 40,
+  "callableLine": 64
+}
