@@ -439,3 +439,14 @@ comp evidence, scars, verdicts — never as assertion.
 Library → box → hunt → mouth. No hardcoded numbers (every bound derives
 from a null + a budget). Named gaps, never invented lists. Red rungs
 become standing rules, never retries.
+
+### Situated provenance
+
+Callers may supply `context.position` with their giver, question, corpus/source
+identities, frame, scope and time. The generation ledger snapshots it on each new
+transformation and on the artifact. Missing position stays `null` (undeclared),
+not an invented neutral viewpoint. `foldProvenance(parent, { position })` can
+change the current position while retaining prior events under the position that
+produced them. Different event grounds or positions cannot collapse through
+provenance deduplication. This is additive to `Provenance@2`; it does not assert
+that a declaration establishes truth. `npm test` includes its regression tests.
