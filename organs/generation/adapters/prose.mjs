@@ -20,7 +20,7 @@
 // The MOUTH-LAST / HUNT-FIRST law, the small-model law (prompt is a
 // completion anchor), and falsify-or-die are the ENGINE's, inherited here.
 import { createRequire } from "node:module";
-import { draw, SEARCH_URL } from "../engine.mjs";
+import { draw } from "../engine.mjs";
 
 const require = createRequire(import.meta.url);
 const ER7 = "/Users/mlacy/Documents/3.0/eoreader7";
@@ -57,18 +57,21 @@ export function autofill(unit, ctx) {
 }
 
 // ── THE HUNT (Ranke's chase): the field lacks the framed unit — go get it.
-// The hunt is the same egress the web organ uses (the search endpoint the
-// engine owns); the landed material becomes the shadow the fold re-admits
+// The hunt is the same egress the web organ uses (surf.js::liveWeb — the
+// working DuckDuckGo no-key web organ, the one eoreader7's own pipeline
+// hunts with; the old SEARCH_URL pointed at the absorbed the-fold endpoint
+// and was dead). The landed material becomes the shadow the fold re-admits
 // against. ──
+let web = null;
 export async function hunt(unit, ctx) {
   try {
-    const res = await fetch(SEARCH_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ query: unit.spec }), signal: AbortSignal.timeout(20000) });
-    const j = await res.json();
-    const results = (j.results ?? []).slice(0, 3);
+    if (!web) web = (await import("../../../../eoreader7/native/the-fold/surf.js")).liveWeb();
+    const s = await web.search(unit.spec);
+    const results = (s.results ?? []).slice(0, 3);
     if (!results.length) return null;
     const url = results[0].url;
-    const fetched = await fetch(url, { signal: AbortSignal.timeout(20000) });
-    const text = await fetched.text();
+    const fetched = await web.fetch(url);
+    const text = fetched?.text ?? "";
     const code = String(text ?? "").replace(/\s+/g, " ").slice(0, 400);
     if (code.length < 40) return null;
     ctx.shadow = ctx.shadow ?? new Map();

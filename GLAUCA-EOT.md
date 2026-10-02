@@ -1817,3 +1817,17 @@ so the next weave starts from what this one learned.
 - supersedes: GL-WP-03's definition axis — the definition is not planted and not taken from the Fold's own documents; it is what the world's genre authorities and real white papers carry, gated by frequency + growth against the Fold's own essays
 - evidence: gym/white-paper-genre.mjs on 2026-10-02; discovered modes: problem statement; conclusion section; references / citations / footnotes; table of contents; named author; authoritative / objective tone; audience named; decision / problem-solving purpose; data / figures / case studies; research-based / cited facts; gates pass; artifact what-a-white-paper-is-1790916865945.html; corpus and per-witness features at what-a-white-paper-is-1790916865945.dm.json
 - falsifying control: an essay corpus of comparable size clearing the same five features at the same bound, an independent re-hunt failing to reproduce the features, or a white paper read as a white paper that omits all of them, contradicts this.
+
+### GL-WP-05 — The skeleton-first white paper: the box computes the skeleton, the mouth voices residue — authorship 1 by construction, delta measured, facts refused
+- pipeline: prose (skeleton-first — box DMD skeleton, mouth connective residue via the real mouth; THE-HOLOGRAPH §5)
+- status: standing
+- supersedes: GL-WP-04's shape — the genre's refusal (no present mode clears) becomes the SKELETON, and the local mouth is used where it is genuinely useful: voicing within a saturated form-prior, with authorship counted and every fact censored (II.9)
+- evidence: gym/white-paper-mouth.mjs on 2026-10-02; skeleton 2868 bytes, mouth delta 16.0%, 4 draws, 0 facts refused by the box; gates pass; artifact what-a-white-paper-is-voiced-1790917210320.html
+- falsifying control: a mouth-drawn sentence that originates a number, name, or date that survives into the artifact, or a skeleton whose figures do not match the gate's own verdict, contradicts this.
+
+### GL-WP-07 — The reconciliation: Penelope's pipeline and eoreader7's are one spine — the mouth is the single choke point, the hunt is the working web organ
+- pipeline: prose (reconciled — penelope engine + eoreader7 surf, mouth-last throughout)
+- status: standing
+- supersedes: GL-WP-01..05's separate hunt wiring — the audit found the reconciliation was already built (2026-10-01, "all generation related to eoreader7 runs through Penelope"): streamOllamaChat (eoreader7) → door 8137 → Penelope's mouth 11439 (admission, ration, kind) → channel 11434 (AntiStrauss, host picker). Verified live on the boundary-eulogy run's own draws (gym/swatch.jsonl 05:22–05:24, mouthCalls:1 each). The ONE genuine defect was Penelope's own prose hunt: SEARCH_URL pointed at the absorbed the-fold endpoint (dead), while the working web organ (surf.js::liveWeb) lived in eoreader7.
+- evidence: organs/generation/adapters/prose.mjs — hunt() now uses eoreader7/native/the-fold/surf.js::liveWeb (the same web eoreader7's own pipeline hunts with), one hunt path for the whole system; verified live (found 400 chars on "what is a boundary in systems theory"); SEARCH_URL import removed; 90 selftests green; tapestry re-woven (WPH thread now carries white-paper-mouth.mjs + GL-WP-05)
+- falsifying control: a draw in eoreader7's pipeline that reaches the channel without entering Penelope's mouth (her admission/ration/kind), or a Penelope prose hunt that returns to the dead 8812 endpoint, contradicts this.
