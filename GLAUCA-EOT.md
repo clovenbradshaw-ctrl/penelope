@@ -1756,3 +1756,34 @@ so the next weave starts from what this one learned.
 - falsifying control: a fold that makes the same difference to two different
   for-whoms (no identity by consequence), or a selected claim that is not a
   clean sentence at a byte address, contradicts this.
+
+# Addendum R — the closing loop and the pheromone trail (2026-10-01)
+
+// The system improvements that scale the essay without a bigger mouth: the
+// closing loop (the VOID carries bars; a run is evaluated; the failures become
+// permanent lessons; the next void is seeded with them — red rungs become
+// standing rules, never retries) and the stigmergic trail (parallel leafs
+// coordinate by compact pheromones that indicate the whole without anyone
+// knowing the whole).
+
+## prose — the machinery that scales
+
+### GL-BD-21 — The closing loop and the pheromone trail: bars, permanent lessons, and parallel leafs coordinated by compact traces
+- pipeline: prose + organs
+- status: standing
+- supersedes: —
+- evidence: penelope/organs/essay-void.mjs (EssayVoid@1 — BARS: voice (no
+  meta-voice), grounded (⟦source@address⟧ markers for the box to snip),
+  houses (real names), coherent (no attractor repetition); evaluate(sections,
+  texts) judges a run; learn(ledger, lesson) appends permanently; revise(void,
+  lessons) seeds the next void with the standing rules; selftest 5/5);
+  penelope/organs/stigmergy.mjs (Stigmergy@1 — lay/read/claimed: a compact
+  pheromone per laid claim, deduped, the read indicates the whole without
+  carrying it, no agent knows the essay; selftest 4/4); measured 2026-10-01:
+  round 1 of the essay loop failed 7 bars (2 meta-voice, 2 no-house-names, 5
+  ungrounded); the lessons were appended; round 2's void seeded with them
+  dropped to 6 (meta-voice GONE — the lesson was learned). The parallel leafs
+  wove 5 sections concurrently in ~2 min, each reading only the trail.
+- falsifying control: a run that repeats a failure whose lesson is already on
+  the ledger (a lesson not learned), or a leaf that draws against a shared
+  anchor instead of the compact trail, contradicts this.
