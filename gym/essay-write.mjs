@@ -61,15 +61,50 @@ const FACTS = facts.slice(0, 10);
 console.log(`   ${sources.length} sources -> ${FACTS.length} grounded facts`);
 FACTS.forEach((f, i) => console.log(`   [${i + 1}] ${f.text.slice(0, 78)}`));
 
-// ── 2. THESIS — the mouth's synthetic claim over the facts ──────────────────
-console.log(`\n2. THESIS — the mouth proposes a claim the facts support`);
+// ── 2. THESIS — the mouth's synthetic claim, GATED against the facts ────────
+// The thesis is the essay's own contribution, so it is not a fact and cannot be
+// traced to one. But it CAN overreach the facts (the "some -> all" fallacy:
+// "dolphins are critically endangered" when only some species are). The gate
+// refuses a thesis that shares too little with any fact (unsupported) or that
+// generalizes while its support is about a specific instance (overreach).
+const SPECIES = /(atlantic|common|irrawaddy|ganges|bottlenose|humpback|river dolphin|spinner|orca|delphinus|tucuxi|amazon)/i;
+function thesisGate(thesis, facts) {
+  const th = String(thesis).toLowerCase();
+  if (th.split(/\s+/).length < 4) return { ok: false, reason: "too short to be a thesis" };
+  const thWords = new Set(th.match(/[a-z]{4,}/g) ?? []);
+  let best = null, bestOverlap = 0;
+  for (const f of facts) {
+    const fw = new Set(f.text.toLowerCase().match(/[a-z]{4,}/g) ?? []);
+    const overlap = [...thWords].filter((w) => fw.has(w)).length;
+    if (overlap > bestOverlap) { bestOverlap = overlap; best = f; }
+  }
+  const ratio = thWords.size ? bestOverlap / thWords.size : 0;
+  if (ratio < 0.25) return { ok: false, reason: `shares too little with any fact (best ${(ratio * 100) | 0}%) — unsupported`, best };
+  const general = new RegExp(`\\b${key}s?\\b`, "i").test(th) && !SPECIES.test(th);
+  if (general && best && SPECIES.test(best.text)) return { ok: false, reason: `generalizes ("${key}s") but its support is about a specific species — overreach`, best };
+  return { ok: true, best, support: (ratio * 100) | 0 };
+}
+
+console.log(`\n2. THESIS — the mouth proposes a claim, the gate checks it against the facts`);
 const factList = FACTS.map((f, i) => `[${i + 1}] ${f.text}`).join("\n");
-const thesis = (await draw(`These are verified facts about ${subject}:\n${factList}\n\nWrite ONE thesis sentence about ${subject} that these facts support — a claim, an argument, NOT a summary. Return only the sentence.`, 120)).trim().replace(/^["']|["']$/g, "");
-console.log(`   "${thesis}"`);
+let thesis = "", gate = null;
+for (let tryN = 0; tryN < 3; tryN += 1) {
+  const constraint = gate ? `\nA prior attempt ("${thesis}") was refused: ${gate.reason}. Do NOT generalize beyond the facts — name the specific dolphins the facts are about, or state only what they show.` : "";
+  thesis = (await draw(`These are verified facts about ${subject}:\n${factList}${constraint}\n\nWrite ONE thesis sentence about ${subject} that these facts SUPPORT — a claim the facts bear out, not a summary and not an overgeneralization. Return only the sentence.`, 120)).trim().replace(/^["']|["']$/g, "");
+  gate = thesisGate(thesis, FACTS);
+  console.log(`   try ${tryN + 1}: "${thesis.slice(0, 90)}" → ${gate.ok ? `ACCEPTED (support ${gate.support}%)` : `refused: ${gate.reason}`}`);
+  if (gate.ok) break;
+}
+if (!gate.ok) {
+  const f = FACTS.find((x) => /endanger|conserv|threat/i.test(x.text)) ?? FACTS[0];
+  thesis = f.text;
+  gate = { ok: true, derived: true, support: 100 };
+  console.log(`   fallback: derived a grounded thesis from fact [${FACTS.indexOf(f) + 1}].`);
+}
 
 // ── 3. ESSAY — the mouth argues the thesis over the facts, citing each ──────
 console.log(`\n3. ESSAY — the mouth argues the thesis (every factual claim cited)`);
-const essayRaw = await draw(`Thesis: ${thesis}\n\nVerified facts (cite the bracketed number after each factual claim):\n${factList}\n\nWrite a short essay of 4-5 paragraphs that ARGUES the thesis, in your own voice, connecting the facts into a line of reasoning. Every factual claim must end with its source number in brackets, like [2]. Never state a fact that is not in the list. Open with the thesis; close with what it means.`, 700);
+const essayRaw = await draw(`Thesis: ${thesis}\n\nVerified facts:\n${factList}\n\nWrite a 4-paragraph essay that ARGUES the thesis, in your own voice. USE the facts as your evidence, woven into flowing prose. Rules: do NOT list the facts; do NOT write "this fact", "this claim is supported", "the text says", or any sentence about the facts themselves; do NOT use headings or brackets around the facts. When you state a fact, end that sentence with its number in brackets like [2]. Never state a fact that is not in the list. Begin by asserting the thesis; end with what it means.`, 700);
 const essay = essayRaw.replace(/```[a-z]*\n?/gi, "").trim();
 console.log(`   (${essay.length} bytes drawn)`);
 
