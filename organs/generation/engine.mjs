@@ -196,9 +196,28 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   let units = await adapter.readUnits(task, context);
   ledger.event({ stage: "read", source_id: taskSource, parent: priorSource, transform: "task→units", detail: { units: (units ?? []).map((u) => ({ name: u.name, spec: u.spec })) } });
   units = units ?? [];
+  // THE VOID, READ WITH A HUNT (GL-CD-10): an empty reading is not shipped as
+  // a vacuous pass — it is reasoned about, hunted, and either defined into
+  // units from real material or returned as a well-defined void (a named gap
+  // with what would satisfy it and the hunt disclosed). The hunt source, when
+  // one defined units, becomes a provenance source so the void's resolution is
+  // on the record.
+  let voidHunt = null, voidGap = null;
+  if (!units.length && typeof adapter.readVoid === "function") {
+    const v = await adapter.readVoid(task, context);
+    if (v?.units?.length) {
+      units = v.units;
+      voidHunt = v;
+      const huntSource = v.source ? ledger.source({ kind: "hunt", locator: { url: v.source } }) : null;
+      ledger.event({ stage: "void", source_id: huntSource ?? taskSource, parent: taskSource, transform: "empty-reading→void-hunt-defined", detail: { reason: v.reason, satisfy: v.satisfy, source: v.source ?? null, units: units.map((u) => u.name) } });
+    } else {
+      voidGap = v?.gap ?? v;
+      ledger.event({ stage: "void", source_id: taskSource, parent: taskSource, transform: "empty-reading→void-named", detail: { reason: voidGap?.reason ?? "empty reading", satisfy: voidGap?.satisfy ?? null, hunted: voidGap?.hunted ?? null } });
+    }
+  }
   let example = null;
   if (args.example) { try { example = JSON.parse(args.example); } catch { example = null; } }
-  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example, context);
+  if (example && units.length && adapter.computeSettles) units = await adapter.computeSettles(units, example, context);
   console.log(`  units + per-unit specs (from the reading, not a dictionary):`);
   for (const u of units) console.log(`    ${u.name}: ${u.spec}${u.settle ? `  [settle: ${u.settle}]` : ""}`);
 
@@ -268,7 +287,12 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
   if (scars.length) { console.log(`
   scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
-  return { slug, html, code, eot, verdict, scars, outcomes, units, provenance: finalProvenance };
+  return {
+    slug, html, code, eot, verdict, scars, outcomes, units, provenance: finalProvenance,
+    void: voidHunt ? { kind: "hunt-defined", reason: voidHunt.reason, satisfy: voidHunt.satisfy, source: voidHunt.source ?? null, material: voidHunt.material ?? null }
+      : voidGap ? { kind: "reading-void", reason: voidGap.reason ?? "empty reading", satisfy: voidGap.satisfy ?? null, hunted: voidGap.hunted ?? null }
+      : null,
+  };
 }
 
 export { execSync };

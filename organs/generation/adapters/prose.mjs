@@ -26,12 +26,119 @@ const require = createRequire(import.meta.url);
 // eoreader7 is a sibling checkout (../eoreader7); ER7_HOME overrides it.
 const ER7 = process.env.ER7_HOME ?? decodeURIComponent(new URL("../../../../eoreader7", import.meta.url).pathname);
 let organs = null;
+let composedReader = null;
 try {
   const ledger = await import(`${ER7}/native/the-fold/document-ledger.js`);
   const fold = await import(`${ER7}/native/the-fold/essay-fold.js`);
   const proxy = await import(`${ER7}/proxy-runner.mjs`);
   organs = { ...ledger, ...fold, ...proxy };
 } catch (e) { organs = null; console.error(`[prose] organs not loaded: ${e.message}`); }
+// THE MODEL-FREE READER (composed: positional clause connector where it
+// settles, recurrence arrangement elsewhere). Loaded lazily; a prose unit the
+// BOX can settle from the material needs NO parser and NO mouth.
+try {
+  const composed = await import(`${ER7}/native/adapters/text/gfp-relations-composed.js`);
+  const spans = await import(`${ER7}/native/adapters/text/spans.js`);
+  const wordclass = await import(`${ER7}/native/adapters/text/wordclass.js`);
+  const referents = await import(`${ER7}/native/the-fold/referents.js`);
+  composedReader = { composedRelations: composed.composedRelations, splitSentences: spans.splitSentences, classifyWord: wordclass.classifyWord, dominantClass: wordclass.dominantClass, buildReferents: referents.buildReferents };
+} catch (e) { composedReader = null; console.error(`[prose] composed reader not loaded: ${e.message}`); }
+
+// ── THE BOX SETTLES A PROSE UNIT, NO MODEL — over LIVE material + PRIORS ──
+// penelope's two standing resources, both used:
+//   LIVE   the shadow (ctx.shadow, a Map url->code the field/hunt retained) and
+//          source-index.js (penelope's own clean-sentence index) — the box
+//          settles only against a CLEAN sentence of material already in hand.
+//   PRIORS the RECEIVED priors are injected, never re-derived: eoreader7's
+//          priors (pos-en.json, role-config-eng.json) AND penelope's own
+//          source-index. A unit whose question names a being the material
+//          relates is settled by the composed model-free reader — the box
+//          answering before the mouth is consulted (the box settles, the mouth
+//          draws only the residue). `material` may be a string (operator's own
+//          ground) or omitted, in which case the SHADOW is read.
+let _posPrior = null, _roleConfig = null, _verbForms = null;
+async function loadPriors() {
+  try {
+    if (!_posPrior) { const fs = require("node:fs"); const path = require("node:path"); const p = path.join(ER7, "native", "priors"); for (const n of ["pos-en.json", "pos-eng.json"]) if (fs.existsSync(path.join(p, n))) { _posPrior = JSON.parse(fs.readFileSync(path.join(p, n), "utf8")); break; } }
+    if (!_roleConfig) { const fs = require("node:fs"); const path = require("node:path"); const rc = path.join(ER7, "native", "priors", "role-config-eng.json"); if (fs.existsSync(rc)) _roleConfig = JSON.parse(fs.readFileSync(rc, "utf8")); }
+    // THE VERB-FORMS CLOSED CLASS (reader-bundle.js's own builder, reused): the
+    // POS prior's verb/aux-dominant forms join the attested set, so the
+    // positional clause reader can type a connector on real prose ("found",
+    // "is", "strikes") instead of refusing every sentence. Received prior,
+    // never a hand list.
+    if (!_verbForms && _posPrior?.forms) {
+      const GRAMMAR_MIN_SHARE = 0.9;
+      const forms = new Set();
+      for (const [w, counts] of Object.entries(_posPrior.forms)) {
+        const total = Object.values(counts).reduce((a, b) => a + b, 0);
+        if (total > 0 && ((counts.VERB ?? 0) + (counts.AUX ?? 0)) / total >= GRAMMAR_MIN_SHARE) forms.add(w.toLowerCase());
+      }
+      _verbForms = forms.size ? forms : null;
+    }
+  } catch { /* priors absent — recurrence alone, disclosed */ }
+  return { posPrior: _posPrior, roleConfig: _roleConfig, verbForms: _verbForms };
+}
+
+/** The LIVE material: the operator's own text when given, plus every clean
+ *  sentence of the shadow (url->code). source-index.js indexes a FILE; for the
+ *  shadow's in-memory code we split with the same span discipline (spans.js)
+ *  and drop the dirty header/footer runs source-index would drop — so a claim
+ *  grounds only against a clean sentence of live material already in hand. */
+async function liveMaterial(material, ctx) {
+  const own = typeof material === "string" ? material : (material?.text ?? material?.ground ?? "");
+  const pieces = [];
+  if (own.trim()) pieces.push(own.trim());
+  const shadow = ctx?.shadow instanceof Map ? ctx.shadow : (ctx?.shadow && typeof ctx.shadow === "object" ? new Map(Object.entries(ctx.shadow)) : null);
+  if (shadow) {
+    const split = composedReader?.splitSentences;
+    const DIRTY = /\b(PMC\b|Copyright|doi|PMID|ncbi|Received|Accepted|Edited by|Reviewed by|Submitted)\b/i;
+    for (const [, code] of shadow) {
+      const sents = split ? split(String(code)) : [{ text: String(code) }];
+      // one clean sentence per LINE — splitSentences treats a newline as a
+      // boundary, so the positional clause reader fires per sentence while the
+      // recurrence leg still reads the whole (the newline is not a word).
+      const clean = sents.map((s) => s.text ?? s).filter((t) => t && !DIRTY.test(t));
+      pieces.push(clean.join("\n"));
+    }
+  }
+  return pieces.join("\n");
+}
+
+/** computeSettles(units, material, ctx) — async now, because loading priors and
+ *  indexing the live shadow is I/O. The engine awaits it (engine.mjs:201 awaits
+ *  adapter.computeSettles when present). */
+export async function computeSettles(units, material = null, ctx = {}) {
+  if (!composedReader) return units;
+  const { posPrior, roleConfig, verbForms } = await loadPriors();
+  const text = await liveMaterial(material, ctx);
+  if (!text.trim()) return units;
+  // REMEMBER REFERENTS: the index is built once per material text and reused
+  const refs = composedReader.buildReferents ? composedReader.buildReferents(text) : null;
+  const figures = new Set();
+  if (refs) for (const id of (refs.index?.referents ?? [])) { const rep = refs.represent(id); if (rep && rep.length >= 3) figures.add(rep.toLowerCase()); }
+  // verbForms injected so the positional clause reader can type the connector
+  // (reader-bundle.js's own discipline: the received closed class arrives in).
+  const read = composedReader.composedRelations(text, { posPrior, figures: figures.size >= 3 ? figures : null, roleConfig, classifyWord: composedReader.classifyWord, dominantClass: composedReader.dominantClass, verbForms });
+  for (const u of units) {
+    if (u.settle) continue;
+    const q = String(u.spec ?? "").toLowerCase();
+    const qWords = new Set(q.split(/[^a-z0-9']+/).filter((w) => w.length > 3));
+    // THE QUESTION'S BEING MUST BE AN END, OR THE CONNECTOR HEAD A REAL VERB
+    // IN THE MATERIAL — never a shared function word (measured live: the loose
+    // match settled 7/7 units to one navigation-chrome relation "What is …",
+    // matching on "is"). A settle names a real being the ask asked about.
+    const hit = read.relations.find((r) => {
+      const e1 = String(r.end1).toLowerCase(), e2 = String(r.end2).toLowerCase();
+      const head = String(r.label).toLowerCase().split(/\s+/)[0];
+      const realHead = head.length > 3 && /[a-z]/.test(head) && !/^(what|is|are|was|were|the|of|and|to|in|a|an)$/.test(head);
+      // an end the question names (>=4 chars, not a stopword) is the being asked about
+      const namedEnd = [e1, e2].some((e) => e.length >= 4 && !/^(what|which|that|this|they|them|with|from|into|over|also)$/.test(e) && q.includes(e));
+      return namedEnd || (realHead && qWords.has(head));
+    });
+    if (hit) { u.settle = { end1: hit.end1, label: hit.label, end2: hit.end2, cell: hit.cell ?? null, basis: `box settled from live material + priors, no model (${hit.basis ?? read.basis})` }; u.settledBy = "box"; }
+  }
+  return units;
+}
 
 // ── THE READING: the ask yields ONE subject; the void cells become the
 // units (each cell is a unit whose spec is its question) ──
