@@ -1,6 +1,6 @@
 {
  "schema": "TapestrySpec@1",
- "woven": "2026-10-01",
+ "woven": "2026-10-02",
  "title": "PENELOPE",
  "prefixes": {
   "o/": "organs/",
@@ -93,13 +93,8 @@
    "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
-    "o/mouth.mjs",
-    "mouth/server.mjs",
     "GL-EN-05",
-    "GL-LD-05",
-    "GL-RR-04",
-    "GL-RR-05",
-    "GL-BD-12"
+    "GL-LD-05"
    ]
   },
   {
@@ -182,8 +177,7 @@
     "a/launch-facing.html",
     "a/record.json",
     "GL-BD-01",
-    "GL-BD-04",
-    "GL-RS-03"
+    "GL-BD-04"
    ]
   },
   {
@@ -313,8 +307,7 @@
     "l/nomouth-rows.txt",
     "GL-LD-02",
     "GL-LD-06",
-    "GL-LD-07",
-    "GL-RR-10"
+    "GL-LD-07"
    ]
   },
   {
@@ -347,11 +340,16 @@
     "/api/weave",
     "GL-WV-07",
     "GL-WV-12",
-    "GL-BD-09",
-    "GL-BD-10",
-    "GL-BD-11",
-    "GL-RS-03",
-    "GL-BD-12"
+    "o/generation/api.mjs",
+    "o/generation/provenance.mjs",
+    "g/weave-nomodel.mjs",
+    "g/nomodel-prose.mjs",
+    "g/nomodel-summary.mjs",
+    "l/NOMODEL-BOUNDARY.md",
+    "l/nomodel-borodino.json",
+    "GL-WV-15",
+    "GL-WV-16",
+    "GL-WV-17"
    ]
   },
   {
@@ -420,8 +418,7 @@
     "ER7/heimdall.mjs",
     "organs/generation-door.mjs",
     "GL-CH-03",
-    "GL-RT-03",
-    "GL-RR-05"
+    "GL-RT-03"
    ]
   },
   {
@@ -686,8 +683,8 @@
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "E7/organs/territory.js",
-    "GL-PS-09"
+    "GL-PS-09",
+    "GL-OV-02"
    ],
    "ctl": "¬gain>0 ∧ homogeneous ¬split"
   },
@@ -810,11 +807,9 @@
    "grain": "Figure",
    "typing": "‡",
    "refs": [
-    "o/generation/engine.mjs",
-    "GL-RS-03",
-    "GL-WV-05"
+    "o/generation/engine.mjs"
    ],
-   "ctl": "∑swatch ≠ ∑{≡ ↻ ●} ∨ notes mouthCalls ≠ ∑swatch"
+   "ctl": "∑swatch ≠ ∑{≡ ↻ ●}"
   },
   {
    "id": "KIN",
@@ -852,7 +847,7 @@
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "FOLD/fold-net.js"
+    "FOLD/network.js"
    ],
    "ctl": "arrangement recurs ∧ ¬bound"
   },
@@ -912,11 +907,10 @@
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "o/steersman.mjs",
-    "o/steersman.test.mjs",
     "LP/derived-priors/concern-priors/concern-fields",
     "GL-WV-11",
-    "GL-WV-13"
+    "GL-WV-13",
+    "GL-OV-02"
    ],
    "ctl": "aporia ∅ ∧ shadow-topics ¬activate ⇒✗"
   },
@@ -951,132 +945,44 @@
   {
    "id": "STR",
    "name": "steersman",
-   "st": "■",
+   "st": "·",
    "lvl": 2,
    "op": "DEF",
    "grain": "Pattern",
    "typing": "§",
    "refs": [
-    "o/steersman.mjs",
-    "o/steersman.test.mjs",
-    "GL-WV-13"
-   ]
+    "GL-WV-13",
+    "GL-OV-02"
+   ],
+   "ctl": "Restored organ fails its recorded controls."
   },
   {
    "id": "VOC",
    "name": "voice",
-   "st": "■",
+   "st": "·",
    "lvl": 2,
    "op": "INS",
    "grain": "Figure",
    "typing": "‡",
    "refs": [
-    "o/voice.mjs",
-    "o/voice.e2e.mjs",
-    "GL-WV-13"
-   ]
+    "GL-WV-13",
+    "GL-OV-02"
+   ],
+   "ctl": "Restored organ fails its recorded controls."
   },
   {
-   "id": "SRC",
-   "name": "source",
-   "st": "■",
-   "lvl": 2,
-   "op": "SIG",
-   "grain": "Ground",
-   "typing": "§",
-   "refs": [
-    "o/source-index.mjs",
-    "GL-BD-18"
-   ]
-  },
-  {
-   "id": "GCP",
-   "name": "compose",
+   "id": "OVW",
+   "name": "overview",
    "st": "■",
    "lvl": 2,
    "op": "SYN",
    "grain": "Pattern",
    "typing": "‡",
    "refs": [
-    "o/grounded-composition.mjs",
-    "o/source-index.mjs",
-    "GL-BD-18",
-    "GL-BD-19"
-   ]
-  },
-  {
-   "id": "SNC",
-   "name": "quote",
-   "st": "■",
-   "lvl": 2,
-   "op": "SEG",
-   "grain": "Figure",
-   "typing": "‡",
-   "refs": [
-    "o/snip-cite.mjs",
-    "GL-BD-16",
-    "GL-BD-17"
-   ]
-  },
-  {
-   "id": "FAP",
-   "name": "point",
-   "st": "■",
-   "lvl": 2,
-   "op": "DEF",
-   "grain": "Pattern",
-   "typing": "‡",
-   "refs": [
-    "o/fold-at-point.mjs",
-    "GL-BD-20",
-    "GL-RR-10"
-   ]
-  },
-  {
-   "id": "EVO",
-   "name": "void",
-   "st": "■",
-   "lvl": 2,
-   "op": "REC",
-   "grain": "Pattern",
-   "typing": "‡",
-   "refs": [
-    "o/essay-void.mjs",
-    "GL-BD-21"
-   ]
-  },
-  {
-   "id": "STG",
-   "name": "trail",
-   "st": "■",
-   "lvl": 2,
-   "op": "CON",
-   "grain": "Pattern",
-   "typing": "‡",
-   "refs": [
-    "o/stigmergy.mjs",
-    "GL-BD-21"
-   ]
-  },
-  {
-   "id": "WPH",
-   "name": "white-paper",
-   "st": "■",
-   "lvl": 2,
-   "op": "SYN",
-   "grain": "Figure",
-   "typing": "‡",
-   "refs": [
-    "g/white-paper-run.mjs",
-    "g/white-paper-box.mjs",
-    "g/white-paper-hunt.mjs",
-    "g/white-paper-genre.mjs",
-    "g/white-paper-mouth.mjs",
-    "GL-WP-01",
-    "GL-WP-02",
-    "GL-WP-03",
-    "GL-WP-04",
-    "GL-WP-05"
+    "o/generation/overview.mjs",
+    "o/generation/adapters/overview.mjs",
+    "g/overview.test.mjs",
+    "GL-OV-01"
    ]
   }
  ]

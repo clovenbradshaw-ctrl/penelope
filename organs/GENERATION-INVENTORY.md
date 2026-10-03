@@ -48,3 +48,13 @@ A generation task Penelope cannot route — to a resident organ, a
 referenced organ, or an honest named gap — fails loudly at intake. If a
 referenced organ's home moves, this file's commit pins go stale and the
 stale pin itself is the finding (re-resolve, don't guess).
+
+## Situated overview medium (2026-10-02)
+
+`generation/overview.mjs` is a browser-portable materializer referencing the
+canonical `eoreader7/native/organs/overview.js` byte/replay contract. The native
+`generation/adapters/overview.mjs` adds ethos, logos and pathos at intake and
+runs through `generation/api.mjs`; the public adapter is loaded lazily so code
+builds still work in standalone Penelope checkouts. The browser module is
+vendored unchanged by Holodeck. An export or source mutation accepted as verified
+falsifies this medium (`gym/overview.test.mjs`).

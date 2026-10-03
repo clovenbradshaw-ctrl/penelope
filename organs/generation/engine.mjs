@@ -33,103 +33,22 @@
 //   }
 //
 // The engine owns the ORDER, the RETRIES, the SCARS, the EOT, the FILES.
-//
-// TWO ADDITIONS, wired 2026-10-02 (GL-EN-17):
-//   THE FAN-OUT — the fill runs across units only when the adapter declares
-//   them independent (`adapter.independent`), bounded by the mouth's own
-//   house family cap when the mouth is the draw entry (organs/mouth.mjs
-//   HOUSE — the measured number, never invented); without the mouth it stays
-//   the serial twin (one local mouth = one job at a time; a dependent chain
-//   cannot be parallelized — GL-CD-07).
-//   THE TRACE — every fill/scar/gap/draw emits a deterministic event as it
-//   happens: one human line, one NDJSON row, zero model calls. The trace's
-//   falsifier is reconcile: its per-source byte totals must equal the EOT
-//   provenance, or it is decoration and says so loudly.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { ProvenanceLedger, byteRange } from "./provenance.mjs";
 // THE UNIVERSAL REFINEMENT (organs/void-refine.mjs): when the test fails, the
 // void is refined under the REAL judge, in the cube's operator order — a
-// transform the judge's failure implies, illegal moves refused. Domain-agnostic
-// (falsified general: 4/4 code tasks; survives on text via the essay bars).
+// transform the judge's failure implies, illegal moves refused. Domain-agnostic.
 import { refine } from "../../organs/void-refine.mjs";
 
 export const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const OLLAMA = process.env.ER7_OLLAMA_URL ?? "http://localhost:11434";
 export const MODEL = process.env.ER7_BUILD_MODEL ?? "qwen2.5-coder:1.5b";
 export const SEARCH_URL = process.env.ER7_SEARCH_URL ?? "http://localhost:8812/api/web/search";
-// The mouth is the only draw entry (GL-RR-04/05): when PENELOPE_MOUTH_URL is
-// set, a draw enters her admission and kind→wire routing first — identity and
-// kind ride, a 429 defers on the retry-after — and she directs the bridge.
-// Unset, this file stays the domain-shared ai-code-harness engine it is (the
-// twin byte-identical twin in ai-code-harness/pipeline/engine.mjs).
-const MOUTH_URL = String(process.env.PENELOPE_MOUTH_URL ?? "").replace(/\/+$/, "");
-const MOUTH_IDENTITY = MOUTH_URL ? { "x-er7-user": "penelope", "x-er7-caller": "penelope-engine", "x-er7-kind": "code", "x-er7-priority": "batch" } : null;
-
-// ── THE TRACE — the run's own record, deterministic and model-free. Every
-// event is a fact the engine already holds (provenance, attempt outcomes);
-// the human line prints as it happens, the NDJSON sink is the same event.
-// ──
-export const TRACE_SCHEMA = "GenerationTrace@1";
-const shortAddr = (s) => String(s ?? "").replace(/^.*\//, "").slice(0, 48);
-
-function humanTrace(e) {
-  switch (e.event) {
-    case "run": return `  ── trace ${e.run} · kind ${e.kind} · parallelism ${e.parallelism} · mouth ${e.mouth}`;
-    case "field": return `  · unit ${e.unit} ← field (corpus@${shortAddr(e.address)}, ${e.bytes} B)`;
-    case "hunt": return `  · unit ${e.unit} ← hunt (${String(e.url ?? "").slice(0, 72)}, ${e.bytes} B)`;
-    case "mouth:draw": return `  · unit ${e.unit} — mouth draw ${e.attempt}: ${String(e.atom ?? "").slice(0, 80)}`;
-    case "mouth": return `  · unit ${e.unit} ← mouth (draw ${e.attempt}, ${e.bytes} B)`;
-    case "scar": return `  ✗ unit ${e.unit} — attempt ${e.attempt}: ${e.why}`;
-    case "gap": return `  ○ unit ${e.unit} — named gap: nothing satisfied it after ${e.attempts} draw(s)`;
-    case "test": return `  test:   ${e.reason}${e.ok ? "" : " — " + e.detail}`;
-    case "council": return `  · council: ${e.ok === true ? "arrived" : e.ok === false ? `${e.findings} finding(s)` : "gap"} (${e.fired} fired)`;
-    case "product": return `  product: ${e.widget} · folded ${e.bytes} B`;
-    case "trace": return `  · trace ${e.ok ? "reconciled" : "RECONCILE FAILED"}: ${e.detail}`;
-    default: return `  · ${e.event}${e.detail ? `: ${e.detail}` : ""}`;
-  }
-}
-
-export function makeTrace({ run = "arrangement", printer = console.log, sink = null } = {}) {
-  const events = [];
-  let fd = null;
-  if (sink) {
-    fs.mkdirSync(path.dirname(sink), { recursive: true });
-    fd = fs.openSync(sink, "a");
-  }
-  const event = (name, data = {}) => {
-    const e = { schema: TRACE_SCHEMA, ts: new Date().toISOString(), run, event: name, ...data };
-    events.push(e);
-    if (fd !== null) { try { fs.writeSync(fd, JSON.stringify(e) + "\n"); } catch (x) { console.error(`[trace] sink write failed: ${x.message}`); } }
-    if (printer) printer(humanTrace(e));
-    return e;
-  };
-  const close = () => { if (fd !== null) { try { fs.closeSync(fd); } catch { /* already closed */ } fd = null; } };
-  return { schema: TRACE_SCHEMA, run, events, event, close };
-}
-
-// ── RECONCILE — the trace's falsifier (GL-EN-17): every EOT provenance row
-// must appear in the trace with the same source and byte count, and the
-// per-source byte totals must agree. A pretty trace that cannot be
-// reconciled is lying. ──
-export function reconcileTrace(events, provenance) {
-  const rows = (events ?? []).filter((e) => e.event === "field" || e.event === "hunt" || e.event === "mouth");
-  const missing = [];
-  for (const p of provenance ?? []) {
-    const hit = rows.some((e) => e.source === p.source && e.unit === p.unit && Number(e.bytes) === Number(p.bytes));
-    if (!hit) missing.push(`${p.unit} (${p.source}, ${p.bytes} B)`);
-  }
-  const total = (list) => list.reduce((a, x) => { const s = x.source; a[s] = (a[s] ?? 0) + (Number(x.bytes) || 0); return a; }, {});
-  const t = total(rows), p = total(provenance ?? []);
-  const drift = Object.keys({ ...t, ...p }).filter((s) => (t[s] ?? 0) !== (p[s] ?? 0)).map((s) => `${s}: trace ${t[s] ?? 0} ≠ eot ${p[s] ?? 0}`);
-  const ok = missing.length === 0 && drift.length === 0;
-  const detail = ok
-    ? `trace reconciles: ${rows.length} row(s), ${Object.entries(p).map(([s, b]) => `${s} ${b} B`).join(", ")}`
-    : [missing.length ? `missing: ${missing.join("; ")}` : null, drift.length ? `drift: ${drift.join("; ")}` : null].filter(Boolean).join(" · ");
-  return { ok, detail };
-}
 
 export function parseArgs(argv) {
   const out = { _: [] };
@@ -143,26 +62,22 @@ export function parseArgs(argv) {
 
 // ── THE MOUTH: one small, framed ask; retried; never steered (small-model
 // law — the prompt is a completion anchor, the test decides) ──
-export async function draw(prompt, { maxTokens = 240, retries = 4, model = null } = {}) {
-  const url = MOUTH_URL ? `${MOUTH_URL}/api/generate` : `${OLLAMA}/api/generate`;
-  const headers = MOUTH_URL ? { "content-type": "application/json", ...MOUTH_IDENTITY } : { "content-type": "application/json" };
-  const body = JSON.stringify({ model: model ?? MODEL, prompt, stream: false, options: { num_predict: maxTokens, temperature: 0 } });
+export async function draw(prompt, { maxTokens = 240, retries = 4, model = null, kind = "build", priority = "batch", noModel = false } = {}) {
+  // NO-MODEL TRIPWIRE: a weave run with noModel:true must never reach the door.
+  // fillUnits stops a unit at the mouth stage before calling here; this throw
+  // is the second wall, so no future caller can draw by accident.
+  if (noModel) throw new Error("draw() called with noModel:true — the mouth stage must stop a unit as model-required, never draw");
+  // Every model draw enters Penelope's draw door. The engine remains the
+  // orchestrator; admission/routing belongs to the door, not this engine.
+  const { runDrawDoor } = await import("../generation-door.mjs");
+  let last = "";
   for (let a = 0; a < retries; a += 1) {
-    try {
-      const r = await fetch(url, { method: "POST", headers, body, signal: AbortSignal.timeout(120000) });
-      if (r.status === 429 && MOUTH_URL) {
-        // the mouth refused the ration — defer on the retry-after, never spin
-        const wait = Math.min(60000, (Number(r.headers.get("retry-after")) || 5) * 1000);
-        await new Promise((res) => setTimeout(res, wait));
-        continue;
-      }
-      const j = await r.json();
-      return j.response ?? "";
-    } catch (e) {
-      await new Promise((r) => setTimeout(r, 3000 * (a + 1)));
-    }
+    const r = await runDrawDoor({ prompt, model: model ?? MODEL, kind, priority, maxTokens });
+    if (r.ok) return r.text;
+    last = r.error ?? "draw failed";
+    await new Promise((res) => setTimeout(res, 3000 * (a + 1)));
   }
-  return "";
+  return last ? "" : "";
 }
 
 let tmpCounter = 0;
@@ -175,163 +90,185 @@ export function writeTmp(code) {
 // ── THE SPIRAL — draw → probe → sharpen the atom → re-draw. The dissent
 // (every defection) is disclosed on the EOT. The FILL ORDER is the law:
 // field (autofill) → hunt → mouth. The mouth is never the first resort. ──
-async function fillUnit(u, adapter, emit) {
-  const scars = [];
-  // 1. THE FIELD (autofill): the corpus already holds the framed unit —
-  //    snipped from its bytes with an address. Match BY FRAME, never name.
-  const fill = adapter.autofill ? adapter.autofill(u) : null;
-  if (fill) {
-    emit("field", { unit: u.name, source: "corpus", address: fill.address, bytes: fill.code.length });
-    return { code: fill.code, provenance: { unit: u.name, source: "corpus", address: fill.address, bytes: fill.code.length }, scars };
-  }
-  // 2. THE HUNT: the field lacks the framed unit — go get it. The mouth is
-  //    not the first resort for structured material.
-  if (adapter.hunt) {
-    const res = await adapter.hunt(u);
-    if (res) {
-      emit("hunt", { unit: u.name, source: "hunt", url: res.url, bytes: res.code.length });
-      return { code: res.code, provenance: { unit: u.name, source: "hunt", url: res.url, bytes: res.code.length }, scars };
-    }
-    if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
-  }
-  // 3. THE MOUTH draws only the irreducible residue.
-  let attempt = 0;
-  let atom = u.spec;
-  while (attempt < 4) {
-    emit("mouth:draw", { unit: u.name, attempt: attempt + 1, atom });
-    const fragment = adapter.mouthFragment(u, atom);
-    const out = await draw(fragment, { maxTokens: adapter.mouthTokens ?? 240 });
-    const fn = adapter.snip(out, u.name);
-    const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
-    if (fn && alone.ok) {
-      emit("mouth", { unit: u.name, source: "mouth", attempt: attempt + 1, bytes: fn.length });
-      return { code: fn, provenance: { unit: u.name, source: "mouth", bytes: fn.length }, scars };
-    }
-    const why = alone.detail;
-    atom = adapter.sharpen ? adapter.sharpen(u, atom, why) : atom;
-    scars.push({ unit: u.name, attempt: attempt + 1, why, atom });
-    emit("scar", { unit: u.name, attempt: attempt + 1, why });
-    attempt += 1;
-  }
-  emit("gap", { unit: u.name, attempts: attempt });
-  return { code: null, provenance: null, scars };
-}
-
-// ── THE FILL: units in read order, filled across a bounded pool only when
-// the adapter declares them independent. Results are indexed by unit, so the
-// EOT stays deterministic whatever order the pool completes in; the bound is
-// the caller's (mouth family cap or the operator's override). ──
-async function fillUnits(units, adapter, { parallelism = 1, trace = null } = {}) {
-  const emit = trace ? trace.event : () => {};
-  const results = new Array(units.length);
-  const limit = Math.max(1, Math.min(parallelism, units.length || 1));
-  let cursor = 0;
-  await Promise.all(Array.from({ length: limit }, async () => {
-    while (cursor < units.length) {
-      const idx = cursor++;
-      results[idx] = await fillUnit(units[idx], adapter, emit);
-    }
-  }));
+async function fillUnits(units, adapter, ctx = {}) {
   const drawn = [];
   const scars = [];
-  const provenance = [];
-  for (const r of results) {
-    if (r?.code != null) drawn.push(r.code);
-    if (r?.provenance) provenance.push(r.provenance);
-    scars.push(...(r?.scars ?? []));
+  // Per-unit disposition: where each unit was satisfied (field | hunt | mouth)
+  // or why it was not (model-required | unsatisfied). The provenance events
+  // carry the same fact; this is the flat, countable form of it.
+  const outcomes = [];
+  const ledger = ctx.provenanceLedger ?? new ProvenanceLedger({ artifact: ctx.artifact ?? adapter.kind, position: ctx.position ?? null });
+  const addSource = (spec) => ledger.source(spec);
+  const addContribution = ({ unit, stage, code, source_id, parent = null, detail = null, transform = null }) => {
+    const text = String(code ?? "");
+    // The folded artifact is drawn.join("\n\n") + "\n": the next contribution starts
+    // AFTER the two-byte separator. (This was +1, which put every anchor after the
+    // first one byte early — measured by gym/weave-nomodel.mjs's byte-range audit.)
+    const offset = drawn.length ? Buffer.byteLength(drawn.join("\n\n")) + 2 : 0;
+    if (text) drawn.push(text);
+    const end = offset + Buffer.byteLength(text);
+    ledger.event({ stage, source_id, unit: unit.name, parent, range: byteRange(offset, end), detail, transform });
+  };
+
+  for (const u of units) {
+    const unitSource = addSource({ kind: "unit", locator: { artifact: ctx.artifact ?? adapter.kind, name: u.name, spec: u.spec } });
+    ledger.event({ stage: "arrange", source_id: unitSource, unit: u.name, transform: "unit-spec" });
+
+    const fill = adapter.autofill ? adapter.autofill(u, ctx) : null;
+    if (fill) {
+      const source = addSource({ kind: "corpus", locator: fill.address ?? "corpus:unknown", anchor: fill.address ?? null });
+      addContribution({ unit: u, stage: "ground", code: fill.code, source_id: source, parent: unitSource, transform: "autofill-frame" });
+      outcomes.push({ unit: u.name, stage: "field", source_id: source, bytes: Buffer.byteLength(String(fill.code ?? "")), text: String(fill.code ?? "") });
+      continue;
+    }
+
+    if (adapter.hunt) {
+      const res = await adapter.hunt(u, ctx);
+      if (res) {
+        const source = addSource({ kind: "hunt", locator: res.url ?? "hunt:unknown", anchor: res.url ?? null });
+        addContribution({ unit: u, stage: "ground", code: res.code, source_id: source, parent: unitSource, transform: "hunt-snip" });
+        outcomes.push({ unit: u.name, stage: "hunt", source_id: source, bytes: Buffer.byteLength(String(res.code ?? "")), text: String(res.code ?? "") });
+        continue;
+      }
+      if (res === null && adapter.huntScar) scars.push({ unit: u.name, why: adapter.huntScar(u) });
+    }
+
+    // THE MOUTH STAGE. With noModel the unit stops HERE: field and hunt both
+    // had their chance, neither satisfied it, and the next stage is a model.
+    // That is recorded as a typed, countable fact (event + scar + outcome) —
+    // never a draw, never a fallback, never a silent skip.
+    if (ctx.noModel) {
+      ledger.event({ stage: "model-required", source_id: unitSource, parent: unitSource, unit: u.name, transform: "field+hunt-unsatisfied→mouth-stage", detail: { reason: "noModel:true — the unit reached the mouth stage and was left unresolved" } });
+      scars.push({ unit: u.name, attempt: 0, why: "model-required (noModel:true)", atom: u.spec, stage: "mouth" });
+      outcomes.push({ unit: u.name, stage: "model-required", source_id: unitSource, bytes: 0 });
+      continue;
+    }
+
+    let attempt = 0;
+    let atom = u.spec;
+    while (attempt < 4) {
+      const fragment = adapter.mouthFragment(u, atom, ctx);
+      const source = addSource({ kind: "draw", locator: { adapter: adapter.kind, unit: u.name, attempt: attempt + 1, prompt: fragment } });
+      ledger.event({ stage: "draw-request", source_id: source, parent: unitSource, unit: u.name, transform: "prompt-from-spec", detail: { attempt: attempt + 1 } });
+      const out = await draw(fragment, {
+        maxTokens: adapter.mouthTokens ?? 240,
+        model: ctx.model ?? null,
+        noModel: ctx.noModel === true,
+        kind: ["code", "application"].includes(ctx.artifact ?? adapter.kind) ? "build" : ["prose", "document", "text"].includes(ctx.artifact ?? adapter.kind) ? "chat" : "other",
+        priority: "batch",
+      });
+      const fn = adapter.snip(out, u.name);
+      const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
+      if (fn && alone.ok) {
+        addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1 }, transform: "draw→snip" });
+        outcomes.push({ unit: u.name, stage: "mouth", source_id: source, bytes: Buffer.byteLength(String(fn)), text: String(fn) });
+        break;
+      }
+      const why = alone.detail;
+      const nextAtom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
+      ledger.event({ stage: "repair", source_id: source, parent: unitSource, unit: u.name, transform: "failed-draw→sharpened-prior", detail: { attempt: attempt + 1, why, from: atom, to: nextAtom } });
+      scars.push({ unit: u.name, attempt: attempt + 1, why, atom: nextAtom });
+      atom = nextAtom;
+      attempt += 1;
+    }
+    if (!outcomes.some((o) => o.unit === u.name)) outcomes.push({ unit: u.name, stage: "unsatisfied", source_id: unitSource, bytes: 0 });
   }
-  return { code: drawn.join("\n\n") + "\n", scars, provenance };
+
+  ledger.event({ stage: "fold", transform: "contributions→artifact", detail: { bytes: Buffer.byteLength(drawn.join("\n\n") + "\n"), units: units.length } });
+  return { code: drawn.join("\n\n") + "\n", scars, outcomes, provenance: ledger.eot() };
 }
 
 // ── THE PIPELINE ────────────────────────────────────────────────────────────
-export async function arrange({ task, args = {}, adapter }) {
+export async function arrange({ task, args = {}, adapter, context = {} }) {
   const outDir = path.resolve(args.out || path.join(HERE, "..", "arrangement-out"));
   fs.mkdirSync(outDir, { recursive: true });
-  const slug = `arrangement-${Date.now()}`;
-  // THE FAN-OUT (GL-EN-17): only across units the adapter declares
-  // independent, bounded by the mouth's own house family cap when the mouth
-  // is the draw entry (the measured number, never invented); args.parallelism
-  // is the operator's explicit override. Without the mouth: 1, the serial twin.
-  const independent = adapter.independent === true;
-  const mouthCap = independent && MOUTH_URL ? (await import("../mouth.mjs")).HOUSE.familyCap : 1;
-  const parallelism = independent ? Math.max(1, Math.floor(Number(args.parallelism) > 0 ? Number(args.parallelism) : mouthCap)) : 1;
-  const tracePath = args.trace === false ? null : path.join(outDir, `${slug}.trace.jsonl`);
-  const trace = makeTrace({ run: slug, sink: tracePath, printer: args.quiet ? null : console.log });
-  trace.event("run", { task, kind: adapter.kind, parallelism, mouth: MOUTH_URL ? "penelope" : "direct" });
 
-  console.log(`\n=== THE FIELD READS THE PROMPT ===`);
-  console.log(`  "${task}"\n`);
-  let units = await adapter.readUnits(task);
+  console.log(`
+=== THE FIELD READS THE PROMPT ===`);
+  console.log(`  "${task}"
+`);
+  const ledger = new ProvenanceLedger({ artifact: context.artifact ?? adapter.kind, position: context.position ?? null });
+  const taskSource = ledger.source({ kind: "intent", locator: { task, artifact: context.artifact ?? adapter.kind } });
+  ledger.event({ stage: "intent", source_id: taskSource, transform: "request→task" });
+  const priorSource = ledger.source({ kind: "prior", locator: { adapter: adapter.kind, constraints: context.constraints ?? {}, verification: context.verification ?? {} } });
+  ledger.event({ stage: "prior", source_id: priorSource, parent: taskSource, transform: "constraints+verification→generation-prior" });
+  context.provenanceLedger = ledger;
+  let units = await adapter.readUnits(task, context);
+  ledger.event({ stage: "read", source_id: taskSource, parent: priorSource, transform: "task→units", detail: { units: (units ?? []).map((u) => ({ name: u.name, spec: u.spec })) } });
   units = units ?? [];
   let example = null;
   if (args.example) { try { example = JSON.parse(args.example); } catch { example = null; } }
-  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example);
+  if (example && units.length && adapter.computeSettles) units = adapter.computeSettles(units, example, context);
   console.log(`  units + per-unit specs (from the reading, not a dictionary):`);
   for (const u of units) console.log(`    ${u.name}: ${u.spec}${u.settle ? `  [settle: ${u.settle}]` : ""}`);
 
-  console.log(`\n=== THE SPIRAL — field first, hunt second, mouth last ===`);
-  const { code, scars, provenance } = await fillUnits(units, adapter, { parallelism, trace });
-  let verdict = adapter.testUnits(code, units);
-  trace.event("test", { ok: verdict.ok === true, reason: verdict.reason, detail: verdict.detail ?? null });
-  // THE REFINEMENT (the universal step): a failing test is refined under the
-  // judge itself, in the cube's operator order — the adapter's own transforms
-  // move the artifact, illegal moves refused. Domain-agnostic: the same step
-  // for code (a testCommand) and text (the essay bars). The mouth is never
-  // re-asked; the transforms are held pieces.
+  console.log(`
+=== THE SPIRAL — field first, hunt second, mouth last ===`);
+  const { code, scars, outcomes, provenance } = await fillUnits(units, adapter, context);
+  const verdict = adapter.testUnits(code, units, context);
+  // THE REFINEMENT (the universal step, GL-CD-08): a failing test is refined
+  // under the judge itself, in the cube's operator order — the adapter's own
+  // transforms move the artifact, illegal moves refused. Domain-agnostic (code
+  // and text). The mouth is never re-asked; the transforms are held pieces.
   let finalCode = code;
   let refinement = null;
   if (!verdict.ok && Array.isArray(adapter.refineTransforms) && adapter.refineTransforms.length) {
-    const r = refine({ start: code, transforms: adapter.refineTransforms, judge: (s) => { const v = adapter.testUnits(s, units); return { ok: v.ok === true, failure: v.reason }; } });
+    const r = refine({ start: code, transforms: adapter.refineTransforms, judge: (s) => { const v = adapter.testUnits(s, units, context); return { ok: v.ok === true, failure: v.reason }; } });
     refinement = { ok: r.ok, steps: r.steps, seq: r.seq, refused: r.refused, reason: r.reason ?? null };
-    if (r.ok) { finalCode = r.state; verdict = adapter.testUnits(finalCode, units); }
-    trace.event("refine", { ok: r.ok, steps: r.steps, seq: r.seq });
+    if (r.ok) { finalCode = r.state; verdict = adapter.testUnits(finalCode, units, context); }
+    ledger.event({ stage: "refine", source_id: ledger.source({ kind: "refinement", locator: { adapter: adapter.kind, ok: r.ok, steps: r.steps } }), transform: "artifact→refined", detail: refinement });
     console.log(`  refine: ${r.ok ? "converged" : "stopped"} — ${r.seq.join(" → ") || "(none)"}${r.refused.length ? ` · illegal refused: ${r.refused.map((x) => x.name).join(", ")}` : ""}`);
   }
+  const verifySource = ledger.source({ kind: "verification", locator: { adapter: adapter.kind, verdict: verdict.reason } });
+  ledger.event({ stage: "verify", source_id: verifySource, transform: "artifact→verification", detail: verdict });
   console.log(`  folded: ${finalCode.length} bytes, ${units.length} units`);
-  const snipped = (provenance ?? []).filter((p) => p.source === "corpus");
-  const drawn = (provenance ?? []).filter((p) => p.source === "mouth");
-  const hunted = (provenance ?? []).filter((p) => p.source === "hunt");
-  if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${p.address?.split("/").pop()}`).join(", ")}`);
+  // Provenance@2 has events, not refs: derive the per-stage summaries from the
+  // transformation events (stage:ground + transform names which door filled it).
+  const evs = provenance?.events ?? [];
+  const srcOf = new Map((provenance?.sources ?? []).map((x) => [x.source_id, x]));
+  const row = (e) => ({ unit: e.unit, address: srcOf.get(e.source_id)?.anchor ?? null, source_id: e.source_id });
+  const snipped = evs.filter((e) => e.stage === "ground" && e.transform === "autofill-frame").map(row);
+  const drawn = evs.filter((e) => e.stage === "draw").map(row);
+  const hunted = evs.filter((e) => e.stage === "ground" && e.transform === "hunt-snip").map(row);
+  if (snipped.length) console.log(`  field snipped: ${snipped.map((p) => `${p.unit}@${String(p.address ?? "").split("/").pop()}`).join(", ")}`);
   if (hunted.length) console.log(`  hunted: ${hunted.map((p) => p.unit).join(", ")}`);
   if (drawn.length) console.log(`  drawn by the mouth: ${drawn.map((p) => p.unit).join(", ")}`);
   console.log(`  test:   ${verdict.reason}${verdict.ok ? "" : " — " + verdict.detail}`);
 
-  console.log(`\n=== THE PRODUCT ===`);
+  console.log(`
+=== THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
-  const html = adapter.toDocument({ code: finalCode, units: units.map((u) => u.name), title });
+  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
+  ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(code) } });
+  const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
-  fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), finalCode);
-  trace.event("product", { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}`, bytes: finalCode.length });
-  // THE TRACE'S OWN FALSIFIER (GL-EN-17): reconcile before the EOT is sealed
-  // — a trace that cannot be reconciled is decoration and says so loudly.
-  const traceCheck = reconcileTrace(trace.events, provenance);
-  trace.event("trace", { ok: traceCheck.ok, detail: traceCheck.detail });
-  trace.close();
-  if (!traceCheck.ok) console.error(`  ✗ trace reconcile failed: ${traceCheck.detail}`);
+  fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
+  // The snapshot returned by fillUnits predates the verification source; re-take it
+  // now so every source an event names is in the table (no dangling verify.source_id).
+  const finalProvenance = ledger.eot();
   const eot = {
-    schema: "ArrangementEOT@1", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
-    prompt: task, model: MODEL,
-    law: "mouth-last, hunt-first, multiple-framings, falsify-or-die; fan out only independent units; the trace reconciles (GL-EN-17)",
-    parallelism,
-    trace: { schema: TRACE_SCHEMA, path: tracePath, events: trace.events.length, check: traceCheck },
+    schema: "ArrangementEOT@2", kind: adapter.kind, giver: "heimdall", standing: "disclosed",
+    prompt: task, model: context.noModel ? null : MODEL, noModel: context.noModel === true,
+    law: "mouth-last, hunt-first, multiple-framings, falsify-or-die",
     field: { read: "one draw named the units and each unit's own spec from the prompt" },
+    provenance: finalProvenance,
     corpus: {
       note: "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
-      snipped: (provenance ?? []).filter((p) => p.source === "corpus"),
-      hunted: (provenance ?? []).filter((p) => p.source === "hunt"),
-      drawn: (provenance ?? []).filter((p) => p.source === "mouth"),
+      snipped,
+      hunted,
+      drawn,
+      sourceTable: finalProvenance.sources ?? [],
     },
     swarm: { verdict, scars },
-    ...(refinement ? { refinement } : null),
     product: { widget: path.join(outDir, `${slug}.html`), folded: `${slug}.folded.${adapter.ext ?? "js"}` },
   };
   fs.writeFileSync(path.join(outDir, `${slug}.eot.json`), JSON.stringify(eot, null, 2));
   console.log(`  widget: ${path.join(outDir, `${slug}.html`)}`);
   console.log(`  eot:    ${path.join(outDir, `${slug}.eot.json`)}`);
   console.log(`  folded: ${path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`)}`);
-  if (tracePath) console.log(`  trace:  ${tracePath}${traceCheck.ok ? "" : " (RECONCILE FAILED)"}`);
-  if (scars.length) { console.log(`\n  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
-  return { slug, html, code: finalCode, eot, verdict, scars, provenance, parallelism, tracePath, traceCheck };
+  if (scars.length) { console.log(`
+  scars (the dissent, disclosed):`); for (const s of scars) console.log(`    ${s.unit}: ${s.why}`); }
+  return { slug, html, code, eot, verdict, scars, outcomes, units, provenance: finalProvenance };
 }
 
 export { execSync };

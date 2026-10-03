@@ -27,3 +27,17 @@ The ladder as a Jupyter notebook: markdown cells carry specs and
 model-drawn history (recorded, never replayed), code cells re-run the
 organ selftests with outputs stored. (Live: `penelope-notebook.ipynb`
 via `gym/to-notebook.mjs`, 4/4 organ cells green.)
+
+## overview — a situated evidence medium
+
+Use the public generation API with `artifact: "overview"`, `noModel: true`,
+and `context.overview` containing the declared frame, selected versioned text,
+expectations and optional owned arrangements. One unit carries the complete
+replayable record through the existing lifecycle. The portable materializer is
+also vendored by the Holodeck surface; it requires no server or model. Native
+intake runs ethos, logos and pathos; browser replay does not claim that clearance.
+The output HTML includes source text, contextual expansion, reverse links,
+negative spaces, inquiries and the construction record. Source selection is
+literal; inferred impact/representation equity and original-media mappings
+remain explicit boundaries. Contract and controls: eoreader7's
+`native/docs/OVERVIEW-BLOCKS.md`; `node --test gym/overview.test.mjs`.
