@@ -36,7 +36,7 @@
 ║                 ∙∙            ■∙∙∙∙∙•∙∙∙∙∙■            ∙∙                  ║
 ║                  ∙∙∙                                 ∙∙∙                   ║
 ║                     ∙∙∙                           ∙∙∙                      ║
-║                        ∙∙∙∙■∙               ∙·∙∙∙∙                         ║
+║                        ∙∙∙∙■∙               ∙■∙∙∙∙                         ║
 ║                              ∙∙∙∙∙∙∙Ω∙∙∙∙∙∙∙                               ║
 ║                           ◊                   →                            ║
 ║                                                                            ║
@@ -45,7 +45,7 @@
 ║   ░   ▓    ○ ≈ε  ◦■ •□ Ω·   ■VDF◦                                          ║
 ║ ▓       ░  ● ×ε  ◦■ •■ Ω■   ■RDU• ■HNT◦ ■MTH•                              ║
 ║   ▓   ░    | ÷σ  ◦■ •■ Ω·   ■SNP•                                          ║
-║     ▒      → ≈σ  ◦■ •■ Ω·   ■FLD•                                          ║
+║     ▒      → ≈σ  ◦■ •■ Ω■   ■FLD•                                          ║
 ║   ░   ▓    ◊ ×σ  ◦■ •■ Ω■   ■SELΩ ■EOT•                                    ║
 ║  ▓     ░   = ÷ι  ◦° •■ Ω■   ■STL•                                          ║
 ║   ▓   ░    ± ≈ι  ◦■ •■ Ω■   ■PRB• ■TST•                                    ║
@@ -60,57 +60,58 @@
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ε  │ Ø ÷ε                │ ○ ≈ε                │ ● ×ε                │  ║
 ║  │    │ ■GAP ■NLB ·KNL      │ ■VDF □LOK ·KOE ·SCR │ ■RDU ■HNT ■MTH ■CHT │  ║
-║  │    │                     │ ·KIN                │ ■ADC ■ADP □CDB ·PAG │  ║
+║  │    │                     │ ·KIN ■SRC           │ ■ADC ■ADP □CDB ·PAG │  ║
 ║  │    │                     │                     │ ■VOC                │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ σ  │ | ÷σ                │ → ≈σ                │ ◊ ×σ                │  ║
 ║  │    │ ■SNP ■DOR ·TER ■WSN │ ■FLD ■DTF ■ADM ·NET │ ■SEL ■EOT ■BLD ■ASK │  ║
-║  │    │                     │ ■WND ■AGD           │ ■TAP ■LIB □TKB □BPG │  ║
+║  │    │ ■SNC                │ ■WND ■AGD ■STG      │ ■TAP ■LIB □TKB □BPG │  ║
 ║  │    │                     │                     │ ·HOR ·LFL ·SWT ■CCL │  ║
+║  │    │                     │                     │ ■GCP ■WPH           │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ι  │ = ÷ι                │ ± ≈ι                │ ↔ ×ι                │  ║
 ║  │    │ ■STL ■CUB ■LAW ■GLA │ ■PRB ■TST ■CGT ■BHC │ ■SPR ■BOX ·RSM ·DEM │  ║
-║  │    │ ·GAT ·STM ■RSR ■STR │ ■FRS ■LDR ■NBK ·RUT │                     │  ║
-║  │    │                     │ ·GAR ·MAR ·VIS ·APO │                     │  ║
+║  │    │ ·GAT ·STM ■RSR ■STR │ ■FRS ■LDR ■NBK ·RUT │ ■EVO                │  ║
+║  │    │ ■FAP                │ ·GAR ·MAR ·VIS ·APO │                     │  ║
 ║  │    │                     │ ·ANS ·POL ·CRV      │                     │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
 ║  │ ▲  │          ◦          │          •          │          Ω          │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ε  │ ε◦                  │ ε•                  │ εΩ                  │  ║
-║  │    │ ■VDF ■HNT ■NLB      │ ■RDU ■MTH ■GAP ■CHT │ ■ADC ■ADP □CDB ·PAG │  ║
+║  │    │ ■VDF ■HNT ■NLB ■SRC │ ■RDU ■MTH ■GAP ■CHT │ ■ADC ■ADP □CDB ·PAG │  ║
 ║  │    │                     │ □LOK ·KOE ·SCR ■VOC │ ·KIN ·KNL           │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ σ  │ σ◦                  │ σ•                  │ σΩ                  │  ║
 ║  │    │ ■DOR ■ADM ■LIB      │ ■FLD ■SNP ■EOT ■DTF │ ■SEL ■BLD ■ASK ■TAP │  ║
 ║  │    │                     │ □TKB ·HOR ·SWT ■WND │ □BPG ·LFL ·TER ·NET │  ║
-║  │    │                     │ ■AGD ■WSN           │ ■CCL                │  ║
+║  │    │                     │ ■AGD ■WSN ■SNC ■WPH │ ■CCL ■GCP ■STG      │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ι  │ ι◦                  │ ι•                  │ ιΩ                  │  ║
 ║  │    │ ■FRS ·RSM ·APO      │ ■STL ■PRB ■SPR ■TST │ ■CGT ■CUB ■LDR ■BOX │  ║
 ║  │    │                     │ ■BHC ·RUT ·GAR ·MAR │ ■NBK ■LAW ■GLA ·GAT │  ║
 ║  │    │                     │ ·VIS ·POL           │ ·DEM ·ANS ·CRV ·STM │  ║
-║  │    │                     │                     │ ■RSR ■STR           │  ║
+║  │    │                     │                     │ ■RSR ■STR ■FAP ■EVO │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ║  ┌────┬─────────────────────┬─────────────────────┬─────────────────────┐  ║
 ║  │ ↕  │          ◦          │          •          │          Ω          │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ÷  │ ÷◦                  │ ÷•                  │ ÷Ω                  │  ║
 ║  │    │ ■NLB ■DOR           │ ■STL ■SNP ■GAP ■WSN │ ■CUB ■LAW ■GLA ·GAT │  ║
-║  │    │                     │                     │ ·TER ·KNL ·STM ■RSR │  ║
-║  │    │                     │                     │ ■STR                │  ║
+║  │    │                     │ ■SNC                │ ·TER ·KNL ·STM ■RSR │  ║
+║  │    │                     │                     │ ■STR ■FAP           │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ≈  │ ≈◦                  │ ≈•                  │ ≈Ω                  │  ║
 ║  │    │ ■VDF ■FRS ■ADM ·APO │ ■FLD ■PRB ■TST ■DTF │ ■CGT ■LDR ■NBK ·ANS │  ║
-║  │    │                     │ ■BHC □LOK ·KOE ·RUT │ ·CRV ·KIN ·NET      │  ║
+║  │    │ ■SRC                │ ■BHC □LOK ·KOE ·RUT │ ·CRV ·KIN ·NET ■STG │  ║
 ║  │    │                     │ ·GAR ·MAR ·VIS ·SCR │                     │  ║
 ║  │    │                     │ ·POL ■WND ■AGD      │                     │  ║
 ║  ├────┼─────────────────────┼─────────────────────┼─────────────────────┤  ║
 ║  │ ×  │ ×◦                  │ ×•                  │ ×Ω                  │  ║
 ║  │    │ ■HNT ■LIB ·RSM      │ ■RDU ■MTH ■SPR ■EOT │ ■SEL ■BOX ■BLD ■ASK │  ║
 ║  │    │                     │ ■CHT □TKB ·HOR ·SWT │ ■ADC ■ADP ■TAP □CDB │  ║
-║  │    │                     │ ■VOC                │ □BPG ·PAG ·DEM ·LFL │  ║
-║  │    │                     │                     │ ■CCL                │  ║
+║  │    │                     │ ■VOC ■WPH           │ □BPG ·PAG ·DEM ·LFL │  ║
+║  │    │                     │                     │ ■CCL ■GCP ■EVO      │  ║
 ║  └────┴─────────────────────┴─────────────────────┴─────────────────────┘  ║
 ╠═[ ↑ ↓ ]════════════════════════════════════════════════════════════════════╣
 ║ ↑ 4  ■NLBØ◦ ■CUB=Ω ■LDR±Ω ■BOX↔Ω ■LAW=Ω ■GLA=Ω ■TAP◊Ω ■LIB◊◦ ·DEM↔Ω        ║
@@ -119,7 +120,8 @@
 ║ │    ·APO±◦                                                                ║
 ║ │ 2  ■TST±• ■SEL◊Ω ■EOT◊• ■CGT±Ω ■DTF→• ■BHC±• ■FRS±◦ □CDB●Ω □BPG◊Ω        ║
 ║ │    ·RSM↔◦ ·GAT=Ω ·RUT±• ·VIS±• ·ANS±Ω ·CRV±Ω ·SWT◊• ■WND→• ■AGD→•        ║
-║ │    ■CCL◊Ω ■WSN|• ■RSR=Ω ■STR=Ω ■VOC●•                                    ║
+║ │    ■CCL◊Ω ■WSN|• ■RSR=Ω ■STR=Ω ■VOC●• ■SRC○◦ ■GCP◊Ω ■SNC|• ■FAP=Ω        ║
+║ │    ■EVO↔Ω ■STG→Ω ■WPH◊•                                                  ║
 ║ │ 1  ■VDF○◦ ■RDU●• ■STL=• ■FLD→• ■HNT●◦ ■SNP|• ■PRB±• ■GAPØ• ■ADC●Ω        ║
 ║ │    ■ADP●Ω □TKB◊• □LOK○• ·HOR◊• ·KOE○• ·MAR±• ·SCR○• ·POL±• ·KIN○Ω        ║
 ║ │    ·NET→Ω                                                                ║
@@ -183,6 +185,7 @@
 ║     @ l/r1-r8.json l/r9-r13.json l/r9-r13-record.json GL-LD-01 GL-LD-03    ║
 ║■BOX 4 ↔Ω § box                                                             ║
 ║     @ l/mouth-last.json l/nomouth-rows.txt GL-LD-02 GL-LD-06 GL-LD-07      ║
+║     @ GL-RR-10                                                             ║
 ║■CHT 3 ●• ‡ chat                                                            ║
 ║     @ g/server.mjs g/chat.html GL-CH-01 GL-CH-02                           ║
 ║■BLD 3 ◊Ω ‡ build                                                           ║
@@ -285,7 +288,7 @@
 ║     @ E7/kernel/entity-kind-induction.js GL-LD-07                          ║
 ║     promote(count) ∏ promote(null) ∂†                                      ║
 ║·NET 1 →Ω ‡ weave                                                           ║
-║     @ FOLD/network.js                                                      ║
+║     @ FOLD/fold-net.js                                                     ║
 ║     arrangement recurs Λ ¬bound ∂†                                         ║
 ║                                                                            ║
 ║■ ░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒░▒▓▒      ║
@@ -313,6 +316,22 @@
 ║     @ o/steersman.mjs o/steersman.test.mjs GL-WV-13                        ║
 ║■VOC 2 ●• ‡ voice                                                           ║
 ║     @ o/voice.mjs o/voice.e2e.mjs GL-WV-13                                 ║
+║■SRC 2 ○◦ § source                                                          ║
+║     @ o/source-index.mjs GL-BD-18                                          ║
+║■GCP 2 ◊Ω ‡ compose                                                         ║
+║     @ o/grounded-composition.mjs o/source-index.mjs GL-BD-18 GL-BD-19      ║
+║■SNC 2 |• ‡ quote                                                           ║
+║     @ o/snip-cite.mjs GL-BD-16 GL-BD-17                                    ║
+║■FAP 2 =Ω ‡ point                                                           ║
+║     @ o/fold-at-point.mjs GL-BD-20 GL-RR-10                                ║
+║■EVO 2 ↔Ω ‡ void                                                            ║
+║     @ o/essay-void.mjs GL-BD-21                                            ║
+║■STG 2 →Ω ‡ trail                                                           ║
+║     @ o/stigmergy.mjs GL-BD-21                                             ║
+║■WPH 2 ◊• ‡ white-paper                                                     ║
+║     @ g/white-paper-run.mjs g/white-paper-box.mjs g/white-paper-hunt.mjs   ║
+║     @ g/white-paper-genre.mjs g/white-paper-mouth.mjs GL-WP-01 GL-WP-02    ║
+║     @ GL-WP-03 GL-WP-04 GL-WP-05                                           ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ```

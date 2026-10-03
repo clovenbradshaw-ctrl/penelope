@@ -12,7 +12,19 @@
 // difference; the rest of the universe stays outside the fold. Two for-whoms →
 // two stakes → two selections → two identities, by consequence.
 //
-// PURE (node builtins). Selftest:
+// STANCE, INJECTED (2026-10-02, GL-RR-10). Word-overlap selection has a named
+// weakness: a sentence can share the stake's words and still be OFF the being
+// the stake names (the shuffled control — act words on the wrong referent).
+// So the fold carries, per selected claim, the STANCE verdict when the caller
+// injects the stance organ (eoreader7/native/organs/stance.js — the cast.js
+// pattern, organs injected): readStance(claim, holon) → in_terms / against /
+// off_being at the level. The verdict is a FACT about the claim relative to
+// the source it came from, carried beside the byte address — never used to
+// drop a claim (the fold's selection stays the difference-making), only to
+// disclose what the selected claim IS to the material it stands on. Omitted,
+// the fold is byte-identical to before (no stance field).
+//
+// PURE (node builtins + injected organs). Selftest:
 //   node --input-type=module -e "import('./organs/fold-at-point.mjs').then(m=>m.selftest())"
 
 export const FOLD_SCHEMA = "FoldAtPoint@1";
@@ -24,11 +36,21 @@ const overlap = (text, stake) => { let n = 0; for (const w of words(text)) if (s
 /** Fold the universe at the for-whom: select, per section, the clean sentences
  *  whose differences make a difference to that point. `indices` = { label:
  *  SourceIndex }. Each selected claim carries its byte address — the ethos
- *  spine of the essay. */
-export function foldAtPoint({ forWhom = "", indices = {}, sections = [], per = 2, minOverlap = 2 } = {}) {
+ *  spine of the essay. `organs` = { readStance } (injected, optional): when the
+ *  stance organ is present, each selected claim also carries its stance verdict
+ *  relative to its source (in_terms / against / off_being) — disclosed, never
+ *  used to drop. */
+export function foldAtPoint({ forWhom = "", indices = {}, sections = [], per = 2, minOverlap = 2, organs = {} } = {}) {
   const stake = words(forWhom);
   const folds = [];
   const used = new Set();
+  // the stance organ, injected (cast.js pattern). The holon each claim is read
+  // against: the claim's OWN source as the material, the for-whom's stake as
+  // the theme, the referents from the caller's injected `organs.referents`
+  // (buildReferents over the source — a SourceIndex carries the source FILE,
+  // not its text, so the caller who holds the bytes supplies the referents).
+  const readStance = organs.readStance ?? null;
+  const refsFor = organs.referents ?? null;
   for (const sec of sections) {
     const secStake = new Set([...stake, ...words(sec.aspect)]);
     const scored = [];
@@ -45,7 +67,16 @@ export function foldAtPoint({ forWhom = "", indices = {}, sections = [], per = 2
       const key = c.src + "@" + c.abs;
       if (used.has(key)) continue;
       used.add(key);
-      selected.push(c);
+      const claim = { text: c.text, abs: c.abs, len: c.len, src: c.src, overlap: c.overlap };
+      if (readStance) {
+        try {
+          const referents = typeof refsFor === "function" ? refsFor(c.src) : null;
+          const holon = { theme: forWhom, ground: "", referents, passages: [{ ref: c.src, text: c.text }] };
+          const r = readStance(c.text, holon, { level: "sentence" });
+          claim.stance = { reading: r.stance, sign: r.sign, tied: r.strain ? r.strain.tied : null, basis: r.basis };
+        } catch { claim.stance = null; }
+      }
+      selected.push(claim);
       if (selected.length >= per) break;
     }
     folds.push({ section: sec.name, aspect: sec.aspect, claims: selected });
@@ -68,4 +99,14 @@ export async function selftest() {
     return h.some((k) => !l.includes(k)) || l.some((k) => !h.includes(k));
   })());
   t("every selected claim carries a byte address", holder.folds[0].claims.every((c) => c.abs > 0 && c.src));
+  // STANCE INJECTED: the fold carries each claim's verdict when the caller
+  // supplies readStance (the emergent stance organ). Omitted, byte-identical.
+  try {
+    const { readStance } = await import("../../eoreader7/native/organs/stance.js");
+    const withStance = foldAtPoint({ forWhom: "the one who keeps a memory in a box and must learn to let it go", indices, sections: [{ name: "s", aspect: "how memory works" }], organs: { readStance } });
+    const claim0 = withStance.folds[0].claims[0];
+    t("the fold carries a stance verdict per selected claim when injected", !!claim0 && !!claim0.stance && ["in_terms", "against", "off_being", "unnamed"].includes(claim0.stance.reading));
+    const without = foldAtPoint({ forWhom: "the one who keeps a memory in a box and must learn to let it go", indices, sections: [{ name: "s", aspect: "how memory works" }] });
+    t("omitted, the fold is byte-identical (no stance field)", without.folds[0].claims.every((c) => !("stance" in c)));
+  } catch (e) { t("stance injection loads from eoreader7", false); }
 }

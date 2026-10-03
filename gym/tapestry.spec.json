@@ -313,7 +313,8 @@
     "l/nomouth-rows.txt",
     "GL-LD-02",
     "GL-LD-06",
-    "GL-LD-07"
+    "GL-LD-07",
+    "GL-RR-10"
    ]
   },
   {
@@ -842,19 +843,19 @@
    ],
    "ctl": "promote(count) ≡ promote(null)"
   },
-{
-    "id": "NET",
-    "name": "weave",
-    "st": "·",
-    "lvl": 1,
-    "op": "CON",
-    "grain": "Pattern",
-    "typing": "‡",
-    "refs": [
-     "FOLD/fold-net.js"
-    ],
-    "ctl": "arrangement recurs ∧ ¬bound"
-   },
+  {
+   "id": "NET",
+   "name": "weave",
+   "st": "·",
+   "lvl": 1,
+   "op": "CON",
+   "grain": "Pattern",
+   "typing": "‡",
+   "refs": [
+    "FOLD/fold-net.js"
+   ],
+   "ctl": "arrangement recurs ∧ ¬bound"
+  },
   {
    "id": "WND",
    "name": "window",
@@ -1027,7 +1028,8 @@
    "typing": "‡",
    "refs": [
     "o/fold-at-point.mjs",
-    "GL-BD-20"
+    "GL-BD-20",
+    "GL-RR-10"
    ]
   },
   {
@@ -1065,17 +1067,17 @@
    "grain": "Figure",
    "typing": "‡",
    "refs": [
-"g/white-paper-run.mjs",
-     "g/white-paper-box.mjs",
-     "g/white-paper-hunt.mjs",
-     "g/white-paper-genre.mjs",
-     "g/white-paper-mouth.mjs",
-     "GL-WP-01",
-     "GL-WP-02",
-     "GL-WP-03",
-     "GL-WP-04",
-     "GL-WP-05"
-    ]
+    "g/white-paper-run.mjs",
+    "g/white-paper-box.mjs",
+    "g/white-paper-hunt.mjs",
+    "g/white-paper-genre.mjs",
+    "g/white-paper-mouth.mjs",
+    "GL-WP-01",
+    "GL-WP-02",
+    "GL-WP-03",
+    "GL-WP-04",
+    "GL-WP-05"
+   ]
   }
  ]
 }

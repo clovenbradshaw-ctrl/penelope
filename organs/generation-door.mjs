@@ -9,45 +9,97 @@
 // fairly. Every draw lands on the swatch (gym/swatch.jsonl) — the economy is
 // measured, never asserted (GL-WV-05).
 //
-// The box today: the organs hold no raw-draw shapes — a draw prompt is
-// irreducible residue by construction, so the box answers nothing and the
-// verdict is `mouth`, disclosed. This is the named gap the seam exists to
-// close: as organs acquire shapes, they answer here and the mouth is asked
-// only for what none of them had.
+// THE BOX TODAY (2026-10-02): it holds ONE raw-draw shape — STANCE. A draw
+// whose shape is a stance read (readStance over a candidate against its
+// material, the emergent organ GL-RR-10) is answered HERE with zero mouth
+// draws: the box computes the reading, the swatch records the box win, and the
+// mouth is never asked. This is the first organ to hold a shape — the named
+// gap ("the box answers nothing") closes one cell at a time, each measured on
+// the swatch. Every other draw remains irreducible residue, mouth by
+// construction, disclosed as before.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SWATCH = path.join(HERE, "..", "gym", "swatch.jsonl");
-const CHANNEL = "http://127.0.0.1:11434"; // Heimdall's held door for servers
+// The mouth (PENELOPE_MOUTH_URL) is THE draw entry: the door checks the box,
+// then draws the residue THROUGH THE MOUTH, which admits and forwards to
+// Heimdall's channel (the bridge). The door never draws past her.
+const MOUTH = String(process.env.PENELOPE_MOUTH_URL ?? "http://127.0.0.1:11439").replace(/\/+$/, "");
 const KINDS = new Set(["chat", "probe", "stream", "build", "swarm", "vision", "other"]);
 const ID = { "x-er7-user": "penelope", "x-er7-caller": "penelope-gym" };
 const MAX_DEFER = 6;
 
 const bare = (m) => String(m ?? "").replace(/^er7:/, "");
-const swatch = (row) => fs.appendFileSync(SWATCH, JSON.stringify({ schema: "Swatch@1", ts: new Date().toISOString(), ...row }) + "\n");
+// THE RECORD NEVER WEDGES THE DRAW (2026-10-02): a failed swatch append is a
+// finding, never a kill — generation continues and the miss is on stderr, so
+// the economy stays measured without the record being able to stop the loom.
+const swatch = (row) => {
+  try {
+    fs.appendFileSync(SWATCH, JSON.stringify({ schema: "Swatch@1", ts: new Date().toISOString(), ...row }) + "\n");
+  } catch (e) {
+    console.error(`[generation-door] swatch append failed: ${e.message}`);
+  }
+};
+
+// THE STANCE SHAPE (the box's first cell). A draw with `shape: "stance"` is a
+// mechanical read, not a model draw: readStance(candidate, holon) at a level.
+// The box computes it and answers with zero mouth draws; the residue doctrine
+// is untouched — this shape is the box's, every other shape is the mouth's.
+async function boxStance({ text = "", holon = null, level = "whole" } = {}) {
+  try {
+    const { readStance, carriesStrain } = await import("../../eoreader7/native/organs/stance.js");
+    const t = String(text ?? "").trim();
+    if (!t || !holon) return { answered: false, why: "a stance draw needs both the candidate text and the holon it is read against — a named gap, never a guess" };
+    const r = readStance(t, holon, { level });
+    const strain = carriesStrain(t, holon);
+    return {
+      answered: true, why: "the box holds the stance shape (GL-RR-10) — a mechanical read, zero mouth draws",
+      stance: { reading: r.stance, sign: r.sign, level: r.level, basis: r.basis, carried: strain.carried, tied: strain.tied, of: strain.of },
+    };
+  } catch (e) {
+    return { answered: false, why: "the stance shape could not be computed: " + String(e?.message ?? e).slice(0, 160) };
+  }
+}
 
 /** The door: check the box, then draw the residue through the channel.
  *  `hop` is the turn's re-entry mark (1 = the turn was already admitted at
  *  its doorway — the draw must not re-queue; 0 = full admission, the safe
  *  default for any caller that does not declare it). `keepAliveS` keeps the
  *  model resident for a long turn's worth of draws, like the engine's own
- *  direct draws do (per-request floor, aligned with the server's keep_alive). */
-export async function runDrawDoor({ prompt, model = "gemma2:2b", kind = null, maxTokens = 260, temperature = 0, priority = "interactive", hop = 0, keepAliveS = 0 } = {}) {
+ *  direct draws do (per-request floor, aligned with the server's keep_alive).
+ *  `shape` ("stance") asks the box for a mechanical read instead of a model
+ *  draw; `text`/`holon`/`level` are the stance shape's own inputs. */
+export async function runDrawDoor({ prompt, model = "gemma2:2b", kind = null, maxTokens = 260, temperature = 0, priority = "interactive", hop = 0, keepAliveS = 0, shape = null, text = null, holon = null, level = "whole" } = {}) {
   const ask = String(prompt ?? "").trim();
-  if (!ask) return { ok: false, error: "a prompt is required — an empty draw is a named gap, never a draw" };
+  if (!ask && shape !== "stance") return { ok: false, error: "a prompt is required — an empty draw is a named gap, never a draw" };
   const k = KINDS.has(String(kind ?? "").toLowerCase()) ? String(kind).toLowerCase() : "chat";
   const m = bare(model);
   const t0 = Date.now();
-  // THE BOX, FIRST (mouth-last): the organs hold no raw-draw shape today —
-  // declared here, never invented. When an organ holds the shape it answers
-  // with zero draws and the swatch records the box win.
+  // THE BOX, FIRST (mouth-last). The box today holds ONE shape — stance (a
+  // mechanical read, zero draws). Every other draw is irreducible residue and
+  // the mouth's by construction, disclosed as before.
   const box = { answered: false, why: "no organ holds a raw-draw shape — the residue is the mouth's by construction" };
+  if (shape === "stance") {
+    const b = await boxStance({ text: text ?? ask, holon, level });
+    box.answered = b.answered;
+    box.why = b.why;
+    if (b.answered) {
+      swatch({ weave: `box:stance`, class: "box", engine: "penelope organs (stance.js)", model: null, mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: (b.stance?.basis ?? "").length, verdict: "box", shape: "stance", evidence: "2026-10-02 box stance cell, GL-RR-10" });
+      return { ok: true, text: JSON.stringify(b.stance), winner: "box", kind: k, ms: Date.now() - t0, box, stance: b.stance };
+    }
+    // the box did not answer — fall through to the mouth as residue? NO: a
+    // stance draw that the box cannot compute is a typed gap, never a model
+    // draw (the mouth would paraphrase a reading, and a reading is not a
+    // paraphrase). Returned as a refusal that names why.
+    swatch({ weave: `box:stance`, class: "box", engine: "penelope organs (stance.js)", model: null, mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "gap", shape: "stance", error: b.why, evidence: "2026-10-02 box stance cell, GL-RR-10" });
+    return { ok: false, error: b.why, kind: k, box: { answered: false, why: b.why } };
+  }
   let last = null;
   let j = null;
   for (let a = 0; a < MAX_DEFER; a += 1) {
-    const r = await fetch(`${CHANNEL}/api/generate`, {
+    const r = await fetch(`${MOUTH}/api/generate`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -69,7 +121,7 @@ export async function runDrawDoor({ prompt, model = "gemma2:2b", kind = null, ma
     if (!r.ok) { last = r.status; break; }
     const text = String(j?.response ?? "").trim();
     if (!text) { last = "empty"; break; }
-    swatch({ weave: `draw:${k}`, class: "draw", engine: "box→mouth (heimdall channel)", mouthCalls: 1, mouthBytes: text.length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "mouth", evidence: "2026-10-01 door, GL-WV-05" });
+    swatch({ weave: `draw:${k}`, class: "draw", engine: "box→mouth (heimdall channel)", model: m, mouthCalls: 1, mouthBytes: text.length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "mouth", evidence: "2026-10-01 door, GL-WV-05" });
     return {
       ok: true, text, winner: "mouth", model: j?.model ?? m, kind: k,
       promptTokens: j?.prompt_eval_count ?? 0, evalTokens: j?.eval_count ?? 0,
@@ -77,7 +129,7 @@ export async function runDrawDoor({ prompt, model = "gemma2:2b", kind = null, ma
       box,
     };
   }
-  swatch({ weave: `draw:${k}`, class: "draw", engine: "box→mouth (heimdall channel)", mouthCalls: 1, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "refused", error: String(last ?? "no draw"), evidence: "2026-10-01 door, GL-WV-05" });
+  swatch({ weave: `draw:${k}`, class: "draw", engine: "box→mouth (heimdall channel)", model: m, mouthCalls: 1, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "refused", error: String(last ?? "no draw"), evidence: "2026-10-01 door, GL-WV-05" });
   return { ok: false, error: `heimdall refused the draw (${last}) after bounded defer — Thea says pace, retry later`, kind: k, box };
 }
 
