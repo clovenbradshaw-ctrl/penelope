@@ -87,6 +87,49 @@ async function pacedPost(url, body, { timeoutMs = 900000, maxDefer = 6 } = {}) {
   return new Response(JSON.stringify({ error: "the box stayed busy past the defer budget — Thea says pace, retry later" }), { status: 429 });
 }
 
+// ── THE BUILD STREAM (GL-EN-17): /v1/ask streams the build as it works when
+// the door supports it (`buildStream: true` — NDJSON event lines, then the
+// result). An older door answers plain JSON and the trace prints from the
+// provenance instead, as before. The consumer is exported so the wall can
+// feed it a fake stream with no proxy, no model.
+export function humanBuildEvent(e) {
+  switch (e.event) {
+    case "units": return `    units: ${(e.units ?? []).join(", ")}`;
+    case "box": return `    ${e.unit} ← box (computed${e.shape ? `, ${e.shape}` : ""}, ${e.bytes} B)`;
+    case "draw:start": return `    ${e.unit} — drawing (${e.model})…`;
+    case "draw:done": return e.error ? `    ${e.unit} — draw failed: ${String(e.error).slice(0, 100)}` : `    ${e.unit} — draw returned (${e.tokens ?? 0} tok)`;
+    case "mouth": return `    ${e.unit} ← mouth (${e.bytes} B)`;
+    case "gap": return `    ${e.unit} — gap: ${String(e.error ?? "nothing extractable").slice(0, 100)}`;
+    case "verify": return `    verify: ${e.verified === true ? "passed" : e.verified === "syntax_only" ? "syntax only (no test given)" : "FAILED"}`;
+    case "refuse": return `    refused: ${String(e.error ?? "").slice(0, 120)}`;
+    case "seal": return `    seal: ${e.bytes} B, ${e.draws} draw(s), box ${e.boxBytes ?? 0} B + mouth ${e.mouthBytes ?? 0} B`;
+    default: return `    · ${e.event}`;
+  }
+}
+
+export async function consumeBuildStream(res) {
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "";
+  let build = null;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let nl;
+    while ((nl = buf.indexOf("\n")) >= 0) {
+      const line = buf.slice(0, nl).trim();
+      buf = buf.slice(nl + 1);
+      if (!line) continue;
+      let e;
+      try { e = JSON.parse(line); } catch { continue; }
+      if (e.type === "event") console.log(humanBuildEvent(e));
+      else if (e.type === "result" || e.type === "refused") build = e;
+    }
+  }
+  return build ?? { ok: false, error: "the build stream ended without a result — a named gap, never a silent success" };
+}
+
 export async function engineRun({ ask, testCommand, out, model }) {
   // The seam is an address (GL-BD-10): a relative --out is resolved by the
   // PROXY's own cwd, never Penelope's. Resolve here, against the ROOT, so the
@@ -117,10 +160,12 @@ export async function engineRun({ ask, testCommand, out, model }) {
   // The operator may still name a model; the standing default is the mouth
   // that held the anchor.
   const buildModel = model ?? "gemma2:2b";
-  const build = await (await pacedPost(`${PROXY}/v1/ask`, { task: ask, testCommand: gate || null, out: absOut, model: buildModel })).json();
+  const buildRes = await pacedPost(`${PROXY}/v1/ask`, { task: ask, testCommand: gate || null, out: absOut, model: buildModel, buildStream: true });
+  const streamed = String(buildRes.headers.get("content-type") ?? "").includes("application/x-ndjson");
+  const build = streamed ? await consumeBuildStream(buildRes) : await buildRes.json();
   let j = build;
   if (build.kind !== "mechanical-code-build") {
-    swatch({ weave: "engine:" + String(ask).slice(0, 40), class: "new (engine-held)", engine: "eoreader7 /v1/ask (build refused)", mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.error ? "refused (named gap)" : "turn", evidence: "GL-WV-07/08, GL-BD-09" });
+    swatch({ weave: "engine:" + String(ask).slice(0, 40), class: "new (engine-held)", engine: "eoreader7 /v1/ask (build refused)", model: buildModel, mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: build.error ? "refused (named gap)" : "turn", evidence: "GL-WV-07/08, GL-BD-09" });
     return { ok: false, error: build.error ?? `the door answered a turn, not a build (kind ${build.kind ?? "?"}) — ${String(build.answer ?? "").slice(0, 200)}` };
   }
   const mouthCalls = build.draws ?? 0;
@@ -130,6 +175,23 @@ export async function engineRun({ ask, testCommand, out, model }) {
   const prov = Array.isArray(build.provenance) ? build.provenance : [];
   const boxBytes = prov.filter((p) => p.source === "box").reduce((a, p) => a + (p.bytes ?? 0), 0);
   const mouthBytes = prov.filter((p) => p.source === "mouth").reduce((a, p) => a + (p.bytes ?? 0), 0);
+  // THE TRACE, WITHOUT A MODEL CALL (GL-EN-17): the per-unit provenance is
+  // the readable trace — printed here and sealed into the facing holograph +
+  // an NDJSON file. Its control: the per-unit sums must equal the ENGINE's own
+  // reported box/mouth totals (never the loom's restatement of them).
+  const traceRows = prov.map((p) => ({ unit: p.unit, source: p.source, bytes: p.bytes ?? 0, ...(p.shape ? { shape: p.shape } : {}), ...(p.lang ? { lang: p.lang } : {}) }));
+  const boxSum = traceRows.filter((r) => r.source === "box").reduce((a, r) => a + r.bytes, 0);
+  const mouthSum = traceRows.filter((r) => r.source === "mouth").reduce((a, r) => a + r.bytes, 0);
+  const hasTotals = Number.isFinite(build.boxBytes) && Number.isFinite(build.mouthBytes);
+  const traceCheck = {
+    ok: hasTotals ? boxSum === build.boxBytes && mouthSum === build.mouthBytes : traceRows.length > 0,
+    detail: `box ${boxSum}${hasTotals ? `/${build.boxBytes}` : ""} B · mouth ${mouthSum}${hasTotals ? `/${build.mouthBytes}` : ""} B`,
+  };
+  if (!traceCheck.ok) console.error(`[weave] TRACE RECONCILE FAILED: ${traceCheck.detail} — the trace is decoration (GL-EN-17)`);
+  if (traceRows.length && !streamed) {
+    console.log(`  provenance (per unit — the trace, no model call):`);
+    for (const r of traceRows) console.log(`    ${r.unit} ← ${r.source} (${r.bytes} B${r.shape ? `, ${r.shape}` : ""})`);
+  }
   // Thea's remedy: a gate that fails is handed to the bounded loop, not re-run.
   if (build.verified !== true && absOut && gate) {
     const remedy = await (await pacedPost(`${PROXY}/v1/code`, {
@@ -138,11 +200,11 @@ export async function engineRun({ ask, testCommand, out, model }) {
     })).json();
     const finalCode = fs.existsSync(absOut) ? fs.readFileSync(absOut, "utf8") : (remedy.code ?? build.code ?? "");
     const remedyDraws = Array.isArray(remedy.rounds) ? remedy.rounds.length : (remedy.draws ?? 0);
-    swatch({ weave: "engine:" + (build.units ?? []).join("+") + "+remedy", class: "new (engine-held)", engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", mouthCalls: mouthCalls + remedyDraws, mouthBytes: mouthBytes + (remedy.code?.length ?? 0), corpusBytes: 0, huntBytes: 0, boxBytes, verdict: remedy.done ? "pass (remedy loop)" : String(remedy.error ?? "budget spent"), evidence: "GL-WV-07/10/12" });
-    return { ok: !!remedy.done, engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", units: build.units ?? [], draws: mouthCalls + remedyDraws, mouthCalls, boxUnits: build.boxUnits ?? [], boxBytes, mouthBytes, verified: !!remedy.done, remedy: remedy.done ? "loop converged" : String(remedy.error ?? remedy.status ?? "budget spent"), out: absOut, code: finalCode, disclosure: build.disclosure ?? null };
+    swatch({ weave: "engine:" + (build.units ?? []).join("+") + "+remedy", class: "new (engine-held)", engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", model: buildModel, mouthCalls: mouthCalls + remedyDraws, mouthBytes: mouthBytes + (remedy.code?.length ?? 0), corpusBytes: 0, huntBytes: 0, boxBytes, verdict: remedy.done ? "pass (remedy loop)" : String(remedy.error ?? "budget spent"), trace: traceCheck.ok ? "reconciled" : "FAILED", evidence: "GL-WV-07/10/12" });
+    return { ok: !!remedy.done, engine: "eoreader7 /v1/ask → /v1/code (Thea's loop)", units: build.units ?? [], draws: mouthCalls + remedyDraws, mouthCalls, boxUnits: build.boxUnits ?? [], boxBytes, mouthBytes, verified: !!remedy.done, remedy: remedy.done ? "loop converged" : String(remedy.error ?? remedy.status ?? "budget spent"), out: absOut, code: finalCode, disclosure: build.disclosure ?? null, trace: traceRows, traceCheck };
   }
-  swatch({ weave: "engine:" + (build.units ?? []).join("+"), class: "new (engine-held)", engine: "eoreader7 /v1/ask → buildCodeTask", mouthCalls, mouthBytes, corpusBytes: 0, huntBytes: 0, boxBytes, verdict: build.verified === true ? "pass (testCommand)" : String(build.verified ?? "unverified"), evidence: "GL-WV-07/08/09" });
-  return { ok: build.verified === true, engine: "eoreader7 /v1/ask → buildCodeTask", units: build.units ?? [], draws: mouthCalls, mouthCalls, boxUnits: build.boxUnits ?? [], boxBytes, mouthBytes, tokens: build.tokens ?? 0, verified: build.verified ?? null, verifyError: build.verifyError ?? null, out: absOut, code: build.code ?? null, provenance: prov, disclosure: build.disclosure ?? null };
+  swatch({ weave: "engine:" + (build.units ?? []).join("+"), class: "new (engine-held)", engine: "eoreader7 /v1/ask → buildCodeTask", model: buildModel, mouthCalls, mouthBytes, corpusBytes: 0, huntBytes: 0, boxBytes, verdict: build.verified === true ? "pass (testCommand)" : String(build.verified ?? "unverified"), trace: traceCheck.ok ? "reconciled" : "FAILED", evidence: "GL-WV-07/08/09" });
+  return { ok: build.verified === true, engine: "eoreader7 /v1/ask → buildCodeTask", units: build.units ?? [], draws: mouthCalls, mouthCalls, boxUnits: build.boxUnits ?? [], boxBytes, mouthBytes, tokens: build.tokens ?? 0, verified: build.verified ?? null, verifyError: build.verifyError ?? null, out: absOut, code: build.code ?? null, provenance: prov, disclosure: build.disclosure ?? null, trace: traceRows, traceCheck };
 }
 
 export async function runWeave({ ask, testCommand, out, banked, model, html, sel, image, attachment }) {
@@ -181,6 +243,16 @@ export function seal(result) {
     result.standing ? `standing: ${result.standing}` : null,
     `falsifier: the swatch must equal this run's EOT provenance (mouth bytes vs measured/box bytes), never asserted`,
   ].filter(Boolean);
+  // THE RUN'S TRACE (GL-EN-17): the per-unit provenance sealed beside the
+  // holograph — the same events, no model call. A trace that failed
+  // reconciliation is named, never smoothed.
+  let traceFile = null;
+  if (Array.isArray(result.trace) && result.trace.length) {
+    traceFile = path.join(ROOT, "apps", "weaves", `${slug}.trace.jsonl`);
+    fs.writeFileSync(traceFile, result.trace.map((r) => JSON.stringify({ schema: "GenerationTrace@1", ts: new Date().toISOString(), run: slug, event: "unit", ...r })).join("\n") + "\n");
+    notes.push(`trace: ${result.trace.length} unit(s) → ${path.basename(traceFile)}${result.traceCheck ? ` (${result.traceCheck.ok ? "reconciled" : "RECONCILE FAILED: " + result.traceCheck.detail})` : ""}`);
+    for (const r of result.trace) notes.push(`  ${r.unit} ← ${r.source} (${r.bytes} B${r.shape ? `, ${r.shape}` : ""})`);
+  }
   const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const facing = `<!doctype html><meta charset="utf-8"><title>holograph ${slug}</title>
 <style>body{font:14px/1.5 ui-monospace,Menlo,monospace;max-width:760px;margin:0 auto;padding:24px;background:#faf7f0;color:#241d15}h1{font-size:17px}.src{border-left:3px solid #7a6a4f;padding:4px 10px;margin:6px 0;background:#f1eadb;color:#4a3f2a}.resp{white-space:pre-wrap;border:1px solid #c9bda0;border-radius:6px;padding:12px;background:#fff}.tag{color:#8a2f2f;font-weight:700}.note{color:#5b4a2f;margin:4px 0}</style>
@@ -190,7 +262,7 @@ export function seal(result) {
 <h2>NOTES</h2>${notes.map((n) => `<div class="note">· ${esc(n)}</div>`).join("")}`;
   const p = path.join(ROOT, "apps", "weaves", `${slug}-facing.html`);
   fs.writeFileSync(p, facing);
-  return { ...result, holograph: p, slug };
+  return { ...result, holograph: p, slug, traceFile };
 }
 
 // ── html:snip — reuse the markup that already exists, never regenerate it ──
@@ -214,22 +286,46 @@ export async function htmlSnipRun({ html, sel }) {
 // or the unmerged screenshot pipeline — disclosed, never faked (GL-IM-01/05).
 export async function imagePageRun({ image }) {
   if (!image) return { ok: false, error: "image:page needs an image path" };
-  const LOOK = "/Users/mlacy/Documents/3.0/eoreader7/native/organs/look.js";
+  const ER7 = path.resolve(HERE, "..", "..", "eoreader7");
+  // THE MEASURED SCREEN READ FIRST (GL-IM-01): eoreader7's screenshot pipeline
+  // (adapters/image/screen-read.js -> screen-sidecar.js) reads the pixels into a
+  // measured model — flat regions, rules, image regions, OCR text — with NO
+  // vision model (ffmpeg + tesseract), and htmlOf regenerates the page from that
+  // model. This is the structure the OCR-only path below cannot see. Falls back
+  // to OCR only when the image is not a screen (the gate's own number named).
+  let notScreen = null;
+  try {
+    const { lookAtScreen } = await import(pathToFileURL(path.join(ER7, "native/organs/look-screen.js")).href);
+    const { htmlOf } = await import(pathToFileURL(path.join(ER7, "native/adapters/image/screen-sidecar.js")).href);
+    const r = await lookAtScreen(image, { name: path.basename(image) });
+    if (r.screen) {
+      const page = htmlOf(r.sidecar, { mode: "flex", title: "measured page" });
+      swatch({ weave: "image:" + String(image).slice(-24), class: "image:page", engine: "box (screen-read.js -> htmlOf, no vision model)", mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: page.length, verdict: "pass", evidence: "GL-IM-01, GL-WV-13" });
+      return {
+        ok: true, class: "image:page", html: page, standing: r.standing, mouthCalls: 0, measured: true,
+        elements: r.sidecar.elements.length, tokens: { background: r.sidecar.tokens.background?.hex, accent: r.sidecar.tokens.accent?.hex },
+        gaps: (r.sidecar.gaps ?? []).map((g) => g.kind),
+      };
+    }
+    notScreen = r.reason + (r.gate ? ` (flatShare ${r.gate.flatShare} < floor ${r.gate.floor})` : "") + (r.detail ? `: ${String(r.detail).slice(0, 100)}` : "");
+  } catch (e) {
+    notScreen = `screen pipeline unavailable: ${String(e.message).slice(0, 100)}`;
+  }
+  // FALLBACK: not a measured screen — OCR text only, the reason named, never silent.
+  const LOOK = pathToFileURL(path.join(ER7, "native/organs/look.js")).href;
   let look = null;
   try { look = await import(LOOK); } catch (e) { return { ok: false, error: `look.js not loadable: ${String(e.message).slice(0, 120)}` }; }
   let text;
   try { text = look.ocrFullImage(image); } catch (e) { return { ok: false, error: `OCR failed (${String(e.message).slice(0, 120)})` }; }
   const paras = String(text ?? "").split(/\n{2,}/).map((p) => p.replace(/\s+/g, " ").trim()).filter(Boolean);
   const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const regionNote = process.env.VISUAL_DETECT_PYTHON
-    ? "measured structure (OpenCV regions available)"
-    : "OCR-measured text only — region structure needs VISUAL_DETECT_PYTHON or the unmerged screenshot pipeline (GL-IM-01)";
+  const regionNote = `not read as a screen (${notScreen ?? "unknown"}) — OCR-measured text only`;
   const page = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>measured page</title>
 <style>body{font:16px/1.55 system-ui,serif;max-width:720px;margin:0 auto;padding:24px} .note{font:12px monospace;color:#666;border-top:1px solid #ccc;margin-top:20px;padding-top:8px}</style>
 <main>${paras.length ? paras.map((p) => `<p>${esc(p)}</p>`).join("\n") : `<p>(no measurable text — unread is a gap, not a guess)</p>`}</main>
 <div class="note">measured from ${esc(image)} · ${esc(regionNote)} · one witness, not applied as fact (GL-IM-03)</div>`;
   swatch({ weave: "image:" + String(image).slice(-24), class: "image:page", engine: "box (look.js ocrFullImage, tesseract)", mouthCalls: 0, mouthBytes: 0, corpusBytes: text.length, huntBytes: 0, boxBytes: page.length, verdict: paras.length ? "pass" : "gap", evidence: "GL-WV-13, GL-IM-01" });
-  return { ok: true, class: "image:page", html: page, words: paras.length, chars: text.length, standing: regionNote, mouthCalls: 0 };
+  return { ok: true, class: "image:page", html: page, words: paras.length, chars: text.length, standing: regionNote, mouthCalls: 0, measured: false };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
