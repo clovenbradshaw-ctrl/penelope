@@ -153,6 +153,16 @@ export function sharpen(unit, atom, why) {
   return `${unit.spec} — answer from the subject's OWN record; name only referents the shadow's material established; never invent a name.`;
 }
 
+// ── THE REFINEMENT TRANSFORMS (organs/void-refine.mjs): when testUnits fails,
+// the passage is refined under the fold itself, in the cube's operator order.
+// Each is a held text operation; the real fold (testUnits) is the judge.
+export const refineTransforms = [
+  { name: "strip_meta", op: "SIG", deps: [], apply: (t) => String(t).split(/(?<=[.!?])\s+/).filter((s) => !/(this (passage|essay|section|piece)|explores|discusses|highlights)/i.test(s)).join(" ").trim() },
+  { name: "house", op: "INS", deps: ["SIG"], apply: (t) => String(t).replace(/\bthe (system|region|thing)\b/gi, "the fold") },
+  { name: "scope", op: "SEG", deps: ["SIG"], apply: (t) => String(t).split(/(?<=[.!?])\s+/).filter((s) => !/weather|mild|also/i.test(s)).join(" ").trim() },
+  { name: "ground", op: "CON", deps: ["SIG", "SEG"], apply: (t) => `${String(t).replace(/\.$/, "")} ⟦fold@0⟧.` },
+];
+
 export default {
   kind: "prose",
   ext: "html",
@@ -166,4 +176,5 @@ export default {
   testUnits,
   toDocument,
   sharpen,
+  refineTransforms,
 };
