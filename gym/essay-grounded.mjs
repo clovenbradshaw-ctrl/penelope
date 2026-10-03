@@ -94,14 +94,45 @@ console.log(`   kept: ${kept.length} (${kept.filter((k) => k.grounded).length} g
 for (const d of dropped.slice(0, 5)) console.log(`   ✗ dropped: ${d.sen.slice(0, 68)} (${d.why})`);
 const finalEssay = kept.map((k) => k.sen).join(" ");
 
-// ── 5. ARCHONS ──────────────────────────────────────────────────────────────
-const sentences = [thesis, ...kept.map((k) => k.sen)];
-const piece = [{ id: "essay", pieces: sentences.map((t) => ({ text: t, carries: [] })) }];
-const ctx = { piece, ground: facts.map((f) => f.text).join(" "), task: `an essay on ${subject}` };
-const apparatus = houdiniExclusivity(sentences.join(" "), ctx);
-const findings = [...(readPiece(ctx).findings ?? []), ...apparatus];
-const arrival = gebserArrival({ piece, findings });
-console.log(`\n5. ARCHONS — the nine editors judge the essay (ethos · logos · PATHOS)`);
+// ── 4b. REFINE TO ARRIVAL — clear the ethos objections, mechanically ────────
+// The archons name the exact defect: Caro flags a sentence with no word in the
+// material (drop it); Zinsser flags a word the material never uses that the
+// prose REPEATS (keep one occurrence, drop the rest). Re-judge until Gebser
+// arrives (origin present, nothing lost, no editor objecting) or no progress.
+function judgeText(text) {
+  const sents = text.split(/(?<=[.!?])\s+/).map((x) => x.trim()).filter(Boolean);
+  const pc = [{ id: "essay", pieces: sents.map((t) => ({ text: t, carries: [] })) }];
+  const c = { piece: pc, ground: facts.map((f) => f.text).join(" "), task: `an essay on ${subject}` };
+  const f = [...(readPiece(c).findings ?? []), ...houdiniExclusivity(text, c)];
+  return { sents, findings: f, arrival: gebserArrival({ piece: pc, findings: f }) };
+}
+console.log(`\n4b. REFINE TO ARRIVAL — clear the archon objections`);
+let essayText = finalEssay.replace(/\s*\[\d+\]/g, ""); // strip the mouth's citation markers
+for (let step = 0; step < 14; step += 1) {
+  const { sents, findings, arrival } = judgeText(essayText);
+  const objs = [...new Set(findings.map((f) => f.editor))];
+  console.log(`   pass ${step}: ${findings.length} finding(s) [${objs.join(", ")}] · Gebser arrived: ${arrival.arrived}`);
+  if (findings.length === 0 && arrival.arrived) break;
+  const drop = new Set();
+  // Caro: an ungrounded sentence; Clark: a restatement or splice (no job);
+  // Houdini: an apparatus leak — all DROP the sentence.
+  for (const f of findings) if (["unverified", "restatement", "splice", "apparatus_leak"].includes(f.kind) && f.sentence) drop.add(f.sentence);
+  // Zinsser: a word the material never uses, REPEATED — keep one, drop the rest.
+  const byWord = new Map();
+  for (const f of findings) if (f.kind === "tic" && f.sentence) for (const w of f.words ?? []) { if (!byWord.has(w)) byWord.set(w, []); byWord.get(w).push(f.sentence); }
+  for (const [, ss] of byWord) { const uniq = [...new Set(ss)].sort((a, b) => b.length - a.length); for (const s of uniq.slice(1)) drop.add(s); }
+  const next = sents.filter((s) => !drop.has(s));
+  if (next.length === sents.length || next.length < 3) break; // no progress / would gut the essay
+  essayText = next.join(" ");
+}
+const finalArrival = judgeText(essayText).arrival;
+const finalFindings = judgeText(essayText).findings;
+
+// ── 5. ARCHONS — the nine editors judge the REFINED essay ───────────────────
+const j = judgeText(essayText);
+const findings = j.findings, arrival = j.arrival;
+const apparatus = findings.filter((f) => f.kind === "apparatus_leak");
+console.log(`\n5. ARCHONS — the nine editors judge the refined essay (ethos · logos · PATHOS)`);
 const byEd = new Map(); for (const f of findings) byEd.set(f.editor, (byEd.get(f.editor) ?? 0) + 1);
 for (const appeal of ["ethos", "logos", "pathos"]) {
   console.log(`   ── ${appeal.toUpperCase()} ──`);
@@ -111,18 +142,19 @@ for (const appeal of ["ethos", "logos", "pathos"]) {
     console.log(`   ${c.cell.padEnd(12)} ${c.editor.padEnd(26)} ${hits ? "✗ " + hits + " finding(s)" : "clean"}`);
   }
 }
-console.log(`   Gebser arrival: ${arrival.arrived} — ${arrival.basis.slice(0, 90)}`);
+console.log(`   Gebser arrival: ${arrival.arrived} — ${arrival.basis.slice(0, 100)}`);
 console.log(`   Houdini apparatus leaks: ${apparatus.length}`);
 
 // ── SHIP ────────────────────────────────────────────────────────────────────
+const paras = essayText.split(/(?<=[.!?])\s+/).reduce((acc, sen, i) => { const p = Math.floor(i / 3); (acc[p] ??= []).push(sen); return acc; }, []).map((p) => `<p>${p.join(" ")}</p>`).join("\n");
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject} — a grounded essay</title>
-<style>body{font:18px/1.75 Georgia,serif;max-width:680px;margin:0 auto;padding:48px 28px;background:#fbf8f1;color:#231d13}h1{font-size:28px;font-style:italic;border-bottom:2px solid #231d13;padding-bottom:14px;margin-bottom:26px}p{margin:0 0 1.15em}sup{font:9px ui-monospace;color:#a08d60}footer{margin-top:40px;border-top:1px solid #c9bda0;padding-top:14px;font:12px ui-monospace;color:#6b5b3a}</style></head>
+<style>body{font:18px/1.75 Georgia,serif;max-width:680px;margin:0 auto;padding:48px 28px;background:#fbf8f1;color:#231d13}h1{font-size:28px;font-style:italic;border-bottom:2px solid #231d13;padding-bottom:14px;margin-bottom:26px}p{margin:0 0 1.15em}footer{margin-top:40px;border-top:1px solid #c9bda0;padding-top:14px;font:12px ui-monospace;color:#6b5b3a}</style></head>
 <body><h1>${subject}</h1>
-${finalEssay.split(/(?<=[.!?])\s+/).reduce((paras, sen, i) => { const p = Math.floor(i / 3); (paras[p] ??= []).push(sen); return paras; }, []).map((p) => `<p>${p.join(" ")}</p>`).join("\n")}
-<footer>a grounded essay — ${kept.filter((k) => k.grounded).length} claims traced to a real source, ${kept.filter((k) => !k.grounded).length} sentences of the author's voice, ${dropped.length} ungrounded factual claim(s) dropped. Archons: ${findings.length} finding(s); Gebser arrival: ${arrival.arrived}.</footer></body></html>`;
+${paras}
+<footer>a grounded essay — the mouth's voice over ${facts.length} grounded facts; ethos/logos/pathos archons: ${findings.length} finding(s); Gebser arrival: ${arrival.arrived}.</footer></body></html>`;
 fs.mkdirSync(OUT, { recursive: true });
-const slug = `${subject}-grounded-${Date.now()}`;
+const slug = `${subject}-arrived-${Date.now()}`;
 fs.writeFileSync(path.join(OUT, `${slug}.html`), html);
 console.log(`\n════════ THE GROUNDED ESSAY ════════\n`);
-console.log(finalEssay);
+console.log(essayText);
 console.log(`\n→ ${OUT}/${slug}.html`);
