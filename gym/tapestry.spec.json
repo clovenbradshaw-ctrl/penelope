@@ -121,7 +121,8 @@
    "typing": "§",
    "refs": [
     "o/generation/engine.mjs",
-    "GL-EN-07"
+    "GL-EN-07",
+    "GL-CD-11"
    ]
   },
   {
@@ -444,7 +445,8 @@
    "typing": "‡",
    "refs": [
     "o/generation/adapters/prose.mjs",
-    "GL-EN-11"
+    "GL-EN-11",
+    "GL-EN-13"
    ]
   },
   {

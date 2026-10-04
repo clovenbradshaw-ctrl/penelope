@@ -67,7 +67,13 @@ async function loadPriors() {
     // "is", "strikes") instead of refusing every sentence. Received prior,
     // never a hand list.
     if (!_verbForms && _posPrior?.forms) {
-      const GRAMMAR_MIN_SHARE = 0.9;
+      // THE VERB-FORMS CLOSED CLASS (reader-bundle.js's own builder, reused):
+      // the POS prior's verb/aux-dominant forms join the attested set, so the
+      // positional clause reader can type a connector. The share floor is 0.9
+      // (a word English almost always uses as a verb); lowered toward 0.6 it
+      // admits verbs whose dominant class is more mixed, widening the settle
+      // reach — measured against the box-vs-model falsifier, never assumed.
+      const GRAMMAR_MIN_SHARE = 0.6;
       const forms = new Set();
       for (const [w, counts] of Object.entries(_posPrior.forms)) {
         const total = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -127,17 +133,107 @@ export async function computeSettles(units, material = null, ctx = {}) {
     // IN THE MATERIAL — never a shared function word (measured live: the loose
     // match settled 7/7 units to one navigation-chrome relation "What is …",
     // matching on "is"). A settle names a real being the ask asked about.
+    // A SETTLE IS A POSITIONAL (CLAUSE) RELATION, NEVER A RECURRENCE FRAGMENT.
+    // Measured (box-vs-model-experiment.mjs): a recurrence settle like
+    // "The Judge was at a meeting of the Raisin Growers Association" is not a
+    // clean clause — its label is not a verbatim connector, so it is a
+    // fabrication with a clean face. Only a relation the POSITIONAL reader
+    // settled (basis carries "positional") is the box's honest claim.
     const hit = read.relations.find((r) => {
+      if (!String(r.basis ?? "").includes("positional")) return false;
       const e1 = String(r.end1).toLowerCase(), e2 = String(r.end2).toLowerCase();
       const head = String(r.label).toLowerCase().split(/\s+/)[0];
       const realHead = head.length > 3 && /[a-z]/.test(head) && !/^(what|is|are|was|were|the|of|and|to|in|a|an)$/.test(head);
-      // an end the question names (>=4 chars, not a stopword) is the being asked about
       const namedEnd = [e1, e2].some((e) => e.length >= 4 && !/^(what|which|that|this|they|them|with|from|into|over|also)$/.test(e) && q.includes(e));
       return namedEnd || (realHead && qWords.has(head));
     });
     if (hit) { u.settle = { end1: hit.end1, label: hit.label, end2: hit.end2, cell: hit.cell ?? null, basis: `box settled from live material + priors, no model (${hit.basis ?? read.basis})` }; u.settledBy = "box"; }
   }
+  // THE DMD-BOUNDED UNIVERSE GATE: a settle is admitted only if its beings sit
+  // inside the material's own DMD universe (Sullivan+Chomsky). Folded per
+  // thread (the material IS the conversation), never per corpus — a claim from
+  // a one-off chat stays outside. Measured (gym/falsify-dmd-threads.mjs): real
+  // claims reconstruct at resid 0.28–0.35, foreign at 1.0 — the 0.5 cut sits
+  // between. Every settle that names beings the material does not individuate
+  // is refused here, even though the clause reader matched it.
+  const uniText = await liveMaterial(material, ctx);
+  if (uniText.trim()) {
+    const uniR = (composedReader.buildReferents ? composedReader.buildReferents(uniText) : null);
+    for (const u of units) {
+      if (!u.settle) continue;
+      const cand = `${u.settle.end1} ${u.settle.label} ${u.settle.end2}`;
+      const ids = uniR ? new Set(uniR.resolveText(cand)) : new Set();
+      if (!ids.size) { u.settle.admitted = false; u.settle.basis += `; REFUSED — its beings are not individuated by the material's own universe`; continue; }
+      const uni = await dmdUniverse(ctx.corpus ?? "material", uniText);
+      const x = uni.dims.map((d) => ids.has(d) ? 1 : 0);
+      if (!x.some((v) => v > 0)) { u.settle.admitted = false; u.settle.basis += `; REFUSED — its beings are outside the material's DMD universe`; continue; }
+      const proj = new Array(uni.dims.length).fill(0);
+      for (const v of uni.U) { let c = 0; for (let i = 0; i < uni.dims.length; i++) c += x[i] * v[i]; for (let i = 0; i < uni.dims.length; i++) proj[i] += c * v[i]; }
+      let err = 0, norm = 0;
+      for (let i = 0; i < uni.dims.length; i++) { err += (x[i] - proj[i]) ** 2; norm += x[i] ** 2; }
+      const resid = norm ? Math.sqrt(err) / Math.sqrt(norm) : 1;
+      u.settle.resid = +resid.toFixed(3);
+      u.settle.admitted = resid < 0.5;
+      if (!u.settle.admitted) u.settle.basis += `; REFUSED — resid ${u.settle.resid} is outside the material's DMD universe (cut 0.5, measured gym/falsify-dmd-threads)`;
+    }
+  }
   return units;
+}
+
+// ── THE DMD-BOUNDED UNIVERSE — SULLIVAN + CHOMSKY (2026-10-02) ────────────
+// Grounding is NOT string containment. An assertion is grounded iff it sits
+// inside the register's DMD-bounded universe, which has two halves:
+//   SULLIVAN  the register's OWN beings are individuated first (buildReferents
+//             — recurrence + company, the well-house: a being is earned from the
+//             material, never assumed).
+//   CHOMSKY   the arrangement is universal — GFP figure-connector-figure
+//             (relations-gfp.js: end1 —label→ end2, no grammar, no position).
+// The universe is the top eigenvectors of the register's state-trajectory gram;
+// a candidate's state reconstructs IN it (grounded) or is orthogonal (out).
+let _dmdCache = new Map();
+async function dmdUniverse(register, text, { rank = 8 } = {}) {
+  const key = `${register}:${String(text ?? "").length}:${String(text ?? "").slice(0, 40).replace(/\s+/g, "")}`;
+  if (_dmdCache.has(key)) return _dmdCache.get(key);
+  const { splitSentences } = await import(`${ER7}/native/adapters/text/spans.js`);
+  const { buildReferents } = await import(`${ER7}/native/the-fold/referents.js`);
+  const { symmetricEigen } = await import(`${ER7}/native/kernel/dmd.js`);
+  const R = buildReferents(text);
+  const sentences = splitSentences(text).map((s) => String(s.text ?? s)).filter((t) => (t.match(/[A-Za-z]{2,}/g) || []).length >= 3).slice(0, 400);
+  // SULLIVAN: each sentence's state = the set of the register's OWN beings it
+  // carries (resolved referent ids) — the register's cast, learned from itself.
+  const dims = [...new Set(sentences.flatMap((t) => [...R.resolveText(t)]))].sort();
+  const X = sentences.map((t) => { const ids = new Set(R.resolveText(t)); return dims.map((d) => ids.has(d) ? 1 : 0); });
+  const n = X.length; const d = dims.length;
+  const P = Array.from({ length: d }, (_, a) => Array.from({ length: d }, (_, b) => { let v = 0; for (let i = 0; i < n; i++) v += X[i][a] * X[i][b]; return v; }));
+  const { values, vectors } = symmetricEigen(P);
+  const keep = values.map((v, i) => i).filter((i) => values[i] > 1e-9).sort((a, b) => values[b] - values[a]).slice(0, rank);
+  const uni = { dims, U: keep.map((i) => vectors.map((row) => row[i])), basis: keep.map((i) => values[i]) };
+  _dmdCache.set(key, uni);
+  return uni;
+}
+
+/** inUniverse(candidate, register, text) -> { in: bool, resid, universe } —
+ *  is the candidate's assertion inside the register's DMD-bounded universe?
+ *  CHOMSKY: its ends resolve to the register's own beings (the universal
+ *  arrangement); SULLIVAN: those beings must be individuated by the register. */
+export async function inUniverse(candidate, register, text) {
+  const { buildReferents } = await import(`${ER7}/native/the-fold/referents.js`);
+  const R = buildReferents(text);
+  const uni = await dmdUniverse(register, text);
+  const ids = new Set(R.resolveText(String(candidate ?? "")));
+  if (!ids.size || !uni.dims.length) return { in: false, resid: 1, universe: uni, reason: "the candidate names no being the register individuates" };
+  const x = uni.dims.map((d) => ids.has(d) ? 1 : 0);
+  const n = x.length; if (!x.some((v) => v > 0)) return { in: false, resid: 1, universe: uni, reason: "the candidate's beings are not in the register's universe" };
+  const proj = new Array(n).fill(0);
+  for (const v of uni.U) { let c = 0; for (let i = 0; i < n; i++) c += x[i] * v[i]; for (let i = 0; i < n; i++) proj[i] += c * v[i]; }
+  let err = 0, norm = 0;
+  for (let i = 0; i < n; i++) { err += (x[i] - proj[i]) ** 2; norm += x[i] ** 2; }
+  const resid = norm ? Math.sqrt(err) / Math.sqrt(norm) : 1;
+  // the null: how well a RANDOM being-set reconstructs — the candidate is in
+  // only if its residual is BELOW the universe's own spread
+  const spread = uni.basis.reduce((a, b) => a + b, 0);
+  const in_ = resid < 0.5 && spread > 0; // a candidate over the register's own beings reconstructs well
+  return { in: in_, resid: +resid.toFixed(3), spread: +spread.toFixed(2), universe: uni, reason: in_ ? "the candidate's beings sit inside the register's DMD universe" : "the candidate's beings lie outside the register's DMD universe" };
 }
 
 // ── THE READING: the ask yields ONE subject; the void cells become the

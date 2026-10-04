@@ -197,7 +197,7 @@ append-only, always revisable).
 ║■SNP 1 |◆ § snip                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-09 GL-RT-02                     ║
 ║■PRB 1 ⊨◆ § probe                                                           ║
-║     @ o/generation/engine.mjs GL-EN-07                                     ║
+║     @ o/generation/engine.mjs GL-EN-07 GL-CD-11                            ║
 ║■SPR 0 ↬◆ § spiral                                                          ║
 ║     @ o/generation/engine.mjs GL-EN-06 GL-EN-12                            ║
 ║■GAP 1 ∅◆ § gap                                                             ║
@@ -245,7 +245,7 @@ append-only, always revisable).
 ║■ADC 1 ●◈ ‡ code                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
 ║■ADP 1 ●◈ ‡ prose                                                           ║
-║     @ o/generation/adapters/prose.mjs GL-EN-11                             ║
+║     @ o/generation/adapters/prose.mjs GL-EN-11 GL-EN-13                    ║
 ║■LAW 4 =◈ ‡ law                                                             ║
 ║     @ README.md GL-00 GL-01 GL-EN-02                                       ║
 ║■GLA 4 =◈ § owl                                                             ║
