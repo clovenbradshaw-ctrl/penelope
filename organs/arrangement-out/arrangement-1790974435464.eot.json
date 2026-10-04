@@ -1,0 +1,277 @@
+{
+  "schema": "ArrangementEOT@2",
+  "kind": "diagnostic",
+  "giver": "heimdall",
+  "standing": "disclosed",
+  "prompt": "model-free diagnostic",
+  "model": null,
+  "noModel": true,
+  "law": "mouth-last, hunt-first, multiple-framings, falsify-or-die",
+  "field": {
+    "read": "one draw named the units and each unit's own spec from the prompt"
+  },
+  "provenance": {
+    "schema": "Provenance@2",
+    "artifact": "diagnostic",
+    "position": null,
+    "addressSpace": {
+      "artifact": "folded-bytes",
+      "unit": "byte",
+      "encoding": "utf8"
+    },
+    "sources": [
+      {
+        "source_id": "src_80b06085f9f648855045",
+        "kind": "intent",
+        "locator": {
+          "task": "model-free diagnostic",
+          "artifact": "diagnostic"
+        }
+      },
+      {
+        "source_id": "src_4561b555fa29e7ecd2a2",
+        "kind": "prior",
+        "locator": {
+          "adapter": "diagnostic",
+          "constraints": {},
+          "verification": {}
+        }
+      },
+      {
+        "source_id": "src_f6941b53754f4af29516",
+        "kind": "unit",
+        "locator": {
+          "artifact": "diagnostic",
+          "name": "field",
+          "spec": "a grounded fact"
+        }
+      },
+      {
+        "source_id": "src_801672e487285127dae0",
+        "kind": "corpus",
+        "locator": "fixture:field",
+        "anchor": "fixture:field"
+      },
+      {
+        "source_id": "src_749e25dd2802897810e3",
+        "kind": "unit",
+        "locator": {
+          "artifact": "diagnostic",
+          "name": "mouth",
+          "spec": "a missing fact"
+        }
+      },
+      {
+        "source_id": "src_d47b83ada6f93a5ee195",
+        "kind": "verification",
+        "locator": {
+          "adapter": "diagnostic",
+          "verdict": "fixture"
+        }
+      }
+    ],
+    "events": [
+      {
+        "event_id": "evt_657ca2ee5abb6275b5f5",
+        "stage": "intent",
+        "position": null,
+        "source_id": "src_80b06085f9f648855045",
+        "transform": "request→task"
+      },
+      {
+        "event_id": "evt_462525fbe8c1d0ab67b5",
+        "stage": "prior",
+        "position": null,
+        "source_id": "src_4561b555fa29e7ecd2a2",
+        "parent": "src_80b06085f9f648855045",
+        "transform": "constraints+verification→generation-prior"
+      },
+      {
+        "event_id": "evt_22438da43c59a3e71a80",
+        "stage": "read",
+        "position": null,
+        "source_id": "src_80b06085f9f648855045",
+        "parent": "src_4561b555fa29e7ecd2a2",
+        "transform": "task→units",
+        "detail": {
+          "units": [
+            {
+              "name": "field",
+              "spec": "a grounded fact"
+            },
+            {
+              "name": "mouth",
+              "spec": "a missing fact"
+            }
+          ]
+        }
+      },
+      {
+        "event_id": "evt_4132af2e605d1bba04e9",
+        "stage": "arrange",
+        "position": null,
+        "source_id": "src_f6941b53754f4af29516",
+        "unit": "field",
+        "transform": "unit-spec"
+      },
+      {
+        "event_id": "evt_e2b657fb2d14c07e9807",
+        "stage": "ground",
+        "position": null,
+        "source_id": "src_801672e487285127dae0",
+        "parent": "src_f6941b53754f4af29516",
+        "unit": "field",
+        "range": {
+          "unit": "byte",
+          "start": 0,
+          "end": 32
+        },
+        "transform": "autofill-frame"
+      },
+      {
+        "event_id": "evt_364e158bf51b0d9e2c8b",
+        "stage": "arrange",
+        "position": null,
+        "source_id": "src_749e25dd2802897810e3",
+        "unit": "mouth",
+        "transform": "unit-spec"
+      },
+      {
+        "event_id": "evt_c56183b42c3c08a8868c",
+        "stage": "model-required",
+        "position": null,
+        "source_id": "src_749e25dd2802897810e3",
+        "parent": "src_749e25dd2802897810e3",
+        "unit": "mouth",
+        "transform": "field+hunt-unsatisfied→mouth-stage",
+        "detail": {
+          "reason": "noModel:true — the unit reached the mouth stage and was left unresolved"
+        }
+      },
+      {
+        "event_id": "evt_acb3fbf5202d00fd82a1",
+        "stage": "fold",
+        "position": null,
+        "transform": "contributions→artifact",
+        "detail": {
+          "bytes": 33,
+          "units": 2
+        }
+      },
+      {
+        "event_id": "evt_4c6207eb333c65fd8417",
+        "stage": "verify",
+        "position": null,
+        "source_id": "src_d47b83ada6f93a5ee195",
+        "transform": "artifact→verification",
+        "detail": {
+          "ok": true,
+          "reason": "fixture",
+          "folded": {
+            "beats": [],
+            "refused": [],
+            "residual": []
+          }
+        }
+      },
+      {
+        "event_id": "evt_abdc19ec53f05c0dd63a",
+        "stage": "materialize",
+        "position": null,
+        "source_id": "src_80b06085f9f648855045",
+        "transform": "artifact→document",
+        "detail": {
+          "htmlBytes": 33,
+          "artifactBytes": 33
+        }
+      }
+    ]
+  },
+  "corpus": {
+    "note": "a unit the field already holds (by FRAME, never by name) is snipped from its bytes with an address; the mouth writes only the irreducible residue",
+    "snipped": [
+      {
+        "unit": "field",
+        "address": "fixture:field",
+        "source_id": "src_801672e487285127dae0"
+      }
+    ],
+    "hunted": [],
+    "drawn": [],
+    "sourceTable": [
+      {
+        "source_id": "src_80b06085f9f648855045",
+        "kind": "intent",
+        "locator": {
+          "task": "model-free diagnostic",
+          "artifact": "diagnostic"
+        }
+      },
+      {
+        "source_id": "src_4561b555fa29e7ecd2a2",
+        "kind": "prior",
+        "locator": {
+          "adapter": "diagnostic",
+          "constraints": {},
+          "verification": {}
+        }
+      },
+      {
+        "source_id": "src_f6941b53754f4af29516",
+        "kind": "unit",
+        "locator": {
+          "artifact": "diagnostic",
+          "name": "field",
+          "spec": "a grounded fact"
+        }
+      },
+      {
+        "source_id": "src_801672e487285127dae0",
+        "kind": "corpus",
+        "locator": "fixture:field",
+        "anchor": "fixture:field"
+      },
+      {
+        "source_id": "src_749e25dd2802897810e3",
+        "kind": "unit",
+        "locator": {
+          "artifact": "diagnostic",
+          "name": "mouth",
+          "spec": "a missing fact"
+        }
+      },
+      {
+        "source_id": "src_d47b83ada6f93a5ee195",
+        "kind": "verification",
+        "locator": {
+          "adapter": "diagnostic",
+          "verdict": "fixture"
+        }
+      }
+    ]
+  },
+  "swarm": {
+    "verdict": {
+      "ok": true,
+      "reason": "fixture",
+      "folded": {
+        "beats": [],
+        "refused": [],
+        "residual": []
+      }
+    },
+    "scars": [
+      {
+        "unit": "mouth",
+        "attempt": 0,
+        "why": "model-required (noModel:true)",
+        "atom": "a missing fact",
+        "stage": "mouth"
+      }
+    ]
+  },
+  "product": {
+    "widget": "/tmp/claude-0/wt-pen2/organs/arrangement-out/arrangement-1790974435464.html",
+    "folded": "arrangement-1790974435464.folded.txt"
+  }
+}
