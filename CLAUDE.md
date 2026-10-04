@@ -18,6 +18,14 @@ spine (read → settle → fill → snip → probe → test → seal).
    control, fix a citation). Every entry needs a real `path:line` or measured
    run as evidence, and a falsifying control.
 3. A run that trips an entry's falsifying control IS the finding: supersede it.
+4. **The house round (the handmaidens)** — `node gym/handmaidens.mjs` must be
+   run after a process change, and each member's finding addressed before
+   commit: Eurycleia (every generation thread named), Autonoe (every draw
+   recorded on the swatch), Iphthime (every claim grounded — no uncited law,
+   no ghost thread), Telemachus (every draw inside the sanctioned door). A
+   member that reports a suitor means the change is not finished — the suitors
+   are forgetfulness of duties and hallucinations that creep in. The round
+   failing is the honest state; the suitors it names are the work left undone.
 
 ## Concurrent writers
 

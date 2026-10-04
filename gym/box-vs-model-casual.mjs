@@ -35,8 +35,8 @@ const THREADS = [
 const UNITS_PER_THREAD = 3;
 
 async function mouth(text, material) {
-  const res = await fetch("http://localhost:11435/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model: MOUTH, stream: false, options: { temperature: 0 }, messages: [{ role: "user", content: `Below are sentences copied from one conversation.\n\n${material.slice(0, 3000)}\n\nAnswer in one sentence: ${text}` }] }) });
-  return String((await res.json()).message?.content ?? "").trim();
+  const { doorDraw } = await import("./box-draw.mjs");
+  return await doorDraw(`Below are sentences copied from one conversation.\n\n${material.slice(0, 3000)}\n\nAnswer in one sentence: ${text}`, { model: MOUTH });
 }
 
 /** units: the material's own beings, asked as facts — what does the thread say about X? */

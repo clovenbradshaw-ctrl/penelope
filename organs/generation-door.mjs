@@ -42,6 +42,10 @@ const swatch = (row) => {
     console.error(`[generation-door] swatch append failed: ${e.message}`);
   }
 };
+/** The swatch writer, exported so every draw path in the house uses ONE
+ *  record — the door's own, never a second copy that drifts (Autonoe's
+ *  duty: every draw recorded, by the same hand). */
+export { swatch, SWATCH };
 
 // THE STANCE SHAPE (the box's first cell). A draw with `shape: "stance"` is a
 // mechanical read, not a model draw: readStance(candidate, holon) at a level.
@@ -98,6 +102,39 @@ export async function runDrawDoor({ prompt, model = "gemma2:2b", kind = null, ma
   }
   let last = null;
   let j = null;
+  // THE VOICE, WHEN THE ARCHONS HOLD THE THREAD (2026-10-04): penelope's job
+  // is keeping ALL the threads together for generation. A `chat` draw that the
+  // box cannot settle is the mouth's — but before the bare draw, the voice
+  // layer checks the archons in: the steersman reads the shadow (pathos —
+  // whose stake the turn carries), speakEnvelope frames the draw with the
+  // routed archons' jurisdictions (the POV in the frame, never in the quotes),
+  // and the two gates — rejectfab (a quotation not in the material) and the
+  // veil (no name reaches the model or the response) — bound the draw. Logos
+  // is untouched. When the archons are unavailable (no cast/shadow on disk),
+  // the door draws the residue exactly as before — the record discloses which.
+  if (k === "chat") {
+    try {
+      const { steer } = await import("./steersman.mjs");
+      const { speakEnvelope, loadCast } = await import("./voice.mjs");
+      const env = steer({ turn: ask });
+      if (env?.activation?.length && !env.aporia) {
+        const voice = await speakEnvelope(env, loadCast(), { turn: ask });
+        if (voice?.text) {
+          const vText = String(voice.text).trim();
+          swatch({ weave: `voice:${voice.record?.mode ?? "chat"}`, class: "voice", engine: "steersman→voice (pathos archons)", model: voice.record?.model ?? m, mouthCalls: 1, mouthBytes: vText.length, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: "voice", routed: (voice.record?.routed ?? []).map((r) => r.handle).join("+"), evidence: "2026-10-04 voice thread, GL-WV-15" });
+          return { ok: true, text: vText, winner: "voice", model: voice.record?.model ?? m, kind: k, ms: Date.now() - t0, box, voice: { mode: voice.record?.mode, routed: voice.record?.routed, disclosure: voice.record?.disclosure } };
+        }
+        if (voice?.refused || voice?.record?.mode === "weak-pointer") {
+          swatch({ weave: `voice:${voice.record?.mode ?? "refused"}`, class: "voice", engine: "steersman→voice", model: null, mouthCalls: 0, mouthBytes: 0, corpusBytes: 0, huntBytes: 0, boxBytes: 0, verdict: voice.record?.mode ?? "refused", error: voice.refused ?? null, evidence: "2026-10-04 voice thread" });
+          if (voice.record?.mode === "aporia" || voice.record?.mode === "weak-pointer") {
+            return { ok: true, text: voice.text, winner: "voice", model: null, kind: k, ms: Date.now() - t0, box, voice: voice.record };
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`[generation-door] voice unavailable, drawing residue: ${e.message}`);
+    }
+  }
   for (let a = 0; a < MAX_DEFER; a += 1) {
     const r = await fetch(`${MOUTH}/api/generate`, {
       method: "POST",

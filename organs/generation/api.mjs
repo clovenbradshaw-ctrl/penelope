@@ -121,13 +121,14 @@ export async function weave({
     },
   });
 
-  const verified = result.verdict?.ok === true;
+  const verified = result.verdict?.ok === true && result.void?.kind !== "reading-void";
   return {
     schema: "Weaving@1",
     ok: verified,
-    status: verified ? "verified" : "unverified",
+    status: verified ? "verified" : result.void?.kind === "hunt-defined" ? "void-resolved" : result.void ? "void" : "unverified",
     intent: task,
     artifact: normalizeArtifact(result, kind ?? adapter.kind),
+    void: result.void ?? null,
     materialization: {
       widget: result.eot?.product?.widget ?? null,
       folded: result.eot?.product?.folded ?? null,

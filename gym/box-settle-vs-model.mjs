@@ -54,10 +54,9 @@ const residueUnit = settled.find((u) => !u.settle);
 if (residueUnit) {
   const msg = `Below are sentences copied from one text.\n\n${material}\n\nAnswer in one sentence: ${residueUnit.spec}`;
   try {
-    const res = await fetch("http://localhost:11435/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model: MOUTH, stream: false, options: { temperature: 0 }, messages: [{ role: "user", content: msg }] }) });
-    const j = await res.json();
-    const out = String(j.message?.content ?? "").trim();
-    console.log(`\n  MODEL draw for ${residueUnit.name} (${JSON.stringify(residueUnit.spec)}):\n    ${out.slice(0, 200)}`);
+    const { doorDraw } = await import("./box-draw.mjs");
+    const out = await doorDraw(msg, { model: MOUTH });
+    console.log(`\n  MODEL draw for ${residueUnit.name} (${JSON.stringify(residueUnit.spec)}):\n    ${String(out ?? "").slice(0, 200)}`);
   } catch (e) { console.log(`\n  MODEL draw skipped (no local mouth): ${String(e.message).slice(0, 60)}`); }
 }
 

@@ -51,9 +51,9 @@ const r = settled.find((u) => !u.settle);
 if (r) {
   const text = [...ctx.shadow.values()].join(" ").slice(0, 3000);
   try {
-    const res = await fetch("http://localhost:11435/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model: MOUTH, stream: false, options: { temperature: 0 }, messages: [{ role: "user", content: `Below are sentences copied from one text.\n\n${text}\n\nAnswer in one sentence: ${r.spec}` }] }) });
-    const out = String((await res.json()).message?.content ?? "").trim();
-    console.log(`\n  MODEL draw for ${r.name}: ${out.slice(0, 200)}`);
+    const { doorDraw } = await import("./box-draw.mjs");
+    const out = await doorDraw(`Below are sentences copied from one text.\n\n${text}\n\nAnswer in one sentence: ${r.spec}`, { model: MOUTH });
+    console.log(`\n  MODEL draw for ${r.name}: ${String(out ?? "").slice(0, 200)}`);
   } catch (e) { console.log(`\n  MODEL draw skipped: ${String(e.message).slice(0, 60)}`); }
 }
 console.log(`\nVERDICT: on live-hunted text — box settles ${box}, model draws ${residue}, box fabrications ${fab}. The honest settle rate is ${box}/${units.length}.`);

@@ -230,7 +230,12 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
 
   console.log(`
 === THE SPIRAL — field first, hunt second, mouth last ===`);
-  const { code, scars, outcomes, provenance } = await fillUnits(units, adapter, context);
+  const { code: drawnCode, scars, outcomes, provenance } = await fillUnits(units, adapter, context);
+  // THE ASSEMBLY (GL-CD-11): the adapter turns the joined bare declarations
+  // into the artifact the caller actually gets. For code this emits the export
+  // surface (`export { a, b, c }`) so a strict importer can use the module; the
+  // probe/tests then judge the ASSEMBLED artifact, never the loose join.
+  const code = adapter.assemble ? adapter.assemble(drawnCode, units, context) : drawnCode;
   const verdict = adapter.testUnits(code, units, context);
   // THE REFINEMENT (the universal step, GL-CD-08): a failing test is refined
   // under the judge itself, in the cube's operator order — the adapter's own
@@ -264,11 +269,11 @@ export async function arrange({ task, args = {}, adapter, context = {} }) {
   console.log(`
 === THE PRODUCT ===`);
   const title = task.split(/[.,]/)[0].slice(0, 48);
-  const html = adapter.toDocument({ code, units: units.map((u) => u.name), title }, context);
-  ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(code) } });
+  const html = adapter.toDocument({ code: finalCode, units: units.map((u) => u.name), title }, context);
+  ledger.event({ stage: "materialize", source_id: taskSource, transform: "artifact→document", detail: { htmlBytes: Buffer.byteLength(html), artifactBytes: Buffer.byteLength(finalCode) } });
   const slug = `arrangement-${Date.now()}`;
   fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
-  fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), code);
+  fs.writeFileSync(path.join(outDir, `${slug}.folded.${adapter.ext ?? "js"}`), finalCode);
   // The snapshot returned by fillUnits predates the verification source; re-take it
   // now so every source an event names is in the table (no dangling verify.source_id).
   const finalProvenance = ledger.eot();
