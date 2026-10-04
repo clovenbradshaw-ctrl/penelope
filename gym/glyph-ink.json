@@ -1,7 +1,7 @@
 {
   "schema": "GlyphInk@1",
   "measured": "2026-10-01",
-  "instrument": "canvas rasterization at 8x supersample of each printable ASCII glyph, in the computed font of the live GitHub README code block (https://github.com/clovenbradshaw-ctrl/penelope, built-in browser pane); coverage = mean darkness over one character cell (cell width = measured advance of 'M', cell height = computed line height)",
+  "instrument": "canvas rasterization at 8x supersample of each printable ASCII glyph, in the computed font of the live GitHub README code block (https://github.com/scores-patch-points/penelope, built-in browser pane); coverage = mean darkness over one character cell (cell width = measured advance of 'M', cell height = computed line height)",
   "font": {
     "sizePx": 13.6,
     "lineHeightPx": 19.72,
