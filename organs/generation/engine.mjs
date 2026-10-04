@@ -81,8 +81,8 @@ export async function draw(prompt, { maxTokens = 240, retries = 4, model = null,
 }
 
 let tmpCounter = 0;
-export function writeTmp(code) {
-  const p = path.join(os.tmpdir(), `arrangement-${process.pid}-${tmpCounter++}.js`);
+export function writeTmp(code, ext = "js") {
+  const p = path.join(os.tmpdir(), `arrangement-${process.pid}-${tmpCounter++}.${ext}`);
   fs.writeFileSync(p, code);
   return p;
 }
@@ -159,12 +159,19 @@ async function fillUnits(units, adapter, ctx = {}) {
       });
       const fn = adapter.snip(out, u.name);
       const alone = fn && !String(fn).includes("this.") ? adapter.probeUnit(fn, u, ctx) : { ok: false, detail: !fn ? "no function drawn" : "used `this`" };
-      if (fn && alone.ok) {
-        addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1 }, transform: "draw→snip" });
-        outcomes.push({ unit: u.name, stage: "mouth", source_id: source, bytes: Buffer.byteLength(String(fn)), text: String(fn) });
+      // THE DMD-UNIVERSE GATE ON THE MOUTH (GL-EN-13): a draw that passes the
+      // probe is still admitted only if its beings sit inside the thread's DMD
+      // universe. The box refuses what it cannot settle; the mouth may not
+      // invent a universe the material never individuated. Only when gateUnit
+      // exists (prose) is the thread's universe consulted; other adapters keep
+      // their own discipline.
+      const gated = alone.ok && adapter.gateUnit ? await adapter.gateUnit(fn, u, ctx) : { ok: true };
+      if (fn && alone.ok && gated.ok) {
+        addContribution({ unit: u, stage: "draw", code: fn, source_id: source, parent: unitSource, detail: { attempt: attempt + 1, transform: "draw→snip", resid: gated.resid ?? null, gate: gated.detail ?? null } });
+        outcomes.push({ unit: u.name, stage: "mouth", source_id: source, bytes: Buffer.byteLength(String(fn)), text: String(fn), resid: gated.resid ?? null });
         break;
       }
-      const why = alone.detail;
+      const why = (alone.ok && !gated.ok ? gated.detail : alone.detail) ?? "gated";
       const nextAtom = adapter.sharpen ? adapter.sharpen(u, atom, why, ctx) : atom;
       ledger.event({ stage: "repair", source_id: source, parent: unitSource, unit: u.name, transform: "failed-draw→sharpened-prior", detail: { attempt: attempt + 1, why, from: atom, to: nextAtom } });
       scars.push({ unit: u.name, attempt: attempt + 1, why, atom: nextAtom });

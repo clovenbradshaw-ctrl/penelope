@@ -314,6 +314,35 @@ export function probeUnit(code, u) {
   return { ok: true, detail: `cell's question touched (coverage ${Math.round(coverage * 100)}%)` };
 }
 
+// ── THE DMD-UNIVERSE GATE ON THE MOUTH (GL-EN-13, extended to the residue):
+// the box's settles are admitted only inside the thread's universe; so must the
+// mouth's DRAWN assertion be. The law is per-thread: a draw whose beings the
+// material does not individuate, or whose residual sits outside the thread's
+// modes, is REFUSED — the mouth may not invent a universe the material never
+// earned. Async (the universe is the eigendecomposition); the engine awaits it
+// after probeUnit passes, before the draw is admitted. ──
+export async function gateUnit(code, u, ctx = {}) {
+  const material = await liveMaterial(null, ctx);
+  if (!material.trim()) return { ok: true, detail: "no material to ground against — the draw stands only by its own claim" };
+  const R = composedReader.buildReferents ? composedReader.buildReferents(material) : null;
+  if (!R) return { ok: true, detail: "no referent index — the draw stands" };
+  // the drawn assertion's OWN beings, folded back through the material's
+  // individuation — never by string containment
+  const uni = await dmdUniverse(ctx.corpus ?? "material", material);
+  if (!uni.dims.length) return { ok: true, detail: "the thread has no universe to bound the draw" };
+  const ids = new Set(R.resolveText(String(code ?? "")));
+  if (!ids.size) return { ok: false, detail: "REFUSED — the draw names no being the material individuates (GL-EN-13)" };
+  const x = uni.dims.map((d) => ids.has(d) ? 1 : 0);
+  if (!x.some((v) => v > 0)) return { ok: false, detail: "REFUSED — the draw's beings lie outside the thread's DMD universe (GL-EN-13)" };
+  const proj = new Array(uni.dims.length).fill(0);
+  for (const v of uni.U) { let c = 0; for (let i = 0; i < uni.dims.length; i++) c += x[i] * v[i]; for (let i = 0; i < uni.dims.length; i++) proj[i] += c * v[i]; }
+  let err = 0, norm = 0;
+  for (let i = 0; i < uni.dims.length; i++) { err += (x[i] - proj[i]) ** 2; norm += x[i] ** 2; }
+  const resid = norm ? Math.sqrt(err) / Math.sqrt(norm) : 1;
+  if (resid >= 0.5) return { ok: false, detail: `REFUSED — resid ${resid.toFixed(3)} outside the thread's DMD universe (cut 0.5, GL-EN-13)` };
+  return { ok: true, resid: +resid.toFixed(3), detail: `draw's beings sit inside the thread's DMD universe (resid ${resid.toFixed(3)})` };
+}
+
 // ── THE WHOLE ASSEMBLY: the fold. Every sentence re-admitted against the
 // whole ground, deduped by claim-core, assigned to beats; gaps and residual
 // named. The dissent (refused) is disclosed, never vanished. ──
@@ -377,6 +406,7 @@ export default {
   mouthTokens: 400,
   snip,
   probeUnit,
+  gateUnit,
   testUnits,
   toDocument,
   sharpen,

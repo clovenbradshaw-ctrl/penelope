@@ -204,7 +204,7 @@
 ║■ADC 1 ●◈ ‡ code                                                            ║
 ║     @ o/generation/adapters/code.mjs GL-EN-01                              ║
 ║■ADP 1 ●◈ ‡ prose                                                           ║
-║     @ o/generation/adapters/prose.mjs GL-EN-11 GL-EN-13                    ║
+║     @ o/generation/adapters/prose.mjs GL-EN-11 GL-EN-13 GL-EN-14           ║
 ║■LAW 4 =◈ ‡ law                                                             ║
 ║     @ README.md GL-00 GL-01 GL-EN-02                                       ║
 ║■GLA 4 =◈ § owl                                                             ║
