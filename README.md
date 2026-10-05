@@ -1,3 +1,8 @@
+> ## ⚠️ LEGACY — frozen, no longer maintained
+> This repository is the **old copy** of `penelope` and is kept for history only.
+> The Fold now lives under the `scores-patch-points` account: [scores-patch-points/penelope](https://github.com/scores-patch-points/penelope).
+> Do not file issues or send changes here.
+
 # Penelope
 
 // Handle: Penelope — after the weaver who wove by day and unweaved by
